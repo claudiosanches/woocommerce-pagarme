@@ -149,6 +149,17 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Only numbers.
+	 *
+	 * @param  string|int $string
+	 *
+	 * @return string|int
+	 */
+	protected function only_numbers( $string ) {
+		return preg_replace( '([^0-9])', '', $string );
+	}
+
+	/**
 	 * Generate the transaction data.
 	 *
 	 * @param  WC_Order $order  Order data.
@@ -166,13 +177,14 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			$postback_url = $woocommerce->api_request_url( 'WC_PagarMe_Gateway' );
 		}
 
-		$phone = str_replace( array( '(', '-', ' ', ')' ), '', $order->billing_phone );
+		$phone = $this->only_numbers( $order->billing_phone );
 
 		// Set the request data.
 		$data = array(
 			'api_key'        => $this->api_key,
 			'amount'         => number_format( $order->order_total, 2, '', '' ),
 			'payment_method' => 'credit_card',
+			'postback_url'   => $postback_url,
 			'customer'       => array(
 				'name'    => $order->billing_first_name . ' ' . $order->billing_last_name,
 				'email'   => $order->billing_email,
@@ -181,25 +193,24 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 					'street_number' => $order->billing_number,
 					'complementary' => $order->billing_address_2,
 					'neighborhood'  => $order->billing_neighborhood,
-					'zipcode'       => str_replace( array( '-', ' ' ), '', $order->billing_postcode )
+					'zipcode'       => $this->only_numbers( $order->billing_postcode )
 				),
 				'phone' => array(
 					'ddd'    => substr( $phone, 0, 2 ),
 					'number' => substr( $phone, 2 )
 				)
-			),
-			'postback_url'    => $postback_url
+			)
 		);
 
 		// Set the document number.
 		if ( isset( $order->billing_persontype ) && ! empty( $order->billing_persontype ) ) {
 			if ( 1 == $order->billing_persontype ) {
-				$data['customer']['document_number'] = str_replace( array( '-', '.' ), '', $order->billing_cpf );
+				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
 			}
 
 			if ( 2 == $order->billing_persontype ) {
 				$data['customer']['name']            = $order->billing_company;
-				$data['customer']['document_number'] = str_replace( array( '-', '.' ), '', $order->billing_cnpj );
+				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cnpj );
 			}
 		}
 
@@ -213,6 +224,15 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			$birthdate = explode( '/', $order->billing_birthdate );
 
 			$data['customer']['born_at'] = $birthdate[1] . '-' . $birthdate[0] . '-' . $birthdate[2];
+		}
+
+		if ( 'credit-card' == $posted[ $this->id . '_payment_method' ] ) {
+			$data['card_number']          = $this->only_numbers( $posted[ $this->id . '_card_number' ] );
+			$data['card_holder_name']     = $posted[ $this->id . '_card_holder_name' ];
+			$data['card_expiration_date'] = $this->only_numbers( $posted[ $this->id . '_card_expiry' ] );
+			$data['card_cvv']             = $posted[ $this->id . '_card_cvc' ];
+		} else {
+			$data['payment_method'] = 'boleto';
 		}
 
 		// Add filter for Third Party plugins.
@@ -240,7 +260,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		);
 
 		if ( 'yes' == $this->debug ) {
-			$this->log->add( $this->id, 'Doing a transaction for order ' . $order->get_order_number() . ' with the following data: ' . print_r( $data, true ) );
+			$this->log->add( $this->id, 'Doing a transaction for order ' . $order->get_order_number() . '...' );
 		}
 
 		$response = wp_remote_post( $this->api_url . 'transactions', $params );
@@ -328,6 +348,21 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Payment fields.
+	 *
+	 * @return string
+	 */
+	public function payment_fields() {
+		wp_enqueue_script( 'wc-credit-card-form' );
+
+		if ( $description = $this->get_description() ) {
+			echo wpautop( wptexturize( $description ) );
+		}
+
+		include_once( 'views/html-payment-form.php' );
 	}
 
 	/**
