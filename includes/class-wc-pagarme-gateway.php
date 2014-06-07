@@ -166,6 +166,8 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			$postback_url = $woocommerce->api_request_url( 'WC_PagarMe_Gateway' );
 		}
 
+		$phone = str_replace( array( '(', '-', ' ', ')' ), '', $order->billing_phone );
+
 		// Set the request data.
 		$data = array(
 			'api_key'        => $this->api_key,
@@ -176,18 +178,42 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				'email'   => $order->billing_email,
 				'address' => array(
 					'street'        => $order->billing_address_1,
-					// 'street_number' => '',
+					'street_number' => $order->billing_number,
 					'complementary' => $order->billing_address_2,
-					// 'neighborhood'  => '',
+					'neighborhood'  => $order->billing_neighborhood,
 					'zipcode'       => str_replace( array( '-', ' ' ), '', $order->billing_postcode )
 				),
 				'phone' => array(
-					'ddd'    => '',
-					'number' => ''
+					'ddd'    => substr( $phone, 0, 2 ),
+					'number' => substr( $phone, 2 )
 				)
 			),
 			'postback_url'    => $postback_url
 		);
+
+		// Set the document number.
+		if ( isset( $order->billing_persontype ) && ! empty( $order->billing_persontype ) ) {
+			if ( 1 == $order->billing_persontype ) {
+				$data['customer']['document_number'] = str_replace( array( '-', '.' ), '', $order->billing_cpf );
+			}
+
+			if ( 2 == $order->billing_persontype ) {
+				$data['customer']['name']            = $order->billing_company;
+				$data['customer']['document_number'] = str_replace( array( '-', '.' ), '', $order->billing_cnpj );
+			}
+		}
+
+		// Set the customer gender.
+		if ( isset( $order->billing_sex ) && ! empty( $order->billing_sex ) ) {
+			$data['customer']['sex'] = strtoupper( substr( $order->billing_sex, 0, 1 ) );
+		}
+
+		// Set the customer birthdate.
+		if ( isset( $order->billing_birthdate ) && ! empty( $order->billing_birthdate ) ) {
+			$birthdate = explode( '/', $order->billing_birthdate );
+
+			$data['customer']['born_at'] = $birthdate[1] . '-' . $birthdate[0] . '-' . $birthdate[2];
+		}
 
 		// Add filter for Third Party plugins.
 		$data = apply_filters( 'wc_pagarme_transaction_data', $data );
