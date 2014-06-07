@@ -38,6 +38,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 
 		// Active logs.
 		if ( 'yes' == $this->debug ) {
@@ -464,6 +465,19 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		}
 
 		include_once( 'views/html-payment-form.php' );
+	}
+
+	/**
+	 * Thank You page message.
+	 *
+	 * @param  int    $order_id Order ID.
+	 *
+	 * @return string
+	 */
+	public function thankyou_page( $order_id ) {
+		$data = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
+
+		include_once( 'views/html-thankyou-page.php' );
 	}
 
 	/**
