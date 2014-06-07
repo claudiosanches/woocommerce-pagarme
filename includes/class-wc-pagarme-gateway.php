@@ -312,6 +312,27 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Send email notification.
+	 *
+	 * @param  string $subject Email subject.
+	 * @param  string $title   Email title.
+	 * @param  string $message Email message.
+	 *
+	 * @return void
+	 */
+	protected function send_email( $subject, $title, $message ) {
+		global $woocommerce;
+
+		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
+			$mailer = WC()->mailer();
+		} else {
+			$mailer = $woocommerce->mailer();
+		}
+
+		$mailer->send( get_option( 'admin_email' ), $subject, $mailer->wrap_message( $title, $message ) );
+	}
+
+	/**
 	 * Process the payment.
 	 *
 	 * @param int    $order_id Order ID.
@@ -331,6 +352,24 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				'result' => 'fail'
 			);
 		} else {
+			// Save transaction data.
+			update_post_meta( $order->id, '_wc_pagarme_transaction_id', intval( $transaction['id'] ) );
+			$payment_data = array_map(
+				'sanitize_text_field',
+				array(
+					'payment_method'  => $transaction['payment_method'],
+					'installments'    => $transaction['installments'],
+					'card_brand'      => $transaction['card_brand'],
+					'antifraud_score' => $transaction['antifraud_score'],
+					'boleto_url'      => $transaction['boleto_url'],
+					'subscription_id' => $transaction['subscription_id']
+				)
+			);
+			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $payment_data );
+			update_post_meta( $order->id, __( 'Pagar.me Transaction details', 'woocommerce-pagarme' ), 'https://dashboard.pagar.me/#/transactions/' . intval( $transaction['id'] ) );
+
+			$this->process_order_status( $order, $transaction['status'] );
+
 			// Redirect to thanks page.
 			if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
 				WC()->cart->empty_cart();
@@ -347,6 +386,68 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 					'redirect' => add_query_arg( 'key', $order->order_key, add_query_arg( 'order', $order_id, get_permalink( woocommerce_get_page_id( 'thanks' ) ) ) )
 				);
 			}
+		}
+	}
+
+	/**
+	 * Process the order status.
+	 *
+	 * @param  WC_Order $order  Order data.
+	 * @param  string   $status Transaction status.
+	 *
+	 * @return void
+	 */
+	public function process_order_status( $order, $status ) {
+		if ( 'yes' == $this->debug ) {
+			$this->log->add( $this->id, 'Payment status for order ' . $order->get_order_number() . ' is now: ' . $status );
+		}
+
+		switch ( $status ) {
+			case 'processing':
+				$order->update_status( 'on-hold', __( 'Pagar.me: The transaction is being processed.', 'woocommerce-pagarme' ) );
+
+				break;
+			case 'paid':
+				$order->add_order_note( __( 'Pagar.me: Transaction paid.', 'woocommerce-pagarme' ) );
+
+				// Changing the order for processing and reduces the stock.
+				$order->payment_complete();
+
+				break;
+			case 'waiting_payment':
+				$order->update_status( 'on-hold', __( 'Pagar.me: The banking ticket was issued but not paid yet.', 'woocommerce-pagarme' ) );
+
+				break;
+			case 'refused':
+				$order->update_status( 'failed', __( 'Pagar.me: The transaction was rejected by the card company or by fraud.', 'woocommerce-pagarme' ) );
+
+				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
+
+				$this->send_email(
+					sprintf( __( 'The transaction for order %s was rejected by the card company or by fraud', 'woocommerce-pagarme' ), $order->get_order_number() ),
+					__( 'Transaction failed', 'woocommerce-pagarme' ),
+					sprintf( __( 'Order %s has been marked as failed, because the transaction was rejected by the card company or by fraud, for more details, see %s.', 'woocommerce-pagarme' ), $order->get_order_number(), $transaction_url )
+				);
+
+				break;
+			case 'refunded':
+				$order->update_status( 'refunded', __( 'Pagar.me: The transaction was refunded/canceled.', 'woocommerce-pagarme' ) );
+
+				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
+
+				$this->send_email(
+					sprintf( __( 'The transaction for order %s refunded', 'woocommerce-pagarme' ), $order->get_order_number() ),
+					__( 'Transaction refunded', 'woocommerce-pagarme' ),
+					sprintf( __( 'Order %s has been marked as refunded by Pagar.me, for more details, see %s.', 'woocommerce-pagarme' ), $order->get_order_number(), $transaction_url )
+				);
+
+				break;
+
+			default:
+				// No action xD.
+				break;
 		}
 	}
 
