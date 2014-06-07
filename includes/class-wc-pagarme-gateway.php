@@ -16,9 +16,12 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 
 		$this->id                 = 'pagarme';
 		$this->icon               = false;
-		$this->has_fields         = false;
+		$this->has_fields         = true;
 		$this->method_title       = __( 'Pagar.me', 'woocommerce-pagarme' );
 		$this->method_description = __( 'Accept payments by Credit Card or Banking Ticket using Pagar.me.', 'woocommerce-pagarme' );
+
+		// API URLs.
+		$this->api_url = 'https://api.pagar.me/1/';
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -143,6 +146,102 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				'description' => sprintf( __( 'Log Pagar.me events, such as API requests, inside %s', 'woocommerce-pagarme' ), '<code>woocommerce/logs/' . esc_attr( $this->id ) . '-' . sanitize_file_name( wp_hash( $this->id ) ) . '.txt</code>' )
 			)
 		);
+	}
+
+	/**
+	 * Generate the transaction data.
+	 *
+	 * @param  WC_Order $order  Order data.
+	 * @param  array    $posted Form posted data.
+	 *
+	 * @return array            Transaction data.
+	 */
+	protected function generate_transaction_data( $order, $posted ) {
+		global $woocommerce;
+
+		// Backwards compatibility with WooCommerce version prior to 2.1.
+		if ( function_exists( 'WC' ) ) {
+			$postback_url = WC()->api_request_url( 'WC_PagarMe_Gateway' );
+		} else {
+			$postback_url = $woocommerce->api_request_url( 'WC_PagarMe_Gateway' );
+		}
+
+		// Set the request data.
+		$data = array(
+			'api_key'        => $this->api_key,
+			'amount'         => number_format( $order->order_total, 2, '', '' ),
+			'payment_method' => 'credit_card',
+			'customer'       => array(
+				'name'    => $order->billing_first_name . ' ' . $order->billing_last_name,
+				'email'   => $order->billing_email,
+				'address' => array(
+					'street'        => $order->billing_address_1,
+					// 'street_number' => '',
+					'complementary' => $order->billing_address_2,
+					// 'neighborhood'  => '',
+					'zipcode'       => str_replace( array( '-', ' ' ), '', $order->billing_postcode )
+				),
+				'phone' => array(
+					'ddd'    => '',
+					'number' => ''
+				)
+			),
+			'postback_url'    => $postback_url
+		);
+
+		// Add filter for Third Party plugins.
+		$data = apply_filters( 'wc_pagarme_transaction_data', $data );
+
+		return $data;
+	}
+
+	/**
+	 * Do the transaction.
+	 *
+	 * @param  WC_Order $order  Order data.
+	 * @param  array    $posted Form posted data.
+	 *
+	 * @return array            Response data.
+	 */
+	protected function do_transaction( $order, $posted ) {
+		$data = $this->generate_transaction_data( $order, $posted );
+
+		// Sets the post params.
+		$params = array(
+			'body'      => http_build_query( $data ),
+			'sslverify' => false,
+			'timeout'   => 60
+		);
+
+		if ( 'yes' == $this->debug ) {
+			$this->log->add( $this->id, 'Doing a transaction for order ' . $order->get_order_number() . ' with the following data: ' . print_r( $data, true ) );
+		}
+
+		$response = wp_remote_post( $this->api_url . 'transactions', $params );
+
+		if ( is_wp_error( $response ) ) {
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( $this->id, 'WP_Error in doing the transaction: ' . $response->get_error_message() );
+			}
+
+			return array();
+		} else {
+			$transaction_data = json_decode( $response['body'], true );
+
+			if ( isset( $transaction_data['errors'] ) ) {
+				if ( 'yes' == $this->debug ) {
+					$this->log->add( $this->id, 'Failed to make the transaction: ' . print_r( $transaction_data, true ) );
+				}
+
+				return $transaction_data;
+			}
+
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( $this->id, 'Transaction completed successfully! The transaction response is: ' . print_r( $transaction_data, true ) );
+			}
+
+			return $transaction_data;
+		}
 	}
 
 	/**
