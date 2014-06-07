@@ -46,10 +46,9 @@ class WC_PagarMe {
 		// Checks with WooCommerce is installed.
 		if ( class_exists( 'WC_Payment_Gateway' ) ) {
 			// Include the WC_PagarMe_Gateway class.
-			// include_once 'includes/class-wc-pagarme-gateway.php';
+			include_once 'includes/class-wc-pagarme-gateway.php';
 
-			// add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
-			add_filter( 'woocommerce_available_payment_gateways', array( $this, 'hides_when_is_outside_brazil' ) );
+			add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
 		} else {
 			add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
 		}
