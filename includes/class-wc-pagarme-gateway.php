@@ -30,11 +30,12 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Define user set variables.
-		$this->title       = $this->get_option( 'title' );
-		$this->description = $this->get_option( 'description' );
-		$this->api_key     = $this->get_option( 'api_key' );
-		$this->sandbox     = $this->get_option( 'sandbox' );
-		$this->debug       = $this->get_option( 'debug' );
+		$this->title          = $this->get_option( 'title' );
+		$this->description    = $this->get_option( 'description' );
+		$this->api_key        = $this->get_option( 'api_key' );
+		$this->encryption_key = $this->get_option( 'encryption_key' );
+		$this->sandbox        = $this->get_option( 'sandbox' );
+		$this->debug          = $this->get_option( 'debug' );
 
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -71,8 +72,8 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	protected function admin_notices() {
 		if ( is_admin() ) {
 			// Checks if api_key is not empty.
-			if ( empty( $this->api_key ) ) {
-				add_action( 'admin_notices', array( $this, 'api_key_missing_message' ) );
+			if ( empty( $this->api_key ) || empty( $this->encryption_key ) ) {
+				add_action( 'admin_notices', array( $this, 'plugin_not_configured_message' ) );
 			}
 
 			// Checks that the currency is supported
@@ -91,7 +92,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	 */
 	public function is_available() {
 		// Test if is valid for use.
-		$available = ( 'yes' == $this->get_option( 'enabled' ) ) && ! empty( $this->api_key ) && $this->using_supported_currency();
+		$available = ( 'yes' == $this->get_option( 'enabled' ) ) && ! empty( $this->api_key ) && ! empty( $this->encryption_key ) && $this->using_supported_currency();
 
 		return $available;
 	}
@@ -125,7 +126,13 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			'api_key' => array(
 				'title'       => __( 'Pagar.me API Key', 'woocommerce-pagarme' ),
 				'type'        => 'text',
-				'description' => sprintf( __( 'Please enter your Pagar.me API key. This is needed to process the payment and notifications. Is possible get your API Key in %s.', 'woocommerce-pagarme' ), '<a href="https://dashboard.pagar.me/">' . __( 'Pagar.me Dashboard > My Account page', 'woocommerce-pagarme' ) . '</a>' ),
+				'description' => sprintf( __( 'Please enter your Pagar.me API Key. This is needed to process the payment and notifications. Is possible get your API Key in %s.', 'woocommerce-pagarme' ), '<a href="https://dashboard.pagar.me/">' . __( 'Pagar.me Dashboard > My Account page', 'woocommerce-pagarme' ) . '</a>' ),
+				'default'     => ''
+			),
+			'encryption_key' => array(
+				'title'       => __( 'Pagar.me Encryption Key', 'woocommerce-pagarme' ),
+				'type'        => 'text',
+				'description' => sprintf( __( 'Please enter your Pagar.me Encryption key. This is needed to process the payment. Is possible get your Encryption Key in %s.', 'woocommerce-pagarme' ), '<a href="https://dashboard.pagar.me/">' . __( 'Pagar.me Dashboard > My Account page', 'woocommerce-pagarme' ) . '</a>' ),
 				'default'     => ''
 			),
 			'testing' => array(
@@ -518,12 +525,20 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Adds error message when not configured the API Key.
+	 * Adds error message when the plugin is not configured properly.
 	 *
 	 * @return string Error Mensage.
 	 */
-	public function api_key_missing_message() {
-		echo '<div class="error"><p><strong>' . __( 'Pagar.me Disabled', 'woocommerce-pagarme' ) . '</strong>: ' . sprintf( __( 'You should inform your API Key. %s', 'woocommerce-pagarme' ), '<a href="' . $this->admin_url() . '">' . __( 'Click here to configure!', 'woocommerce-pagarme' ) . '</a>' ) . '</p></div>';
+	public function plugin_not_configured_message() {
+		$id = 'woocommerce_' . $this->id . '_';
+		if (
+			isset( $_POST[ $id . 'api_key' ] ) && ! empty( $_POST[ $id . 'api_key' ] )
+			&& isset( $_POST[ $id . 'encryption_key' ] ) && ! empty( $_POST[ $id . 'encryption_key' ] )
+		) {
+			return;
+		}
+
+		echo '<div class="error"><p><strong>' . __( 'Pagar.me Disabled', 'woocommerce-pagarme' ) . '</strong>: ' . sprintf( __( 'You should inform your API Key and Encryption Key. %s', 'woocommerce-pagarme' ), '<a href="' . $this->admin_url() . '">' . __( 'Click here to configure!', 'woocommerce-pagarme' ) . '</a>' ) . '</p></div>';
 	}
 
 	/**
