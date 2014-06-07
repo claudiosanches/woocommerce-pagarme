@@ -39,6 +39,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
+		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_instructions' ), 10, 3 );
 
 		// Active logs.
 		if ( 'yes' == $this->debug ) {
@@ -478,6 +479,29 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		$data = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
 
 		include_once( 'views/html-thankyou-page.php' );
+	}
+
+	/**
+	 * Add content to the WC emails.
+	 *
+	 * @param  object $order         Order object.
+	 * @param  bool   $sent_to_admin Send to admin.
+	 * @param  bool   $plain_text    Plain text or HTML.
+	 *
+	 * @return string                Banking Ticket instructions.
+	 */
+	public function email_instructions( $order, $sent_to_admin, $plain_text ) {
+		if ( $sent_to_admin || 'on-hold' !== $order->status || $this->id !== $order->payment_method ) {
+			return;
+		}
+
+		$data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+
+		if ( $plain_text ) {
+			include_once( 'views/plain-email-instructions.php' );
+		} else {
+			include_once( 'views/html-email-instructions.php' );
+		}
 	}
 
 	/**
