@@ -230,7 +230,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 
 			if ( isset( $transaction_data['errors'] ) ) {
 				if ( 'yes' == $this->debug ) {
-					$this->log->add( $this->id, 'Failed to make the transaction: ' . print_r( $transaction_data, true ) );
+					$this->log->add( $this->id, 'Failed to make the transaction: ' . print_r( $response, true ) );
 				}
 
 				return $transaction_data;
@@ -241,6 +241,66 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			}
 
 			return $transaction_data;
+		}
+	}
+
+	/**
+	 * Add error messages in checkout.
+	 *
+	 * @param string $messages Error message.
+	 *
+	 * @return string          Displays the error messages.
+	 */
+	protected function add_error( $messages ) {
+		global $woocommerce;
+
+		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
+			foreach ( $messages as $message ) {
+				wc_add_notice( $message['message'], 'error' );
+			}
+		} else {
+			foreach ( $messages as $message ) {
+				$woocommerce->add_error( $message['message'] );
+			}
+		}
+	}
+
+	/**
+	 * Process the payment.
+	 *
+	 * @param int    $order_id Order ID.
+	 *
+	 * @return array           Redirect data.
+	 */
+	public function process_payment( $order_id ) {
+		global $woocommerce;
+
+		$order       = new WC_Order( $order_id );
+		$transaction = $this->do_transaction( $order, $_POST );
+
+		if ( isset( $transaction['errors'] ) ) {
+			$this->add_error( $transaction['errors'] );
+
+			return array(
+				'result' => 'fail'
+			);
+		} else {
+			// Redirect to thanks page.
+			if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
+				WC()->cart->empty_cart();
+
+				return array(
+					'result'   => 'success',
+					'redirect' => $this->get_return_url( $order )
+				);
+			} else {
+				$woocommerce->cart->empty_cart();
+
+				return array(
+					'result'   => 'success',
+					'redirect' => add_query_arg( 'key', $order->order_key, add_query_arg( 'order', $order_id, get_permalink( woocommerce_get_page_id( 'thanks' ) ) ) )
+				);
+			}
 		}
 	}
 
