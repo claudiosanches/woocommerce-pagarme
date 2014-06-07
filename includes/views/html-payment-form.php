@@ -28,5 +28,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<label for="<?php echo esc_attr( $this->id ); ?>-card-cvc"><?php _e( 'Card Code', 'woocommerce-pagarme' ); ?> <span class="required">*</span></label>
 			<input id="<?php echo esc_attr( $this->id ); ?>-card-cvc" class="input-text wc-credit-card-form-card-cvc" type="text" autocomplete="off" placeholder="<?php _e( 'CVC', 'woocommerce-pagarme' ); ?>" name="<?php echo esc_attr( $this->id ); ?>_card_cvc" style="font-size: 1.5em; padding: 8px;" />
 		</p>
+		<div class="clear"></div>
 	</div>
 </fieldset>
