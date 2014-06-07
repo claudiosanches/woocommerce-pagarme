@@ -6,15 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( 'boleto' == $data['payment_method'] ) : ?>
 
 <div class="woocommerce-message">
-
-	<a class="button" href="<?php echo esc_url( $data['boleto_url'] ); ?>" target="_blank"><?php _e( 'Pay the Banking Ticket', 'woocommerce-pagarme' ); ?></a>
-
-	<strong><?php _e( 'Attention!', 'woocommerce-pagarme' ); ?></strong> <span><?php _e( 'You will not get the Banking Ticket by mail.', 'woocommerce-pagarme' ); ?></span><br />
-
-	<span><?php _e( 'Please click the following button and pay the Banking Ticket in your Internet Banking.', 'woocommerce-pagarme' ); ?></span><br />
-
-	<span><?php _e( 'If you prefer, print and pay at any bank branch or lottery retailer.', 'woocommerce-pagarme' ); ?></span><br />
-
+	<span><a class="button" href="<?php echo esc_url( $data['boleto_url'] ); ?>" target="_blank"><?php _e( 'Pay the Banking Ticket', 'woocommerce-pagarme' ); ?></a><strong><?php _e( 'Attention!', 'woocommerce-pagarme' ); ?></strong> <?php _e( 'You will not get the Banking Ticket by mail.', 'woocommerce-pagarme' ); ?><br /><?php _e( 'Please click in the following button to view your Banking Ticket', 'woocommerce-pagarme' ); ?><br /><?php _e( 'You can print and pay in your internet banking or in a lottery retailer.', 'woocommerce-pagarme' ); ?></span>
 </div>
 
 <?php
