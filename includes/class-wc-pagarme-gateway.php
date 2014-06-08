@@ -41,6 +41,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_instructions' ), 10, 3 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'checkout_scripts' ) );
 
 		// Active logs.
 		if ( 'yes' == $this->debug ) {
@@ -53,6 +54,28 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 
 		// Display admin notices.
 		$this->admin_notices();
+	}
+
+	/**
+	 * Checkout scripts.
+	 *
+	 * @return void
+	 */
+	public function checkout_scripts() {
+		if ( is_checkout() ) {
+			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+			wp_enqueue_script( $this->id . '-library', 'https://pagar.me/assets/pagarme.js', array( 'jquery' ), null );
+			wp_enqueue_script( $this->id . '-checkout', plugins_url( 'assets/js/checkout' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery', $this->id . '-library' ), WC_PagarMe::VERSION, true );
+
+			wp_localize_script(
+				$this->id . '-checkout',
+				'wc_' . $this->id . '_params',
+				array(
+					'encryption_key' => $this->encryption_key
+				)
+			);
+		}
 	}
 
 	/**
@@ -236,10 +259,9 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		}
 
 		if ( 'credit-card' == $posted[ $this->id . '_payment_method' ] ) {
-			$data['card_number']          = $this->only_numbers( $posted[ $this->id . '_card_number' ] );
-			$data['card_holder_name']     = $posted[ $this->id . '_card_holder_name' ];
-			$data['card_expiration_date'] = $this->only_numbers( $posted[ $this->id . '_card_expiry' ] );
-			$data['card_cvv']             = $posted[ $this->id . '_card_cvc' ];
+			if ( isset( $posted[ $this->id . '_card_hash' ] ) ) {
+				$data['card_hash'] = $posted[ $this->id . '_card_hash' ];
+			}
 		} else {
 			$data['payment_method'] = 'boleto';
 		}
