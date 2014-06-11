@@ -35,7 +35,7 @@
 		/**
 		 * Display or hide the credit card for when change the payment method.
 		 */
-		$( 'body' ).on( 'click', '#pagarme-payment-form input[name=pagarme_payment_method]', function () {
+		$( 'body' ).on( 'click', 'li.payment_method_pagarme input[name=pagarme_payment_method]', function () {
 			wcPagarMeFormSwitch( $( this ).val() );
 		});
 
@@ -54,8 +54,14 @@
 				return true;
 			}
 
-			if ( 'credit-card' !== $( '#pagarme-payment-form input[name=pagarme_payment_method]' ).val() ) {
-				return true;
+			if ( 'radio' === $( 'body li.payment_method_pagarme input[name=pagarme_payment_method]' ).attr( 'type' ) ) {
+				if ( 'credit-card' !== $( 'body li.payment_method_pagarme input[name=pagarme_payment_method]:checked' ).val() ) {
+					return true;
+				}
+			} else {
+				if ( 'credit-card' !== $( 'body li.payment_method_pagarme input[name=pagarme_payment_method]' ).val() ) {
+					return true;
+				}
 			}
 
 			PagarMe.encryption_key = wc_pagarme_params.encryption_key;

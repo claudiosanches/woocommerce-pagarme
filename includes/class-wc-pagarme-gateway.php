@@ -34,6 +34,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		$this->description    = $this->get_option( 'description' );
 		$this->api_key        = $this->get_option( 'api_key' );
 		$this->encryption_key = $this->get_option( 'encryption_key' );
+		$this->methods        = $this->get_option( 'methods' );
 		$this->sandbox        = $this->get_option( 'sandbox' );
 		$this->debug          = $this->get_option( 'debug' );
 
@@ -158,6 +159,16 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				'description' => sprintf( __( 'Please enter your Pagar.me Encryption key. This is needed to process the payment. Is possible get your Encryption Key in %s.', 'woocommerce-pagarme' ), '<a href="https://dashboard.pagar.me/">' . __( 'Pagar.me Dashboard > My Account page', 'woocommerce-pagarme' ) . '</a>' ),
 				'default'     => ''
 			),
+			'methods' => array(
+				'title'   => __( 'Payment Methods', 'woocommerce-pagarme' ),
+				'type'    => 'select',
+				'default' => 'all',
+				'options' => array(
+					'all'    => __( 'Credit Card and Banking Ticket', 'woocommerce-pagarme' ),
+					'credit' => __( ' Only Credit Card', 'woocommerce-pagarme' ),
+					'ticket' => __( ' Only Banking Ticket', 'woocommerce-pagarme' ),
+				)
+			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
 				'type'        => 'title',
@@ -215,7 +226,6 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		$data = array(
 			'api_key'        => $this->api_key,
 			'amount'         => number_format( $order->order_total, 2, '', '' ),
-			'payment_method' => 'credit_card',
 			'postback_url'   => $postback_url,
 			'customer'       => array(
 				'name'    => $order->billing_first_name . ' ' . $order->billing_last_name,
@@ -258,11 +268,12 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			$data['customer']['born_at'] = $birthdate[1] . '-' . $birthdate[0] . '-' . $birthdate[2];
 		}
 
-		if ( 'credit-card' == $posted[ $this->id . '_payment_method' ] ) {
+		if ( ( 'all' == $this->methods || 'credit' == $this->methods ) && 'credit-card' == $posted[ $this->id . '_payment_method' ] ) {
 			if ( isset( $posted[ $this->id . '_card_hash' ] ) ) {
-				$data['card_hash'] = $posted[ $this->id . '_card_hash' ];
+				$data['payment_method'] = 'credit_card';
+				$data['card_hash']      = $posted[ $this->id . '_card_hash' ];
 			}
-		} else {
+		} elseif ( ( 'all' == $this->methods || 'ticket' == $this->methods ) && 'banking-ticket' == $posted[ $this->id . '_payment_method' ] ) {
 			$data['payment_method'] = 'boleto';
 		}
 
@@ -490,11 +501,17 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	public function payment_fields() {
 		wp_enqueue_script( 'wc-credit-card-form' );
 
+		if ( 'ticket' == $this->methods ) {
+			echo '<input id="' . esc_attr( $this->id ) . '-payment-method-banking-ticket" type="hidden" name="' . $this->id . '_payment_method" value="banking-ticket" />';
+		}
+
 		if ( $description = $this->get_description() ) {
 			echo wpautop( wptexturize( $description ) );
 		}
 
-		include_once( 'views/html-payment-form.php' );
+		if ( 'all' == $this->methods || 'credit' == $this->methods ) {
+			include_once( 'views/html-payment-form.php' );
+		}
 	}
 
 	/**

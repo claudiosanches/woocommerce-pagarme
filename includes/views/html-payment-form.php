@@ -5,10 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <fieldset id="<?php echo $this->id; ?>-payment-form">
-	<p class="form-row form-row-wide">
-		<label><input id="<?php echo esc_attr( $this->id ); ?>-payment-method-credit-cart" type="radio" name="<?php echo esc_attr( $this->id ); ?>_payment_method" value="credit-card" checked="checked" /> <?php _e( 'Credit Card', 'woocommerce-pagarme' ); ?></label>
-		<label><input id="<?php echo esc_attr( $this->id ); ?>-payment-method-banking-ticket" type="radio" name="<?php echo esc_attr( $this->id ); ?>_payment_method" value="banking-ticket" /> <?php _e( 'Banking Ticket', 'woocommerce-pagarme' ); ?></label>
-	</p>
+	<?php if ( 'all' == $this->methods ) : ?>
+		<p class="form-row form-row-wide">
+			<label><input id="<?php echo esc_attr( $this->id ); ?>-payment-method-credit-cart" type="radio" name="<?php echo esc_attr( $this->id ); ?>_payment_method" value="credit-card" checked="checked" /> <?php _e( 'Credit Card', 'woocommerce-pagarme' ); ?></label>
+			<label><input id="<?php echo esc_attr( $this->id ); ?>-payment-method-banking-ticket" type="radio" name="<?php echo esc_attr( $this->id ); ?>_payment_method" value="banking-ticket" /> <?php _e( 'Banking Ticket', 'woocommerce-pagarme' ); ?></label>
+		</p>
+	<?php else : ?>
+		<input id="<?php echo esc_attr( $this->id ); ?>-payment-method-credit-cart" type="hidden" name="<?php echo esc_attr( $this->id ); ?>_payment_method" value="credit-card" />
+	<?php endif; ?>
 
 	<div id="<?php echo esc_attr( $this->id ); ?>-credit-cart-form">
 		<p class="form-row form-row-first">
