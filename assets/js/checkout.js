@@ -68,8 +68,8 @@
 
 			// Set the Credit card data.
 			creditCard.cardHolderName      = $( '#pagarme-card-holder-name', form ).val();
-			creditCard.cardExpirationMonth = $( '#pagarme-card-expiry', form ).val().substr( 0, 2 );
-			creditCard.cardExpirationYear  = $( '#pagarme-card-expiry', form ).val().substr( 5 );
+			creditCard.cardExpirationMonth = $( '#pagarme-card-expiry', form ).val().replace( /[^\d]/g, '' ).substr( 0, 2 );
+			creditCard.cardExpirationYear  = $( '#pagarme-card-expiry', form ).val().replace( /[^\d]/g, '' ).substr( 2 );
 			creditCard.cardNumber          = $( '#pagarme-card-number', form ).val().replace( /[^\d]/g, '' );
 			creditCard.cardCVV             = $( '#pagarme-card-cvc', form ).val();
 
