@@ -30,12 +30,15 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Define user set variables.
-		$this->title          = $this->get_option( 'title' );
-		$this->description    = $this->get_option( 'description' );
-		$this->api_key        = $this->get_option( 'api_key' );
-		$this->encryption_key = $this->get_option( 'encryption_key' );
-		$this->methods        = $this->get_option( 'methods' );
-		$this->debug          = $this->get_option( 'debug' );
+		$this->title                = $this->get_option( 'title' );
+		$this->description          = $this->get_option( 'description' );
+		$this->api_key              = $this->get_option( 'api_key' );
+		$this->encryption_key       = $this->get_option( 'encryption_key' );
+		$this->methods              = $this->get_option( 'methods' );
+		$this->min_installment      = $this->get_option( 'min_installment' );
+		$this->max_installment      = $this->get_option( 'max_installment' );
+		$this->smallest_installment = $this->get_option( 'smallest_installment' );
+		$this->debug                = $this->get_option( 'debug' );
 
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -94,9 +97,18 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	 */
 	protected function admin_notices() {
 		if ( is_admin() ) {
+			$id = 'woocommerce_' . $this->id . '_';
+			$min_installment = isset( $_POST[ $id . 'min_installment' ] ) ? $_POST[ $id . 'min_installment' ] : $this->min_installment;
+			$max_installment = isset( $_POST[ $id . 'max_installment' ] ) ? $_POST[ $id . 'max_installment' ] : $this->max_installment;
+
 			// Checks if api_key is not empty.
 			if ( empty( $this->api_key ) || empty( $this->encryption_key ) ) {
 				add_action( 'admin_notices', array( $this, 'plugin_not_configured_message' ) );
+			}
+
+			// Installments error notice.
+			if ( in_array( $this->methods, array( 'all', 'credit' ) ) && $min_installment > $max_installment ) {
+				add_action( 'admin_notices', array( $this, 'installments_error_message' ) );
 			}
 
 			// Checks that the currency is supported
@@ -144,6 +156,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Description', 'woocommerce-pagarme' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-pagarme' ),
+				'desc_tip'    => true,
 				'default'     => __( 'Pay with Credit Card or Banking Ticket via Pagar.me', 'woocommerce-pagarme' )
 			),
 			'api_key' => array(
@@ -167,6 +180,60 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 					'credit' => __( ' Only Credit Card', 'woocommerce-pagarme' ),
 					'ticket' => __( ' Only Banking Ticket', 'woocommerce-pagarme' ),
 				)
+			),
+			'installments' => array(
+				'title'       => __( 'Installments', 'woocommerce-pagarme' ),
+				'type'        => 'title',
+				'description' => ''
+			),
+			'min_installment' => array(
+				'title'       => __( 'Minimum Installment', 'woocommerce-pagarme' ),
+				'type'        => 'select',
+				'default'     => '1',
+				'description' => __( 'Credit Card minimum installment.', 'woocommerce-pagarme' ),
+				'desc_tip'    => true,
+				'options'     => array(
+					'1'  => '1',
+					'2'  => '2',
+					'3'  => '3',
+					'4'  => '4',
+					'5'  => '5',
+					'6'  => '6',
+					'7'  => '7',
+					'8'  => '8',
+					'9'  => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+				)
+			),
+			'max_installment' => array(
+				'title'       => __( 'Maximum Installment', 'woocommerce-pagarme' ),
+				'type'        => 'select',
+				'default'     => '12',
+				'description' => __( 'Credit Card maximum installment.', 'woocommerce-pagarme' ),
+				'desc_tip'    => true,
+				'options'     => array(
+					'1'  => '1',
+					'2'  => '2',
+					'3'  => '3',
+					'4'  => '4',
+					'5'  => '5',
+					'6'  => '6',
+					'7'  => '7',
+					'8'  => '8',
+					'9'  => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+				)
+			),
+			'smallest_installment' => array(
+				'title'       => __( 'Smallest Installment', 'woocommerce-pagarme' ),
+				'type'        => 'text',
+				'description' => __( 'Please enter with the value of smallest installment, Note: it not can be less than 5', 'woocommerce-pagarme' ),
+				'desc_tip'    => true,
+				'default'     => '5'
 			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
@@ -264,6 +331,17 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			if ( isset( $posted[ $this->id . '_card_hash' ] ) ) {
 				$data['payment_method'] = 'credit_card';
 				$data['card_hash']      = $posted[ $this->id . '_card_hash' ];
+			}
+
+			// Validate the installments.
+			if ( isset( $posted[ $this->id . '_installments' ] ) ) {
+				$installment          = $posted[ $this->id . '_installments' ];
+				$smallest_installment = ( 5 > $this->smallest_installment ) ? 500 : number_format( $this->smallest_installment, 2, '', '' );
+				$installment_total    = number_format( $order->order_total, 2, '', '' ) / $installment;
+
+				if ( $installment >= $this->min_installment && $installment <= $this->max_installment && $smallest_installment <= $installment_total ) {
+					$data['installments'] = $installment;
+				}
 			}
 		} elseif ( ( 'all' == $this->methods || 'ticket' == $this->methods ) && 'banking-ticket' == $posted[ $this->id . '_payment_method' ] ) {
 			$data['payment_method'] = 'boleto';
@@ -491,7 +569,15 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	 * @return string
 	 */
 	public function payment_fields() {
+		global $woocommerce;
+
 		wp_enqueue_script( 'wc-credit-card-form' );
+
+		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
+			$cart_total = WC()->cart->total;
+		} else {
+			$cart_total = $woocommerce->cart->total;
+		}
 
 		if ( 'ticket' == $this->methods ) {
 			echo '<input id="' . esc_attr( $this->id ) . '-payment-method-banking-ticket" type="hidden" name="' . $this->id . '_payment_method" value="banking-ticket" />';
@@ -570,6 +656,15 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		}
 
 		echo '<div class="error"><p><strong>' . __( 'Pagar.me Disabled', 'woocommerce-pagarme' ) . '</strong>: ' . sprintf( __( 'You should inform your API Key and Encryption Key. %s', 'woocommerce-pagarme' ), '<a href="' . $this->admin_url() . '">' . __( 'Click here to configure!', 'woocommerce-pagarme' ) . '</a>' ) . '</p></div>';
+	}
+
+	/**
+	 * Adds error message when the installments are configured improperly.
+	 *
+	 * @return string Error Mensage.
+	 */
+	public function installments_error_message() {
+		echo '<div class="error"><p><strong>' . __( 'Pagar.me Disabled', 'woocommerce-pagarme' ) . '</strong>: ' . sprintf( __( 'Maximum installment can not be less than Minimum installment. %s', 'woocommerce-pagarme' ), '<a href="' . $this->admin_url() . '">' . __( 'Click here to configure!', 'woocommerce-pagarme' ) . '</a>' ) . '</p></div>';
 	}
 
 	/**
