@@ -35,7 +35,6 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		$this->api_key        = $this->get_option( 'api_key' );
 		$this->encryption_key = $this->get_option( 'encryption_key' );
 		$this->methods        = $this->get_option( 'methods' );
-		$this->sandbox        = $this->get_option( 'sandbox' );
 		$this->debug          = $this->get_option( 'debug' );
 
 		// Actions.
@@ -173,13 +172,6 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
 				'type'        => 'title',
 				'description' => ''
-			),
-			'sandbox' => array(
-				'title'       => __( 'Pagar.me Sandbox', 'woocommerce-pagarme' ),
-				'type'        => 'checkbox',
-				'label'       => __( 'Enable Pagar.me Sandbox', 'woocommerce-pagarme' ),
-				'default'     => 'no',
-				'description' => __( 'Pagar.me sandbox can be used to test the payments.', 'woocommerce-pagarme' )
 			),
 			'debug' => array(
 				'title'       => __( 'Debug Log', 'woocommerce-pagarme' ),
