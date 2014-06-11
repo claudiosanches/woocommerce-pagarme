@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<label for="<?php echo esc_attr( $this->id ); ?>-card-installments"><?php _e( 'Installments', 'woocommerce-pagarme' ); ?> <span class="required">*</span></label>
 				<select name="<?php echo esc_attr( $this->id ); ?>_installments" id="<?php echo esc_attr( $this->id ); ?>-installments" style="font-size: 1.5em; padding: 8px; width: 100%;">
 					<?php
-						$smallest_installment = ( 5 > $this->smallest_installment ) ? 5 : $this->smallest_installment;
+						$smallest_installment = ( 5 > $this->smallest_installment ) ? 500 : number_format( $this->smallest_installment, 2, '', '' );
 
 						for ( $i = $this->min_installment; $i <= $this->max_installment; $i++) :
 							$total = $cart_total / $i;

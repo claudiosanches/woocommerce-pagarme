@@ -574,9 +574,9 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		wp_enqueue_script( 'wc-credit-card-form' );
 
 		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
-			$cart_total = WC()->cart->total;
+			$cart_total = number_format( WC()->cart->total, 2, '', '' );
 		} else {
-			$cart_total = $woocommerce->cart->total;
+			$cart_total = number_format( $woocommerce->cart->total, 2, '', '' );
 		}
 
 		if ( 'ticket' == $this->methods ) {
