@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								break;
 							}
 					?>
-						<option value="<?php echo $i; ?>"><?php echo sprintf( '%dx of %s (interest-free)', $i, strip_tags( wc_price( $total ) ) ); ?></option>
+						<option value="<?php echo $i; ?>"><?php echo sprintf( __( '%dx of %s (interest-free)', 'woocommerce-pagarme' ), $i, strip_tags( wc_price( $total ) ) ); ?></option>
 					<?php endfor; ?>
 				</select>
 			</p>
