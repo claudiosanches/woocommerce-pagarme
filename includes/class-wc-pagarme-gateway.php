@@ -127,7 +127,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	 */
 	public function is_available() {
 		// Test if is valid for use.
-		$available = ( 'yes' == $this->get_option( 'enabled' ) ) && ! empty( $this->api_key ) && ! empty( $this->encryption_key ) && $this->using_supported_currency();
+		$available = parent::is_available() && 'yes' == $this->get_option( 'enabled' ) && ! empty( $this->api_key ) && ! empty( $this->encryption_key ) && $this->using_supported_currency();
 
 		return $available;
 	}
