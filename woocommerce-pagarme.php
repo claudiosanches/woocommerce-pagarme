@@ -100,9 +100,9 @@ class WC_PagarMe {
 	 */
 	public function woocommerce_missing_notice() {
 		echo '<div class="error"><p>' . sprintf(
-			__( 'WooCommerce Pagar.me depends on the last version of the %s and the %s to work!', 'bling-woocommerce' ),
-			'<a href="http://wordpress.org/extend/plugins/woocommerce/">' . __( 'WooCommerce', 'bling-woocommerce' ) . '</a>',
-			'<a href="http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">' . __( 'WooCommerce Extra Checkout Fields for Brazil', 'bling-woocommerce' ) . '</a>'
+			__( 'WooCommerce Pagar.me depends on the last version of the %s and the %s to work!', 'woocommerce-pagarme' ),
+			'<a href="http://wordpress.org/extend/plugins/woocommerce/">' . __( 'WooCommerce', 'woocommerce-pagarme' ) . '</a>',
+			'<a href="http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">' . __( 'WooCommerce Extra Checkout Fields for Brazil', 'woocommerce-pagarme' ) . '</a>'
 		) . '</p></div>';
 	}
 }
