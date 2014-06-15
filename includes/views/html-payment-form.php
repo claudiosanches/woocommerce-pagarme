@@ -40,10 +40,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 						$smallest_installment = ( 5 > $this->smallest_installment ) ? 500 : number_format( $this->smallest_installment, 2, '', '' );
 
-						for ( $i = 1; $i <= $this->max_installment; $i++) :
+						for ( $i = 1; $i <= $this->max_installment; $i++ ) :
 							$total = $cart_total / $i;
 
-							if ( $smallest_installment > $total ) {
+							if ( $smallest_installment > number_format( $total, 2, '', '' ) ) {
 								break;
 							}
 					?>
