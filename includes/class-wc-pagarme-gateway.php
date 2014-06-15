@@ -136,7 +136,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			'enabled' => array(
 				'title'   => __( 'Enable/Disable', 'woocommerce-pagarme' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable Pagar.me standard', 'woocommerce-pagarme' ),
+				'label'   => __( 'Enable Pagar.me', 'woocommerce-pagarme' ),
 				'default' => 'yes'
 			),
 			'title' => array(
@@ -171,8 +171,8 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				'default' => 'all',
 				'options' => array(
 					'all'    => __( 'Credit Card and Banking Ticket', 'woocommerce-pagarme' ),
-					'credit' => __( ' Only Credit Card', 'woocommerce-pagarme' ),
-					'ticket' => __( ' Only Banking Ticket', 'woocommerce-pagarme' ),
+					'credit' => __( 'Only Credit Card', 'woocommerce-pagarme' ),
+					'ticket' => __( 'Only Banking Ticket', 'woocommerce-pagarme' ),
 				)
 			),
 			'installments' => array(
@@ -181,10 +181,10 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				'description' => ''
 			),
 			'max_installment' => array(
-				'title'       => __( 'Maximum Installment', 'woocommerce-pagarme' ),
+				'title'       => __( 'Number of Installment', 'woocommerce-pagarme' ),
 				'type'        => 'select',
 				'default'     => '12',
-				'description' => __( 'Credit Card maximum installment.', 'woocommerce-pagarme' ),
+				'description' => __( 'Maximum number of installments possible with payments by credit card.', 'woocommerce-pagarme' ),
 				'desc_tip'    => true,
 				'options'     => array(
 					'1'  => '1',
