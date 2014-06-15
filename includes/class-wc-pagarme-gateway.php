@@ -273,7 +273,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		global $woocommerce;
 
 		// Backwards compatibility with WooCommerce version prior to 2.1.
-		if ( function_exists( 'WC' ) ) {
+		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
 			$postback_url = WC()->api_request_url( 'WC_PagarMe_Gateway' );
 		} else {
 			$postback_url = $woocommerce->api_request_url( 'WC_PagarMe_Gateway' );
