@@ -35,7 +35,6 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		$this->api_key              = $this->get_option( 'api_key' );
 		$this->encryption_key       = $this->get_option( 'encryption_key' );
 		$this->methods              = $this->get_option( 'methods' );
-		$this->min_installment      = $this->get_option( 'min_installment' );
 		$this->max_installment      = $this->get_option( 'max_installment' );
 		$this->smallest_installment = $this->get_option( 'smallest_installment' );
 		$this->debug                = $this->get_option( 'debug' );
@@ -100,17 +99,10 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	protected function admin_notices() {
 		if ( is_admin() ) {
 			$id = 'woocommerce_' . $this->id . '_';
-			$min_installment = isset( $_POST[ $id . 'min_installment' ] ) ? $_POST[ $id . 'min_installment' ] : $this->min_installment;
-			$max_installment = isset( $_POST[ $id . 'max_installment' ] ) ? $_POST[ $id . 'max_installment' ] : $this->max_installment;
 
 			// Checks if api_key is not empty.
 			if ( empty( $this->api_key ) || empty( $this->encryption_key ) ) {
 				add_action( 'admin_notices', array( $this, 'plugin_not_configured_message' ) );
-			}
-
-			// Installments error notice.
-			if ( in_array( $this->methods, array( 'all', 'credit' ) ) && $min_installment > $max_installment ) {
-				add_action( 'admin_notices', array( $this, 'installments_error_message' ) );
 			}
 
 			// Checks that the currency is supported
@@ -187,27 +179,6 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Installments', 'woocommerce-pagarme' ),
 				'type'        => 'title',
 				'description' => ''
-			),
-			'min_installment' => array(
-				'title'       => __( 'Minimum Installment', 'woocommerce-pagarme' ),
-				'type'        => 'select',
-				'default'     => '1',
-				'description' => __( 'Credit Card minimum installment.', 'woocommerce-pagarme' ),
-				'desc_tip'    => true,
-				'options'     => array(
-					'1'  => '1',
-					'2'  => '2',
-					'3'  => '3',
-					'4'  => '4',
-					'5'  => '5',
-					'6'  => '6',
-					'7'  => '7',
-					'8'  => '8',
-					'9'  => '9',
-					'10' => '10',
-					'11' => '11',
-					'12' => '12',
-				)
 			),
 			'max_installment' => array(
 				'title'       => __( 'Maximum Installment', 'woocommerce-pagarme' ),
@@ -341,7 +312,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 				$smallest_installment = ( 5 > $this->smallest_installment ) ? 500 : number_format( $this->smallest_installment, 2, '', '' );
 				$installment_total    = number_format( $order->order_total, 2, '', '' ) / $installment;
 
-				if ( $installment >= $this->min_installment && $installment <= $this->max_installment && $smallest_installment <= $installment_total ) {
+				if ( $installment <= $this->max_installment && $smallest_installment <= $installment_total ) {
 					$data['installments'] = $installment;
 				}
 			}
@@ -716,15 +687,6 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		}
 
 		echo '<div class="error"><p><strong>' . __( 'Pagar.me Disabled', 'woocommerce-pagarme' ) . '</strong>: ' . sprintf( __( 'You should inform your API Key and Encryption Key. %s', 'woocommerce-pagarme' ), '<a href="' . $this->admin_url() . '">' . __( 'Click here to configure!', 'woocommerce-pagarme' ) . '</a>' ) . '</p></div>';
-	}
-
-	/**
-	 * Adds error message when the installments are configured improperly.
-	 *
-	 * @return string Error Mensage.
-	 */
-	public function installments_error_message() {
-		echo '<div class="error"><p><strong>' . __( 'Pagar.me Disabled', 'woocommerce-pagarme' ) . '</strong>: ' . sprintf( __( 'Maximum installment can not be less than Minimum installment. %s', 'woocommerce-pagarme' ), '<a href="' . $this->admin_url() . '">' . __( 'Click here to configure!', 'woocommerce-pagarme' ) . '</a>' ) . '</p></div>';
 	}
 
 	/**

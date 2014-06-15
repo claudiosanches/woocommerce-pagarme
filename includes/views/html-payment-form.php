@@ -33,21 +33,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<input id="<?php echo esc_attr( $this->id ); ?>-card-cvc" class="input-text wc-credit-card-form-card-cvc" type="text" autocomplete="off" placeholder="<?php _e( 'CVC', 'woocommerce-pagarme' ); ?>" style="font-size: 1.5em; padding: 8px;" />
 		</p>
 		<div class="clear"></div>
-		<?php if ( 1 < $this->max_installment && $this->min_installment < $this->max_installment ) : ?>
+		<?php if ( 1 < $this->max_installment ) : ?>
 			<p class="form-row form-row-wide">
 				<label for="<?php echo esc_attr( $this->id ); ?>-card-installments"><?php _e( 'Installments', 'woocommerce-pagarme' ); ?> <span class="required">*</span></label>
 				<select name="<?php echo esc_attr( $this->id ); ?>_installments" id="<?php echo esc_attr( $this->id ); ?>-installments" style="font-size: 1.5em; padding: 8px; width: 100%;">
 					<?php
 						$smallest_installment = ( 5 > $this->smallest_installment ) ? 500 : number_format( $this->smallest_installment, 2, '', '' );
 
-						for ( $i = $this->min_installment; $i <= $this->max_installment; $i++) :
+						for ( $i = 1; $i <= $this->max_installment; $i++) :
 							$total = $cart_total / $i;
 
 							if ( $smallest_installment > $total ) {
 								break;
 							}
 					?>
-						<option value="<?php echo $i; ?>"><?php echo sprintf( '%dx of %s', $i, strip_tags( wc_price( $total ) ) ); ?></option>
+						<option value="<?php echo $i; ?>"><?php echo sprintf( '%dx of %s (interest-free)', $i, strip_tags( wc_price( $total ) ) ); ?></option>
 					<?php endfor; ?>
 				</select>
 			</p>
