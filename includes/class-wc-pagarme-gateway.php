@@ -656,7 +656,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 
 			do_action( 'wc_pagarme_valid_ipn_request', $ipn_response );
 		} else {
-			wp_die( __( 'Pagar.me Request Failure', 'woocommerce-pagseguro' ), '', array( 'response' => 401 ) );
+			wp_die( __( 'Pagar.me Request Failure', 'woocommerce-pagarme' ), '', array( 'response' => 401 ) );
 		}
 	}
 	/**
