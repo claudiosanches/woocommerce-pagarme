@@ -45,6 +45,8 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_instructions' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'checkout_scripts' ) );
+		add_action( 'woocommerce_api_wc_pagarme_gateway', array( $this, 'check_ipn_response' ) );
+		add_action( 'wc_pagarme_valid_ipn_request', array( $this, 'ipn_successful_request' ) );
 
 		// Active logs.
 		if ( 'yes' == $this->debug ) {
@@ -628,6 +630,64 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		}
 	}
 
+	/**
+	 * Check if Pagar.me response is validity.
+	 *
+	 * @param  array $ipn_response IPN response data.
+	 *
+	 * @return bool
+	 */
+	public function check_ipn_request_is_valid( $ipn_response ) {
+		if ( isset( $ipn_response['id'] ) && isset( $ipn_response['current_status'] ) && isset( $ipn_response['fingerprint'] ) ) {
+			$fingerprint = sha1( $ipn_response['id'] . '#' . $this->api_key );
+
+			if ( $fingerprint === $ipn_response['fingerprint'] ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * IPN successful request.
+	 * This method change the order status with the IPN.
+	 *
+	 * @return void
+	 */
+	public function ipn_successful_request( $posted ) {
+		global $wpdb;
+
+		$posted   = stripslashes_deep( $posted );
+		$order_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wc_pagarme_transaction_id' AND meta_value = %d", $posted['id'] ) );
+		$order    = new WC_Order( $order_id );
+		$status   = sanitize_text_field( $posted['current_status'] );
+
+		if ( $order->id === $order_id ) {
+			$this->process_order_status( $order, $status );
+		}
+
+		exit;
+	}
+
+	/**
+	 * Check API Response.
+	 *
+	 * @return void
+	 */
+	public function check_ipn_response() {
+		@ob_clean();
+
+		$ipn_response = ! empty( $_POST ) ? $_POST : false;
+
+		if ( $ipn_response && $this->check_ipn_request_is_valid( $ipn_response ) ) {
+			header( 'HTTP/1.1 200 OK' );
+
+			do_action( 'wc_pagarme_valid_ipn_request', $ipn_response );
+		} else {
+			wp_die( __( 'Pagar.me Request Failure', 'woocommerce-pagseguro' ), '', array( 'response' => 401 ) );
+		}
+	}
 	/**
 	 * Gets the admin url.
 	 *
