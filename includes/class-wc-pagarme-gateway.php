@@ -675,6 +675,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			wp_die( __( 'Pagar.me Request Failure', 'woocommerce-pagarme' ), '', array( 'response' => 401 ) );
 		}
 	}
+
 	/**
 	 * Gets the admin url.
 	 *
