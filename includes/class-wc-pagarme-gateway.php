@@ -15,7 +15,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 		global $woocommerce;
 
 		$this->id                 = 'pagarme';
-		$this->icon               = false;
+		$this->icon               = apply_filters( 'wc_pagarme_icon', false );
 		$this->has_fields         = true;
 		$this->method_title       = __( 'Pagar.me', 'woocommerce-pagarme' );
 		$this->method_description = __( 'Accept payments by Credit Card or Banking Ticket using Pagar.me.', 'woocommerce-pagarme' );
