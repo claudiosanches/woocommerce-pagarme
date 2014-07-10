@@ -91,7 +91,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function admin_scripts( $hook ) {
-		if ( in_array( $hook, array( 'woocommerce_page_wc-settings', 'woocommerce_page_woocommerce_settings' ) ) && ( isset( $_GET['section'] ) && 'wc_pagarme_gateway' == $_GET['section'] ) ) {
+		if ( in_array( $hook, array( 'woocommerce_page_wc-settings', 'woocommerce_page_woocommerce_settings' ) ) && ( isset( $_GET['section'] ) && 'wc_pagarme_gateway' == strtolower( $_GET['section'] ) ) ) {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			wp_enqueue_script( $this->id . '-admin', plugins_url( 'assets/js/admin' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery' ), WC_PagarMe::VERSION, true );
