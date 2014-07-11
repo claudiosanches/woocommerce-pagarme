@@ -84,6 +84,10 @@ Este plugin esta licenciado como GPL.
 
 Confira os preços em "[Pagar.me - Preços](https://pagar.me/precos/)".
 
+= É possível utilizar a opção de pagamento recorrente? =
+
+No momento ainda não é possível, entretanto iremos fazer esta integração em breve.
+
 = O pedido foi pago e ficou com o status de "processando" e não como "concluído", isto esta certo ? =
 
 Sim, esta certo e significa que o plugin esta trabalhando como deveria.
