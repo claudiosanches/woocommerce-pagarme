@@ -72,6 +72,9 @@
 				errors         = null,
 				errorHtml      = '';
 
+			// Lock the checkout form.
+			form.addClass( 'processing' );
+
 			// Set the Credit card data.
 			creditCard.cardHolderName      = $( '#pagarme-card-holder-name', form ).val();
 			creditCard.cardExpirationMonth = $( '#pagarme-card-expiry', form ).val().replace( /[^\d]/g, '' ).substr( 0, 2 );
@@ -94,6 +97,7 @@
 
 				creditCardForm.prepend( '<div class="woocommerce-error">' + errorHtml + '</div>' );
 			} else {
+				form.removeClass( 'processing' );
 				$( '.woocommerce-error', creditCardForm ).remove();
 
 				// Generate the hash.
