@@ -4,7 +4,7 @@
  *
  * Built the Pagar.me method.
  */
-class WC_PagarMe_Gateway extends WC_Payment_Gateway {
+class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 
 	/**
 	 * Constructor for the gateway.
@@ -263,9 +263,9 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 
 		// Backwards compatibility with WooCommerce version prior to 2.1.
 		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
-			$postback_url = WC()->api_request_url( 'WC_PagarMe_Gateway' );
+			$postback_url = WC()->api_request_url( 'WC_Pagarme_Gateway' );
 		} else {
-			$postback_url = $woocommerce->api_request_url( 'WC_PagarMe_Gateway' );
+			$postback_url = $woocommerce->api_request_url( 'WC_Pagarme_Gateway' );
 		}
 
 		$phone = $this->only_numbers( $order->billing_phone );
@@ -697,7 +697,7 @@ class WC_PagarMe_Gateway extends WC_Payment_Gateway {
 			return admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_pagarme_gateway' );
 		}
 
-		return admin_url( 'admin.php?page=woocommerce_settings&tab=payment_gateways&section=WC_PagarMe_Gateway' );
+		return admin_url( 'admin.php?page=woocommerce_settings&tab=payment_gateways&section=WC_Pagarme_Gateway' );
 	}
 
 	/**
