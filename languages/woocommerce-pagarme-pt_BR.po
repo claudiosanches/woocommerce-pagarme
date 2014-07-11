@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: WooCommerce Pagar.me v1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-06-15 23:31:26+0000\n"
+"PO-Revision-Date: 2014-07-11 01:00:09+0000\n"
 "Last-Translator: Claudio Sanches <contato@claudiosmweb.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -29,7 +29,7 @@ msgstr "Pagar.me"
 #: includes/class-wc-pagarme-gateway.php:21
 #@ woocommerce-pagarme
 msgid "Accept payments by Credit Card or Banking Ticket using Pagar.me."
-msgstr "Aceitamos pagamentos por cartão de crédito ou boleto bancário usando o Pagar.me."
+msgstr "Aceite pagamentos por cartão de crédito ou boleto bancário usando o Pagar.me."
 
 #: includes/class-wc-pagarme-gateway.php:153
 #@ woocommerce-pagarme
@@ -146,93 +146,93 @@ msgstr "Ativar logs"
 msgid "Log Pagar.me events, such as API requests, inside %s"
 msgstr "Grava eventos do Pagar.me, como por exemplo solicitações a API, dentro de %s"
 
-#: includes/class-wc-pagarme-gateway.php:470
+#: includes/class-wc-pagarme-gateway.php:472
 #@ woocommerce-pagarme
 msgid "Pagar.me Transaction details"
 msgstr "Detalhes da transação no Pagar.me"
 
-#: includes/class-wc-pagarme-gateway.php:508
+#: includes/class-wc-pagarme-gateway.php:510
 #@ woocommerce-pagarme
 msgid "Pagar.me: The transaction is being processed."
 msgstr "Pagar.me: A transação esta sendo processada."
 
-#: includes/class-wc-pagarme-gateway.php:512
+#: includes/class-wc-pagarme-gateway.php:514
 #@ woocommerce-pagarme
 msgid "Pagar.me: Transaction paid."
 msgstr "Pagar.me: Transação paga."
 
-#: includes/class-wc-pagarme-gateway.php:519
+#: includes/class-wc-pagarme-gateway.php:521
 #@ woocommerce-pagarme
 msgid "Pagar.me: The banking ticket was issued but not paid yet."
 msgstr "Pagar.me: O boleto bancário foi emitido, mas não foi pago ainda."
 
-#: includes/class-wc-pagarme-gateway.php:523
+#: includes/class-wc-pagarme-gateway.php:525
 #@ woocommerce-pagarme
 msgid "Pagar.me: The transaction was rejected by the card company or by fraud."
 msgstr "Pagar.me: A transação foi rejeitada pela operadora do cartão de crédito ou por fraude."
 
-#: includes/class-wc-pagarme-gateway.php:529
+#: includes/class-wc-pagarme-gateway.php:531
 #, php-format
 #@ woocommerce-pagarme
 msgid "The transaction for order %s was rejected by the card company or by fraud"
 msgstr "A transação do pedido %s foi rejeitado pela operadora do cartão de crédito ou por fraude."
 
-#: includes/class-wc-pagarme-gateway.php:530
+#: includes/class-wc-pagarme-gateway.php:532
 #@ woocommerce-pagarme
 msgid "Transaction failed"
 msgstr "A transação falhou"
 
-#: includes/class-wc-pagarme-gateway.php:531
+#: includes/class-wc-pagarme-gateway.php:533
 #, php-format
 #@ woocommerce-pagarme
 msgid "Order %s has been marked as failed, because the transaction was rejected by the card company or by fraud, for more details, see %s."
 msgstr "O pedido %s foi teve seu status alterado para fracassado, porque a transação foi rejeitada pela operadora do cartão de crédito ou por fraude, para mais detalhes veja %s."
 
-#: includes/class-wc-pagarme-gateway.php:536
+#: includes/class-wc-pagarme-gateway.php:538
 #@ woocommerce-pagarme
 msgid "Pagar.me: The transaction was refunded/canceled."
 msgstr "Pagar.me: A transação foi reembolsada/cancelada."
 
-#: includes/class-wc-pagarme-gateway.php:542
+#: includes/class-wc-pagarme-gateway.php:544
 #, php-format
 #@ woocommerce-pagarme
 msgid "The transaction for order %s refunded"
 msgstr "O pagamento para o pedido %s foi reembolsado"
 
-#: includes/class-wc-pagarme-gateway.php:543
+#: includes/class-wc-pagarme-gateway.php:545
 #@ woocommerce-pagarme
 msgid "Transaction refunded"
 msgstr "Pagamento reembolsado"
 
-#: includes/class-wc-pagarme-gateway.php:544
+#: includes/class-wc-pagarme-gateway.php:546
 #, php-format
 #@ woocommerce-pagarme
 msgid "Order %s has been marked as refunded by Pagar.me, for more details, see %s."
 msgstr "O pedido %s teve o seu status alterado para reembolsado pelo Pagar.me, para mais detalhes veja %s."
 
-#: includes/class-wc-pagarme-gateway.php:675
+#: includes/class-wc-pagarme-gateway.php:688
 #@ woocommerce-pagarme
 msgid "Pagar.me Request Failure"
 msgstr "Pagar.me falha na requisição"
 
-#: includes/class-wc-pagarme-gateway.php:705
-#: includes/class-wc-pagarme-gateway.php:714
+#: includes/class-wc-pagarme-gateway.php:719
+#: includes/class-wc-pagarme-gateway.php:728
 #@ woocommerce-pagarme
 msgid "Pagar.me Disabled"
 msgstr "Pagar.me esta desativado"
 
-#: includes/class-wc-pagarme-gateway.php:705
+#: includes/class-wc-pagarme-gateway.php:719
 #, php-format
 #@ woocommerce-pagarme
 msgid "You should inform your API Key and Encryption Key. %s"
 msgstr "Você deve informar a sua Chave de API e Chave de Criptografia. %s"
 
-#: includes/class-wc-pagarme-gateway.php:705
+#: includes/class-wc-pagarme-gateway.php:719
 #@ woocommerce-pagarme
 msgid "Click here to configure!"
 msgstr "Clique aqui para configurar!"
 
-#: includes/class-wc-pagarme-gateway.php:714
+#: includes/class-wc-pagarme-gateway.php:728
 #, php-format
 #@ woocommerce-pagarme
 msgid "Currency <code>%s</code> is not supported. Works only with Brazilian Real."
