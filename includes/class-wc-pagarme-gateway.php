@@ -261,6 +261,8 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	protected function generate_transaction_data( $order, $posted ) {
 		global $woocommerce;
 
+		$wcbcf_settings = get_option( 'wcbcf_settings' );
+
 		// Backwards compatibility with WooCommerce version prior to 2.1.
 		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
 			$postback_url = WC()->api_request_url( 'WC_Pagarme_Gateway' );
@@ -293,12 +295,12 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		);
 
 		// Set the document number.
-		if ( isset( $order->billing_persontype ) && ! empty( $order->billing_persontype ) ) {
-			if ( 1 == $order->billing_persontype ) {
+		if ( 0 != $wcbcf_settings['person_type'] ) {
+			if ( ( 1 == $wcbcf_settings['person_type'] && 1 == $order->billing_persontype ) || 2 == $wcbcf_settings['person_type'] ) {
 				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
 			}
 
-			if ( 2 == $order->billing_persontype ) {
+			if ( ( 1 == $wcbcf_settings['person_type'] && 2 == $order->billing_persontype ) || 3 == $wcbcf_settings['person_type'] ) {
 				$data['customer']['name']            = $order->billing_company;
 				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cnpj );
 			}
