@@ -14,11 +14,12 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	public function __construct() {
 		global $woocommerce;
 
-		$this->id                 = 'pagarme';
-		$this->icon               = apply_filters( 'wc_pagarme_icon', false );
-		$this->has_fields         = true;
-		$this->method_title       = __( 'Pagar.me', 'woocommerce-pagarme' );
-		$this->method_description = __( 'Accept payments by Credit Card or Banking Ticket using Pagar.me.', 'woocommerce-pagarme' );
+		$this->id                   = 'pagarme';
+		$this->icon                 = apply_filters( 'wc_pagarme_icon', false );
+		$this->has_fields           = true;
+		$this->method_title         = __( 'Pagar.me', 'woocommerce-pagarme' );
+		$this->method_description   = __( 'Accept payments by Credit Card or Banking Ticket using Pagar.me.', 'woocommerce-pagarme' );
+		$this->view_transaction_url = 'https://dashboard.pagar.me/#/transactions/%s';
 
 		// API URLs.
 		$this->api_url = 'https://api.pagar.me/1/';
@@ -501,7 +502,14 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 				)
 			);
 			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $payment_data );
-			update_post_meta( $order->id, __( 'Pagar.me Transaction details', 'woocommerce-pagarme' ), 'https://dashboard.pagar.me/#/transactions/' . intval( $transaction['id'] ) );
+
+			// For WooCommerce 2.2 or later.
+			update_post_meta( $order->id, '_transaction_id', intval( $transaction['id'] ) );
+
+			// Save only in old versions.
+			if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1.12', '<=' ) ) {
+				update_post_meta( $order->id, __( 'Pagar.me Transaction details', 'woocommerce-pagarme' ), 'https://dashboard.pagar.me/#/transactions/' . intval( $transaction['id'] ) );
+			}
 
 			$this->process_order_status( $order, $transaction['status'] );
 
