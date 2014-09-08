@@ -38,17 +38,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<label for="<?php echo esc_attr( $this->id ); ?>-card-installments"><?php _e( 'Installments', 'woocommerce-pagarme' ); ?> <span class="required">*</span></label>
 				<select name="<?php echo esc_attr( $this->id ); ?>_installments" id="<?php echo esc_attr( $this->id ); ?>-installments" style="font-size: 1.5em; padding: 8px; width: 100%;">
 					<?php
-						$smallest_installment = ( 5 > $this->smallest_installment ) ? 500 : number_format( $this->smallest_installment, 2, '', '' );
+						$smallest_installment = $this->get_smallest_installment();
 
-						for ( $i = 1; $i <= $this->max_installment; $i++ ) :
-							$total = $cart_total / $i;
-
-							if ( $smallest_installment > number_format( $total, 2, '', '' ) ) {
+						foreach ( $installments as $number => $installment ) :
+							if ( $smallest_installment > $installment['installment_amount'] ) {
 								break;
 							}
-					?>
-						<option value="<?php echo $i; ?>"><?php echo sprintf( __( '%dx of %s (interest-free)', 'woocommerce-pagarme' ), $i, strip_tags( wc_price( $total ) ) ); ?></option>
-					<?php endfor; ?>
+
+							$interest           = ( ( $cart_total * 100 ) < $installment['amount'] ) ? sprintf( __( '(total of %s)', 'woocommerce-pagarme' ), strip_tags( wc_price( $installment['amount'] / 100 ) ) ) : __( '(interest-free)', 'woocommerce-pagarme' );
+							$installment_amount = strip_tags( wc_price( $installment['installment_amount'] / 100 ) );
+							$installment_number = absint( $installment['installment'] );
+						?>
+						<option value="<?php echo $installment_number; ?>"><?php echo sprintf( __( '%dx of %s %s', 'woocommerce-pagarme' ), $installment_number, $installment_amount, $interest ); ?></option>
+					<?php endforeach; ?>
 				</select>
 			</p>
 		<?php endif; ?>

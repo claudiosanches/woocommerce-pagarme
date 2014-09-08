@@ -251,6 +251,15 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Get the smallest installment amount.
+	 *
+	 * @return int
+	 */
+	public function get_smallest_installment() {
+		return ( 5 > $this->smallest_installment ) ? 500 : woocommerce_format_decimal( $this->smallest_installment ) * 100;
+	}
+
+	/**
 	 * Generate the transaction data.
 	 *
 	 * @param  WC_Order $order  Order data.
@@ -275,7 +284,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		// Set the request data.
 		$data = array(
 			'api_key'        => $this->api_key,
-			'amount'         => number_format( $order->order_total, 2, '', '' ),
+			'amount'         => $order->order_total * 100,
 			'postback_url'   => $postback_url,
 			'customer'       => array(
 				'name'    => $order->billing_first_name . ' ' . $order->billing_last_name,
@@ -326,12 +335,18 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 
 			// Validate the installments.
 			if ( isset( $posted[ $this->id . '_installments' ] ) ) {
-				$installment          = $posted[ $this->id . '_installments' ];
-				$smallest_installment = ( 5 > $this->smallest_installment ) ? 500 : number_format( $this->smallest_installment, 2, '', '' );
-				$installment_total    = number_format( $order->order_total, 2, '', '' ) / $installment;
+				$_installment = $posted[ $this->id . '_installments' ];
 
-				if ( $installment <= $this->max_installment && $smallest_installment <= $installment_total ) {
-					$data['installments'] = $installment;
+				// Get installments data.
+				$installments = $this->get_installments( $order->order_total );
+				if ( isset( $installments[ $_installment ] ) ) {
+					$installment          = $installments[ $_installment ];
+					$smallest_installment = $this->get_smallest_installment();
+
+					if ( $installment['installment'] <= $this->max_installment && $smallest_installment <= $installment['installment_amount'] ) {
+						$data['installments'] = $installment['installment'];
+						$data['amount']       = $installment['amount'];
+					}
 				}
 			}
 		} elseif ( ( 'all' == $this->methods || 'ticket' == $this->methods ) && 'banking-ticket' == $posted[ $this->id . '_payment_method' ] ) {
@@ -555,6 +570,71 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Get the installments.
+	 *
+	 * @param  float $amount
+	 *
+	 * @return array
+	 */
+	protected function get_installments( $amount ) {
+		// Set the installment data.
+		$data = http_build_query( array(
+			'encryption_key'   => $this->encryption_key,
+			'amount'           => $amount * 100,
+			'interest_rate'    => '1.5',
+			'max_installments' => $this->max_installment
+		) );
+
+		// Get saved installment data.
+		$_installments = get_transient( 'pgi_' . md5( $data ) );
+
+		if ( false !== $_installments ) {
+			return $_installments;
+		}
+
+		// Sets the post params.
+		$params = array(
+			'body'      => $data,
+			'sslverify' => false,
+			'timeout'   => 60
+		);
+
+		if ( 'yes' == $this->debug ) {
+			$this->log->add( $this->id, 'Getting the order installments...' );
+		}
+
+		$response = wp_remote_get( $this->api_url . 'transactions/calculate_installments_amount', $params );
+
+		if ( is_wp_error( $response ) ) {
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( $this->id, 'WP_Error in getting the installments: ' . $response->get_error_message() );
+			}
+
+			return array();
+		} else {
+			$_installments = json_decode( $response['body'], true );
+
+			if ( isset( $_installments['installments'] ) ) {
+				$installments = $_installments['installments'];
+
+				if ( 'yes' == $this->debug ) {
+					$this->log->add( $this->id, 'Installments generated successfully: ' . print_r( $_installments, true ) );
+				}
+
+				set_transient( 'pgi_' . md5( $data ), $installments, MINUTE_IN_SECONDS * 5 );
+
+				return $installments;
+			}
+		}
+
+		if ( 'yes' == $this->debug ) {
+			$this->log->add( $this->id, 'Failed to get the installments: ' . print_r( $response, true ) );
+		}
+
+		return array();
+	}
+
+	/**
 	 * Payment fields.
 	 *
 	 * @return string
@@ -588,6 +668,8 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		if ( $description = $this->get_description() ) {
 			echo wpautop( wptexturize( $description ) );
 		}
+
+		$installments = $this->get_installments( $cart_total );
 
 		if ( 'all' == $this->methods || 'credit' == $this->methods ) {
 			include_once( 'views/html-payment-form.php' );

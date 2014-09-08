@@ -1,5 +1,5 @@
 === WooCommerce Pagar.me ===
-Contributors: claudiosanches
+Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 3.5
 Tested up to: 3.9.1
