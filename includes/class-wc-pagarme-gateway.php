@@ -37,6 +37,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		$this->methods              = $this->get_option( 'methods' );
 		$this->max_installment      = $this->get_option( 'max_installment' );
 		$this->smallest_installment = $this->get_option( 'smallest_installment' );
+		$this->interest_rate        = $this->get_option( 'interest_rate', '0' );
 		$this->debug                = $this->get_option( 'debug' );
 
 		// Actions.
@@ -220,9 +221,16 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 			'smallest_installment' => array(
 				'title'       => __( 'Smallest Installment', 'woocommerce-pagarme' ),
 				'type'        => 'text',
-				'description' => __( 'Please enter with the value of smallest installment, Note: it not can be less than 5', 'woocommerce-pagarme' ),
+				'description' => __( 'Please enter with the value of smallest installment, Note: it not can be less than 5.', 'woocommerce-pagarme' ),
 				'desc_tip'    => true,
 				'default'     => '5'
+			),
+			'interest_rate' => array(
+				'title'       => __( 'Interest rate', 'woocommerce-pagarme' ),
+				'type'        => 'text',
+				'description' => __( 'Please enter with the interest rate amount. Note: use 0 to not charge interest.', 'woocommerce-pagarme' ),
+				'desc_tip'    => true,
+				'default'     => '0'
 			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
@@ -257,6 +265,15 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	 */
 	public function get_smallest_installment() {
 		return ( 5 > $this->smallest_installment ) ? 500 : woocommerce_format_decimal( $this->smallest_installment ) * 100;
+	}
+
+	/**
+	 * Get the interest rate.
+	 *
+	 * @return float
+	 */
+	public function get_interest_rate() {
+		return woocommerce_format_decimal( $this->interest_rate );
 	}
 
 	/**
@@ -581,7 +598,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		$data = http_build_query( array(
 			'encryption_key'   => $this->encryption_key,
 			'amount'           => $amount * 100,
-			'interest_rate'    => '1.5',
+			'interest_rate'    => $this->get_interest_rate(),
 			'max_installments' => $this->max_installment
 		) );
 
