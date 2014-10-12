@@ -39,6 +39,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		$this->max_installment      = $this->get_option( 'max_installment' );
 		$this->smallest_installment = $this->get_option( 'smallest_installment' );
 		$this->interest_rate        = $this->get_option( 'interest_rate', '0' );
+		$this->free_installments    = $this->get_option( 'free_installments', '1' );
 		$this->debug                = $this->get_option( 'debug' );
 
 		// Actions.
@@ -232,6 +233,27 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 				'description' => __( 'Please enter with the interest rate amount. Note: use 0 to not charge interest.', 'woocommerce-pagarme' ),
 				'desc_tip'    => true,
 				'default'     => '0'
+			),
+			'free_installments' => array(
+				'title'       => __( 'Free Installments', 'woocommerce-pagarme' ),
+				'type'        => 'select',
+				'default'     => '1',
+				'description' => __( 'Number of installments with interest free.', 'woocommerce-pagarme' ),
+				'desc_tip'    => true,
+				'options'     => array(
+					'1'  => '1',
+					'2'  => '2',
+					'3'  => '3',
+					'4'  => '4',
+					'5'  => '5',
+					'6'  => '6',
+					'7'  => '7',
+					'8'  => '8',
+					'9'  => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+				)
 			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
@@ -546,22 +568,22 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		}
 
 		switch ( $status ) {
-			case 'processing':
+			case 'processing' :
 				$order->update_status( 'on-hold', __( 'Pagar.me: The transaction is being processed.', 'woocommerce-pagarme' ) );
 
 				break;
-			case 'paid':
+			case 'paid' :
 				$order->add_order_note( __( 'Pagar.me: Transaction paid.', 'woocommerce-pagarme' ) );
 
 				// Changing the order for processing and reduces the stock.
 				$order->payment_complete();
 
 				break;
-			case 'waiting_payment':
+			case 'waiting_payment' :
 				$order->update_status( 'on-hold', __( 'Pagar.me: The banking ticket was issued but not paid yet.', 'woocommerce-pagarme' ) );
 
 				break;
-			case 'refused':
+			case 'refused' :
 				$order->update_status( 'failed', __( 'Pagar.me: The transaction was rejected by the card company or by fraud.', 'woocommerce-pagarme' ) );
 
 				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
@@ -574,7 +596,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 				);
 
 				break;
-			case 'refunded':
+			case 'refunded' :
 				$order->update_status( 'refunded', __( 'Pagar.me: The transaction was refunded/canceled.', 'woocommerce-pagarme' ) );
 
 				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
@@ -604,10 +626,11 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	protected function get_installments( $amount ) {
 		// Set the installment data.
 		$data = http_build_query( array(
-			'encryption_key'   => $this->encryption_key,
-			'amount'           => $amount * 100,
-			'interest_rate'    => $this->get_interest_rate(),
-			'max_installments' => $this->max_installment
+			'encryption_key'    => $this->encryption_key,
+			'amount'            => $amount * 100,
+			'interest_rate'     => $this->get_interest_rate(),
+			'max_installments'  => $this->max_installment,
+			'free_installments' => $this->free_installments
 		) );
 
 		// Get saved installment data.
