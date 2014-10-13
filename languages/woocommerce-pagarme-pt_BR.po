@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Pagar.me v1.1.0\n"
+"Project-Id-Version: WooCommerce Pagar.me v1.2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-09-08 02:54:09+0000\n"
+"PO-Revision-Date: 2014-10-13 00:03:38+0000\n"
 "Last-Translator: Claudio Sanches <contato@claudiosmweb.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr ""
 "X-Textdomain-Support: yes"
 
 #: includes/class-wc-pagarme-gateway.php:20
-#: includes/class-wc-pagarme-gateway.php:165
+#: includes/class-wc-pagarme-gateway.php:166
 #@ woocommerce-pagarme
 msgid "Pagar.me"
 msgstr "Pagar.me"
@@ -31,208 +31,208 @@ msgstr "Pagar.me"
 msgid "Accept payments by Credit Card or Banking Ticket using Pagar.me."
 msgstr "Aceite pagamentos por cartão de crédito ou boleto bancário usando o Pagar.me."
 
-#: includes/class-wc-pagarme-gateway.php:155
+#: includes/class-wc-pagarme-gateway.php:156
 #@ woocommerce-pagarme
 msgid "Enable/Disable"
 msgstr "Habilitar/Desabilitar"
 
-#: includes/class-wc-pagarme-gateway.php:161
+#: includes/class-wc-pagarme-gateway.php:162
 #@ woocommerce-pagarme
 msgid "Title"
 msgstr "Título"
 
-#: includes/class-wc-pagarme-gateway.php:163
+#: includes/class-wc-pagarme-gateway.php:164
 #@ woocommerce-pagarme
 msgid "This controls the title which the user sees during checkout."
 msgstr "Isto controla o título que o usuário vê durante a finalização da compra."
 
-#: includes/class-wc-pagarme-gateway.php:168
+#: includes/class-wc-pagarme-gateway.php:169
 #@ woocommerce-pagarme
 msgid "Description"
 msgstr "Descrição"
 
-#: includes/class-wc-pagarme-gateway.php:170
+#: includes/class-wc-pagarme-gateway.php:171
 #@ woocommerce-pagarme
 msgid "This controls the description which the user sees during checkout."
 msgstr "Isto controla a descrição que o usuário vê durante a finalização do pedido."
 
-#: includes/class-wc-pagarme-gateway.php:172
+#: includes/class-wc-pagarme-gateway.php:173
 #@ woocommerce-pagarme
 msgid "Pay with Credit Card or Banking Ticket via Pagar.me"
 msgstr "Pagar com cartão de crédito ou boleto bancário usando o Pagar.me"
 
-#: includes/class-wc-pagarme-gateway.php:175
+#: includes/class-wc-pagarme-gateway.php:176
 #@ woocommerce-pagarme
 msgid "Pagar.me API Key"
 msgstr "Chave de API do Pagar.me"
 
-#: includes/class-wc-pagarme-gateway.php:177
+#: includes/class-wc-pagarme-gateway.php:178
 #, php-format
 #@ woocommerce-pagarme
 msgid "Please enter your Pagar.me API Key. This is needed to process the payment and notifications. Is possible get your API Key in %s."
 msgstr "Por favor, digite sua Chave de API da sua conta no Pagar.me. Isto é necessário para poder processar os pagamentos e notificações. É possível encontrar sua Chave de API na %s."
 
-#: includes/class-wc-pagarme-gateway.php:177
-#: includes/class-wc-pagarme-gateway.php:183
+#: includes/class-wc-pagarme-gateway.php:178
+#: includes/class-wc-pagarme-gateway.php:184
 #@ woocommerce-pagarme
 msgid "Pagar.me Dashboard > My Account page"
 msgstr "página Pagar.me Dashboard > Minha Conta"
 
-#: includes/class-wc-pagarme-gateway.php:181
+#: includes/class-wc-pagarme-gateway.php:182
 #@ woocommerce-pagarme
 msgid "Pagar.me Encryption Key"
 msgstr "Chave de Criptografia do Pagar.me"
 
-#: includes/class-wc-pagarme-gateway.php:183
+#: includes/class-wc-pagarme-gateway.php:184
 #, php-format
 #@ woocommerce-pagarme
 msgid "Please enter your Pagar.me Encryption key. This is needed to process the payment. Is possible get your Encryption Key in %s."
 msgstr "Por favor, digite sua Chave de Criptografia da sua conta no Pagar.me. Isto é necessário para poder processar os pagamentos. É possível encontrar sua Chave de Criptografia na %s."
 
-#: includes/class-wc-pagarme-gateway.php:187
+#: includes/class-wc-pagarme-gateway.php:188
 #@ woocommerce-pagarme
 msgid "Payment Methods"
 msgstr "Métodos de pagamento"
 
-#: includes/class-wc-pagarme-gateway.php:191
+#: includes/class-wc-pagarme-gateway.php:192
 #@ woocommerce-pagarme
 msgid "Credit Card and Banking Ticket"
 msgstr "Cartão de crédito e boleto bancário"
 
-#: includes/class-wc-pagarme-gateway.php:192
+#: includes/class-wc-pagarme-gateway.php:193
 #@ woocommerce-pagarme
 msgid "Only Credit Card"
 msgstr "Apenas cartão de crédito"
 
-#: includes/class-wc-pagarme-gateway.php:193
+#: includes/class-wc-pagarme-gateway.php:194
 #@ woocommerce-pagarme
 msgid "Only Banking Ticket"
 msgstr "Apenas boleto bancário"
 
-#: includes/class-wc-pagarme-gateway.php:197
+#: includes/class-wc-pagarme-gateway.php:198
 #: includes/views/html-payment-form.php:38
 #@ woocommerce-pagarme
 msgid "Installments"
 msgstr "Parcelamento"
 
-#: includes/class-wc-pagarme-gateway.php:223
+#: includes/class-wc-pagarme-gateway.php:224
 #@ woocommerce-pagarme
 msgid "Smallest Installment"
 msgstr "Valor da menor parcela"
 
-#: includes/class-wc-pagarme-gateway.php:225
+#: includes/class-wc-pagarme-gateway.php:226
 #@ woocommerce-pagarme
 msgid "Please enter with the value of smallest installment, Note: it not can be less than 5."
 msgstr "Por favor, entre com o valor da menor parcela. Nota: não pode ser menor do que 5."
 
-#: includes/class-wc-pagarme-gateway.php:237
+#: includes/class-wc-pagarme-gateway.php:259
 #@ woocommerce-pagarme
 msgid "Gateway Testing"
 msgstr "Testes de Gateway"
 
-#: includes/class-wc-pagarme-gateway.php:242
+#: includes/class-wc-pagarme-gateway.php:264
 #@ woocommerce-pagarme
 msgid "Debug Log"
 msgstr "Log de depuração"
 
-#: includes/class-wc-pagarme-gateway.php:244
+#: includes/class-wc-pagarme-gateway.php:266
 #@ woocommerce-pagarme
 msgid "Enable logging"
 msgstr "Ativar logs"
 
-#: includes/class-wc-pagarme-gateway.php:246
+#: includes/class-wc-pagarme-gateway.php:268
 #, php-format
 #@ woocommerce-pagarme
 msgid "Log Pagar.me events, such as API requests, inside %s"
 msgstr "Grava eventos do Pagar.me, como por exemplo solicitações a API, dentro de %s"
 
-#: includes/class-wc-pagarme-gateway.php:511
+#: includes/class-wc-pagarme-gateway.php:533
 #@ woocommerce-pagarme
 msgid "Pagar.me Transaction details"
 msgstr "Detalhes da transação no Pagar.me"
 
-#: includes/class-wc-pagarme-gateway.php:550
+#: includes/class-wc-pagarme-gateway.php:572
 #@ woocommerce-pagarme
 msgid "Pagar.me: The transaction is being processed."
 msgstr "Pagar.me: A transação esta sendo processada."
 
-#: includes/class-wc-pagarme-gateway.php:554
+#: includes/class-wc-pagarme-gateway.php:576
 #@ woocommerce-pagarme
 msgid "Pagar.me: Transaction paid."
 msgstr "Pagar.me: Transação paga."
 
-#: includes/class-wc-pagarme-gateway.php:561
+#: includes/class-wc-pagarme-gateway.php:583
 #@ woocommerce-pagarme
 msgid "Pagar.me: The banking ticket was issued but not paid yet."
 msgstr "Pagar.me: O boleto bancário foi emitido, mas não foi pago ainda."
 
-#: includes/class-wc-pagarme-gateway.php:565
+#: includes/class-wc-pagarme-gateway.php:587
 #@ woocommerce-pagarme
 msgid "Pagar.me: The transaction was rejected by the card company or by fraud."
 msgstr "Pagar.me: A transação foi rejeitada pela operadora do cartão de crédito ou por fraude."
 
-#: includes/class-wc-pagarme-gateway.php:571
+#: includes/class-wc-pagarme-gateway.php:593
 #, php-format
 #@ woocommerce-pagarme
 msgid "The transaction for order %s was rejected by the card company or by fraud"
 msgstr "A transação do pedido %s foi rejeitado pela operadora do cartão de crédito ou por fraude."
 
-#: includes/class-wc-pagarme-gateway.php:572
+#: includes/class-wc-pagarme-gateway.php:594
 #@ woocommerce-pagarme
 msgid "Transaction failed"
 msgstr "A transação falhou"
 
-#: includes/class-wc-pagarme-gateway.php:573
+#: includes/class-wc-pagarme-gateway.php:595
 #, php-format
 #@ woocommerce-pagarme
 msgid "Order %s has been marked as failed, because the transaction was rejected by the card company or by fraud, for more details, see %s."
 msgstr "O pedido %s foi teve seu status alterado para fracassado, porque a transação foi rejeitada pela operadora do cartão de crédito ou por fraude, para mais detalhes veja %s."
 
-#: includes/class-wc-pagarme-gateway.php:578
+#: includes/class-wc-pagarme-gateway.php:600
 #@ woocommerce-pagarme
 msgid "Pagar.me: The transaction was refunded/canceled."
 msgstr "Pagar.me: A transação foi reembolsada/cancelada."
 
-#: includes/class-wc-pagarme-gateway.php:584
+#: includes/class-wc-pagarme-gateway.php:606
 #, php-format
 #@ woocommerce-pagarme
 msgid "The transaction for order %s refunded"
 msgstr "O pagamento para o pedido %s foi reembolsado"
 
-#: includes/class-wc-pagarme-gateway.php:585
+#: includes/class-wc-pagarme-gateway.php:607
 #@ woocommerce-pagarme
 msgid "Transaction refunded"
 msgstr "Pagamento reembolsado"
 
-#: includes/class-wc-pagarme-gateway.php:586
+#: includes/class-wc-pagarme-gateway.php:608
 #, php-format
 #@ woocommerce-pagarme
 msgid "Order %s has been marked as refunded by Pagar.me, for more details, see %s."
 msgstr "O pedido %s teve o seu status alterado para reembolsado pelo Pagar.me, para mais detalhes veja %s."
 
-#: includes/class-wc-pagarme-gateway.php:795
+#: includes/class-wc-pagarme-gateway.php:818
 #@ woocommerce-pagarme
 msgid "Pagar.me Request Failure"
 msgstr "Pagar.me falha na requisição"
 
-#: includes/class-wc-pagarme-gateway.php:826
-#: includes/class-wc-pagarme-gateway.php:835
+#: includes/class-wc-pagarme-gateway.php:849
+#: includes/class-wc-pagarme-gateway.php:858
 #@ woocommerce-pagarme
 msgid "Pagar.me Disabled"
 msgstr "Pagar.me esta desativado"
 
-#: includes/class-wc-pagarme-gateway.php:826
+#: includes/class-wc-pagarme-gateway.php:849
 #, php-format
 #@ woocommerce-pagarme
 msgid "You should inform your API Key and Encryption Key. %s"
 msgstr "Você deve informar a sua Chave de API e Chave de Criptografia. %s"
 
-#: includes/class-wc-pagarme-gateway.php:826
+#: includes/class-wc-pagarme-gateway.php:849
 #@ woocommerce-pagarme
 msgid "Click here to configure!"
 msgstr "Clique aqui para configurar!"
 
-#: includes/class-wc-pagarme-gateway.php:835
+#: includes/class-wc-pagarme-gateway.php:858
 #, php-format
 #@ woocommerce-pagarme
 msgid "Currency <code>%s</code> is not supported. Works only with Brazilian Real."
@@ -367,27 +367,27 @@ msgstr "WooCommerce"
 msgid "WooCommerce Extra Checkout Fields for Brazil"
 msgstr "WooCommerce Extra Checkout Fields for Brazil"
 
-#: includes/class-wc-pagarme-gateway.php:157
+#: includes/class-wc-pagarme-gateway.php:158
 #@ woocommerce-pagarme
 msgid "Enable Pagar.me"
 msgstr "Ativar o Pagar.me"
 
-#: includes/class-wc-pagarme-gateway.php:202
+#: includes/class-wc-pagarme-gateway.php:203
 #@ woocommerce-pagarme
 msgid "Number of Installment"
 msgstr "Número de parcelas"
 
-#: includes/class-wc-pagarme-gateway.php:205
+#: includes/class-wc-pagarme-gateway.php:206
 #@ woocommerce-pagarme
 msgid "Maximum number of installments possible with payments by credit card."
 msgstr "Número máximo de parcelas que é possível com pagamentos por cartão de crédito."
 
-#: includes/class-wc-pagarme-gateway.php:230
+#: includes/class-wc-pagarme-gateway.php:231
 #@ woocommerce-pagarme
 msgid "Interest rate"
 msgstr "Taxa de juros"
 
-#: includes/class-wc-pagarme-gateway.php:232
+#: includes/class-wc-pagarme-gateway.php:233
 #@ woocommerce-pagarme
 msgid "Please enter with the interest rate amount. Note: use 0 to not charge interest."
 msgstr "Por favor, entre com a taxa de juros. Nota: utilize 0 para não cobrar juros."
@@ -409,9 +409,19 @@ msgstr "(sem juros)"
 msgid "%dx of %s %s"
 msgstr "%dx de %s %s"
 
+#: includes/class-wc-pagarme-gateway.php:238
+#@ woocommerce-pagarme
+msgid "Free Installments"
+msgstr "Parcelas sem juros"
+
+#: includes/class-wc-pagarme-gateway.php:241
+#@ woocommerce-pagarme
+msgid "Number of installments with interest free."
+msgstr "Número de parcelas que serão sem juros."
+
 #. translators: plugin header field 'Version'
 #: woocommerce-pagarme.php:0
 #@ woocommerce-pagarme
-msgid "1.1.0"
-msgstr "1.1.0"
+msgid "1.2.0"
+msgstr "1.2.0"
 
