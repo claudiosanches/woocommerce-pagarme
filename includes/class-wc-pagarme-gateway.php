@@ -793,7 +793,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		$order    = new WC_Order( $order_id );
 		$status   = sanitize_text_field( $posted['current_status'] );
 
-		if ( $order->id === $order_id ) {
+		if ( $order->id == $order_id ) {
 			$this->process_order_status( $order, $status );
 		}
 
