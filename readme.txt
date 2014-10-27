@@ -3,7 +3,7 @@ Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 3.5
 Tested up to: 4.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
+= 1.2.1 - 27/10/2014 =
+
+* Corrigido o método que manipula os retornos do Pagar.me.
+
 = 1.2.0 - 12/10/2014 =
 
 * Adicionada opção para controlar o número de parcelas sem juros.
@@ -128,9 +132,9 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Upgrade Notice ==
 
-= 1.2.0 =
+= 1.2.1 =
 
-* Adicionada opção para controlar o número de parcelas sem juros.
+* Corrigido o método que manipula os retornos do Pagar.me.
 
 == License ==
 
