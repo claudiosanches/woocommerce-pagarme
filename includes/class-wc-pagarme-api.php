@@ -136,14 +136,6 @@ class WC_Pagarme_API {
 			'free_installments' => $this->gateway->free_installments
 		) );
 
-		error_log( print_r( array(
-			'encryption_key'    => $this->gateway->encryption_key,
-			'amount'            => $amount * 100,
-			'interest_rate'     => $this->get_interest_rate(),
-			'max_installments'  => $this->gateway->max_installment,
-			'free_installments' => $this->gateway->free_installments
-		), true ) );
-
 		// Get saved installment data.
 		$_installments = get_transient( 'pgi_' . md5( $data ) );
 
