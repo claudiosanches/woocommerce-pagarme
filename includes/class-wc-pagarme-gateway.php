@@ -21,6 +21,18 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		$this->method_title         = __( 'Pagar.me', 'woocommerce-pagarme' );
 		$this->method_description   = __( 'Accept payments by Credit Card or Banking Ticket using Pagar.me.', 'woocommerce-pagarme' );
 		$this->view_transaction_url = 'https://dashboard.pagar.me/#/transactions/%s';
+		$this->supports             = array(
+			'subscriptions',
+			'products',
+			'subscription_cancellation',
+			'subscription_reactivation',
+			'subscription_suspension',
+			'subscription_amount_changes',
+			'subscription_payment_method_change',
+			'subscription_date_changes',
+			'default_credit_card_form',
+			'pre-orders'
+		);
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -262,7 +274,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Add error messages in checkout.
 	 *
-	 * @param string $messages Error message.
+	 * @param  array $messages Error message.
 	 *
 	 * @return string          Displays the error messages.
 	 */
@@ -293,7 +305,9 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	 */
 	public function process_payment( $order_id ) {
 		$order            = new WC_Order( $order_id );
-		$transaciton_data = $this->api->generate_transaction_data( $order, $_POST );
+		$card_hash        = isset( $_POST['pagarme_card_hash'] ) ? $_POST['pagarme_card_hash'] : '';
+		$installment      = isset( $_POST['pagarme_installments'] ) ? $_POST['pagarme_installments'] : '';
+		$transaciton_data = $this->api->generate_transaction_data( $order, $_POST['pagarme_payment_method'], $card_hash, $installment );
 		$transaction      = $this->api->do_transaction( $order, $transaciton_data );
 
 		if ( isset( $transaction['errors'] ) ) {
@@ -348,17 +362,25 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	public function payment_fields() {
 		wp_enqueue_script( 'wc-credit-card-form' );
 
-		$cart_total = 0;
-		$order_id = absint( get_query_var( 'order-pay' ) );
+		$cart_total      = 0;
+		$order_id        = absint( get_query_var( 'order-pay' ) );
+		$installments    = array();
+		$is_subscription = false;
 
 		// Gets order total from "pay for order" page.
 		if ( 0 < $order_id ) {
 			$order      = new WC_Order( $order_id );
 			$cart_total = (float) $order->get_total();
+			if ( class_exists( 'WC_Subscriptions_Order' ) ) {
+				$is_subscription = WC_Subscriptions_Order::order_contains_subscription( $order->id );
+			}
 
 		// Gets order total from cart/checkout.
 		} elseif ( 0 < WC()->cart->total ) {
 			$cart_total = (float) WC()->cart->total;
+			if ( class_exists( 'WC_Subscriptions_Cart' ) ) {
+				$is_subscription = WC_Subscriptions_Cart::cart_contains_subscription();
+			}
 		}
 
 		if ( 'ticket' == $this->methods ) {
@@ -369,7 +391,9 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 			echo wpautop( wptexturize( $description ) );
 		}
 
-		$installments = $this->api->get_installments( $cart_total );
+		if ( ! $is_subscription ) {
+			$installments = $this->api->get_installments( $cart_total );
+		}
 
 		if ( in_array( $this->methods, array( 'all', 'credit' ) ) ) {
 			include_once 'views/html-payment-form.php';

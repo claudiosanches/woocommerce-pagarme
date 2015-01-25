@@ -5,7 +5,7 @@
  * Description: Gateway de pagamento Pagar.me para WooCommerce.
  * Author: Pagar.me, claudiosanches
  * Author URI: https://pagar.me/
- * Version: 1.2.1
+ * Version: 2.0.0
  * License: GPLv2 or later
  * Text Domain: woocommerce-pagarme
  * Domain Path: /languages/
@@ -27,7 +27,7 @@ class WC_Pagarme {
 	 *
 	 * @var string
 	 */
-	const VERSION = '1.2.1';
+	const VERSION = '2.0.0';
 
 	/**
 	 * Instance of this class.
@@ -73,6 +73,10 @@ class WC_Pagarme {
 	private function includes() {
 		include_once 'includes/class-wc-pagarme-api.php';
 		include_once 'includes/class-wc-pagarme-gateway.php';
+
+		if ( class_exists( 'WC_Subscriptions_Order' ) || class_exists( 'WC_Pre_Orders_Order' ) ) {
+			include_once 'includes/class-wc-pagarme-addons.php';
+		}
 	}
 
 	/**
@@ -93,7 +97,11 @@ class WC_Pagarme {
 	 * @return array          Payment methods with Pagar.me.
 	 */
 	public function add_gateway( $methods ) {
-		$methods[] = 'WC_Pagarme_Gateway';
+		if ( class_exists( 'WC_Subscriptions_Order' ) || class_exists( 'WC_Pre_Orders_Order' ) ) {
+			$methods[] = 'WC_Pagarme_Gateway_Addons';
+		} else {
+			$methods[] = 'WC_Pagarme_Gateway';
+		}
 
 		return $methods;
 	}

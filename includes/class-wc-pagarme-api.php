@@ -194,7 +194,17 @@ class WC_Pagarme_API {
 	 *
 	 * @return array            Transaction data.
 	 */
-	public function generate_transaction_data( $order, $posted ) {
+	/**
+	 * Generate the transaction data.
+	 *
+	 * @param  WC_Order $order          Order data.
+	 * @param  string   $payment_method Payment method.
+	 * @param  string   $card_hash      Card hash.
+	 * @param  string   $installment    Installment amount
+	 *
+	 * @return array                    Transaction data.
+	 */
+	public function generate_transaction_data( $order, $payment_method = '', $card_hash = '', $installment = '' ) {
 		// Set the request data.
 		$wcbcf_settings = get_option( 'wcbcf_settings' );
 		$phone          = $this->only_numbers( $order->billing_phone );
@@ -243,29 +253,28 @@ class WC_Pagarme_API {
 			$data['customer']['born_at'] = $birthdate[1] . '-' . $birthdate[0] . '-' . $birthdate[2];
 		}
 
-		if ( in_array( $this->gateway->methods, array( 'all', 'credit' ) ) && 'credit-card' == $posted[ 'pagarme_payment_method' ] ) {
-			if ( isset( $posted[ 'pagarme_card_hash' ] ) ) {
+		if ( in_array( $this->gateway->methods, array( 'all', 'credit' ) ) && 'credit-card' == $payment_method ) {
+			if ( '' !== $card_hash ) {
 				$data['payment_method'] = 'credit_card';
-				$data['card_hash']      = $posted[ 'pagarme_card_hash' ];
+				$data['card_hash']      = $card_hash;
 			}
 
 			// Validate the installments.
-			if ( isset( $posted[ 'pagarme_installments' ] ) ) {
-				$_installment = $posted[ 'pagarme_installments' ];
+			if ( '' !== $installment ) {
 
 				// Get installments data.
 				$installments = $this->get_installments( $order->order_total );
-				if ( isset( $installments[ $_installment ] ) ) {
-					$installment          = $installments[ $_installment ];
+				if ( isset( $installments[ $installment ] ) ) {
+					$_installment         = $installments[ $installment ];
 					$smallest_installment = $this->get_smallest_installment();
 
-					if ( $installment['installment'] <= $this->gateway->max_installment && $smallest_installment <= $installment['installment_amount'] ) {
+					if ( $_installment['installment'] <= $this->gateway->max_installment && $smallest_installment <= $_installment['installment_amount'] ) {
 						$data['installments'] = $installment['installment'];
 						$data['amount']       = $installment['amount'];
 					}
 				}
 			}
-		} elseif ( in_array( $this->gateway->methods, array( 'all', 'ticket' ) ) && 'banking-ticket' == $posted[ 'pagarme_payment_method' ] ) {
+		} elseif ( in_array( $this->gateway->methods, array( 'all', 'ticket' ) ) && 'banking-ticket' == $payment_method ) {
 			$data['payment_method'] = 'boleto';
 		}
 
@@ -332,5 +341,50 @@ class WC_Pagarme_API {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Save card.
+	 *
+	 * @param  string   $card_hash
+	 * @param  WC_Order $order
+	 *
+	 * @return string
+	 */
+	public function save_card( $card_hash, $order ) {
+		$data = array(
+			'api_key'   => $this->gateway->api_key,
+			'card_hash' => $card_hash
+		);
+
+		if ( 'yes' == $this->gateway->debug ) {
+			$this->gateway->log->add( $this->gateway->id, 'Saving card hash on Pagar.me for order ' . $order->get_order_number() . '...' );
+		}
+
+		$response = $this->do_request( 'cards', 'POST', http_build_query( $data ) );
+
+		if ( is_wp_error( $response ) ) {
+			if ( 'yes' == $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'WP_Error in saving the card hash: ' . $response->get_error_message() );
+			}
+
+			return array();
+		} else {
+			$card_hash = json_decode( $response['body'], true );
+
+			if ( isset( $card_hash['errors'] ) ) {
+				if ( 'yes' == $this->gateway->debug ) {
+					$this->gateway->log->add( $this->gateway->id, 'Failed to save the card hash: ' . print_r( $response, true ) );
+				}
+
+				return $card_hash;
+			}
+
+			if ( 'yes' == $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'Card hash saved successfully!' );
+			}
+
+			return $card_hash;
+		}
 	}
 }
