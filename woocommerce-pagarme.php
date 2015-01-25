@@ -45,8 +45,7 @@ class WC_Pagarme {
 
 		// Checks with WooCommerce and WooCommerce Extra Checkout Fields for Brazil is installed.
 		if ( class_exists( 'WC_Payment_Gateway' ) && class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
-			// Include the WC_Pagarme_Gateway class.
-			include_once 'includes/class-wc-pagarme-gateway.php';
+			$this->includes();
 
 			add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
 		} else {
@@ -69,9 +68,15 @@ class WC_Pagarme {
 	}
 
 	/**
+	 * Includes.
+	 */
+	private function includes() {
+		include_once 'includes/class-wc-pagarme-api.php';
+		include_once 'includes/class-wc-pagarme-gateway.php';
+	}
+
+	/**
 	 * Load the plugin text domain for translation.
-	 *
-	 * @return void
 	 */
 	public function load_plugin_textdomain() {
 		$locale = apply_filters( 'plugin_locale', get_locale(), 'woocommerce-pagarme' );
@@ -83,9 +88,9 @@ class WC_Pagarme {
 	/**
 	 * Add the gateway to WooCommerce.
 	 *
-	 * @param   array $methods WooCommerce payment methods.
+	 * @param  array $methods WooCommerce payment methods.
 	 *
-	 * @return  array          Payment methods with Pagar.me.
+	 * @return array          Payment methods with Pagar.me.
 	 */
 	public function add_gateway( $methods ) {
 		$methods[] = 'WC_Pagarme_Gateway';
@@ -96,7 +101,7 @@ class WC_Pagarme {
 	/**
 	 * WooCommerce fallback notice.
 	 *
-	 * @return  string
+	 * @return string
 	 */
 	public function woocommerce_missing_notice() {
 		echo '<div class="error"><p>' . sprintf(

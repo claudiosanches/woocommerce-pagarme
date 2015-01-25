@@ -19,7 +19,7 @@ Saiba mais como o Pagar.em funciona:
 
 = Compatibilidade =
 
-Compatível com as versões 2.0.x e 2.1.x do WooCommerce.
+Compatível com as versões 2.1.x e 2.2.x e 2.3.x do WooCommerce.
 
 Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/), desta forma é possível enviar documentos do cliente como "CPF" ou "CNPJ", além dos campos "número" e "bairro" do endereço.
 

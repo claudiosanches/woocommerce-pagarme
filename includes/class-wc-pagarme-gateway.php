@@ -1,4 +1,9 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 /**
  * WC Pagar.me Gateway Class.
  *
@@ -8,21 +13,14 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 
 	/**
 	 * Constructor for the gateway.
-	 *
-	 * @return void
 	 */
 	public function __construct() {
-		global $woocommerce;
-
 		$this->id                   = 'pagarme';
 		$this->icon                 = apply_filters( 'wc_pagarme_icon', false );
 		$this->has_fields           = true;
 		$this->method_title         = __( 'Pagar.me', 'woocommerce-pagarme' );
 		$this->method_description   = __( 'Accept payments by Credit Card or Banking Ticket using Pagar.me.', 'woocommerce-pagarme' );
 		$this->view_transaction_url = 'https://dashboard.pagar.me/#/transactions/%s';
-
-		// API URLs.
-		$this->api_url = 'https://api.pagar.me/1/';
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -42,6 +40,14 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		$this->free_installments    = $this->get_option( 'free_installments', '1' );
 		$this->debug                = $this->get_option( 'debug' );
 
+		// Active logs.
+		if ( 'yes' == $this->debug ) {
+			$this->log = new WC_Logger();
+		}
+
+		// Set the API.
+		$this->api = new WC_Pagarme_API( $this );
+
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
@@ -51,34 +57,23 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 		add_action( 'woocommerce_api_wc_pagarme_gateway', array( $this, 'check_ipn_response' ) );
 		add_action( 'wc_pagarme_valid_ipn_request', array( $this, 'ipn_successful_request' ) );
 
-		// Active logs.
-		if ( 'yes' == $this->debug ) {
-			if ( class_exists( 'WC_Logger' ) ) {
-				$this->log = new WC_Logger();
-			} else {
-				$this->log = $woocommerce->logger();
-			}
-		}
-
 		// Display admin notices.
 		$this->admin_notices();
 	}
 
 	/**
 	 * Checkout scripts.
-	 *
-	 * @return void
 	 */
 	public function checkout_scripts() {
 		if ( is_checkout() ) {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-			wp_enqueue_script( $this->id . '-library', 'https://pagar.me/assets/pagarme.js', array( 'jquery' ), null );
-			wp_enqueue_script( $this->id . '-checkout', plugins_url( 'assets/js/checkout' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery', $this->id . '-library' ), WC_PagarMe::VERSION, true );
+			wp_enqueue_script( 'pagarme-library', $this->api->get_js_url(), array( 'jquery' ), null );
+			wp_enqueue_script( 'pagarme-checkout', plugins_url( 'assets/js/checkout' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery', 'pagarme-library' ), WC_PagarMe::VERSION, true );
 
 			wp_localize_script(
-				$this->id . '-checkout',
-				'wc_' . $this->id . '_params',
+				'pagarme-checkout',
+				'wc_pagarme_params',
 				array(
 					'encryption_key' => $this->encryption_key
 				)
@@ -89,9 +84,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Admin scripts.
 	 *
-	 * @param  string $hook Page slug.
-	 *
-	 * @return void
+	 * @param string $hook Page slug.
 	 */
 	public function admin_scripts( $hook ) {
 		if ( in_array( $hook, array( 'woocommerce_page_wc-settings', 'woocommerce_page_woocommerce_settings' ) ) && ( isset( $_GET['section'] ) && 'wc_pagarme_gateway' == strtolower( $_GET['section'] ) ) ) {
@@ -112,12 +105,10 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 
 	/**
 	 * Displays notifications when the admin has something wrong with the configuration.
-	 *
-	 * @return void
 	 */
 	protected function admin_notices() {
 		if ( is_admin() ) {
-			$id = 'woocommerce_' . $this->id . '_';
+			$id = 'woocommerce_pagarme_';
 
 			// Checks if api_key is not empty.
 			if ( empty( $this->api_key ) || empty( $this->encryption_key ) ) {
@@ -147,8 +138,6 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 
 	/**
 	 * Initialise Gateway Settings Form Fields.
-	 *
-	 * @return void
 	 */
 	public function init_form_fields() {
 		$this->form_fields = array(
@@ -271,184 +260,6 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Only numbers.
-	 *
-	 * @param  string|int $string
-	 *
-	 * @return string|int
-	 */
-	protected function only_numbers( $string ) {
-		return preg_replace( '([^0-9])', '', $string );
-	}
-
-	/**
-	 * Get the smallest installment amount.
-	 *
-	 * @return int
-	 */
-	public function get_smallest_installment() {
-		return ( 5 > $this->smallest_installment ) ? 500 : woocommerce_format_decimal( $this->smallest_installment ) * 100;
-	}
-
-	/**
-	 * Get the interest rate.
-	 *
-	 * @return float
-	 */
-	public function get_interest_rate() {
-		return woocommerce_format_decimal( $this->interest_rate );
-	}
-
-	/**
-	 * Generate the transaction data.
-	 *
-	 * @param  WC_Order $order  Order data.
-	 * @param  array    $posted Form posted data.
-	 *
-	 * @return array            Transaction data.
-	 */
-	protected function generate_transaction_data( $order, $posted ) {
-		global $woocommerce;
-
-		$wcbcf_settings = get_option( 'wcbcf_settings' );
-
-		// Backwards compatibility with WooCommerce version prior to 2.1.
-		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
-			$postback_url = WC()->api_request_url( 'WC_Pagarme_Gateway' );
-		} else {
-			$postback_url = $woocommerce->api_request_url( 'WC_Pagarme_Gateway' );
-		}
-
-		$phone = $this->only_numbers( $order->billing_phone );
-
-		// Set the request data.
-		$data = array(
-			'api_key'        => $this->api_key,
-			'amount'         => $order->order_total * 100,
-			'postback_url'   => $postback_url,
-			'customer'       => array(
-				'name'    => $order->billing_first_name . ' ' . $order->billing_last_name,
-				'email'   => $order->billing_email,
-				'address' => array(
-					'street'        => $order->billing_address_1,
-					'street_number' => $order->billing_number,
-					'complementary' => $order->billing_address_2,
-					'neighborhood'  => $order->billing_neighborhood,
-					'zipcode'       => $this->only_numbers( $order->billing_postcode )
-				),
-				'phone' => array(
-					'ddd'    => substr( $phone, 0, 2 ),
-					'number' => substr( $phone, 2 )
-				)
-			)
-		);
-
-		// Set the document number.
-		if ( 0 != $wcbcf_settings['person_type'] ) {
-			if ( ( 1 == $wcbcf_settings['person_type'] && 1 == $order->billing_persontype ) || 2 == $wcbcf_settings['person_type'] ) {
-				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
-			}
-
-			if ( ( 1 == $wcbcf_settings['person_type'] && 2 == $order->billing_persontype ) || 3 == $wcbcf_settings['person_type'] ) {
-				$data['customer']['name']            = $order->billing_company;
-				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cnpj );
-			}
-		}
-
-		// Set the customer gender.
-		if ( isset( $order->billing_sex ) && ! empty( $order->billing_sex ) ) {
-			$data['customer']['sex'] = strtoupper( substr( $order->billing_sex, 0, 1 ) );
-		}
-
-		// Set the customer birthdate.
-		if ( isset( $order->billing_birthdate ) && ! empty( $order->billing_birthdate ) ) {
-			$birthdate = explode( '/', $order->billing_birthdate );
-
-			$data['customer']['born_at'] = $birthdate[1] . '-' . $birthdate[0] . '-' . $birthdate[2];
-		}
-
-		if ( ( 'all' == $this->methods || 'credit' == $this->methods ) && 'credit-card' == $posted[ $this->id . '_payment_method' ] ) {
-			if ( isset( $posted[ $this->id . '_card_hash' ] ) ) {
-				$data['payment_method'] = 'credit_card';
-				$data['card_hash']      = $posted[ $this->id . '_card_hash' ];
-			}
-
-			// Validate the installments.
-			if ( isset( $posted[ $this->id . '_installments' ] ) ) {
-				$_installment = $posted[ $this->id . '_installments' ];
-
-				// Get installments data.
-				$installments = $this->get_installments( $order->order_total );
-				if ( isset( $installments[ $_installment ] ) ) {
-					$installment          = $installments[ $_installment ];
-					$smallest_installment = $this->get_smallest_installment();
-
-					if ( $installment['installment'] <= $this->max_installment && $smallest_installment <= $installment['installment_amount'] ) {
-						$data['installments'] = $installment['installment'];
-						$data['amount']       = $installment['amount'];
-					}
-				}
-			}
-		} elseif ( ( 'all' == $this->methods || 'ticket' == $this->methods ) && 'banking-ticket' == $posted[ $this->id . '_payment_method' ] ) {
-			$data['payment_method'] = 'boleto';
-		}
-
-		// Add filter for Third Party plugins.
-		$data = apply_filters( 'wc_pagarme_transaction_data', $data );
-
-		return $data;
-	}
-
-	/**
-	 * Do the transaction.
-	 *
-	 * @param  WC_Order $order  Order data.
-	 * @param  array    $posted Form posted data.
-	 *
-	 * @return array            Response data.
-	 */
-	protected function do_transaction( $order, $posted ) {
-		$data = $this->generate_transaction_data( $order, $posted );
-
-		// Sets the post params.
-		$params = array(
-			'body'      => http_build_query( $data ),
-			'sslverify' => false,
-			'timeout'   => 60
-		);
-
-		if ( 'yes' == $this->debug ) {
-			$this->log->add( $this->id, 'Doing a transaction for order ' . $order->get_order_number() . '...' );
-		}
-
-		$response = wp_remote_post( $this->api_url . 'transactions', $params );
-
-		if ( is_wp_error( $response ) ) {
-			if ( 'yes' == $this->debug ) {
-				$this->log->add( $this->id, 'WP_Error in doing the transaction: ' . $response->get_error_message() );
-			}
-
-			return array();
-		} else {
-			$transaction_data = json_decode( $response['body'], true );
-
-			if ( isset( $transaction_data['errors'] ) ) {
-				if ( 'yes' == $this->debug ) {
-					$this->log->add( $this->id, 'Failed to make the transaction: ' . print_r( $response, true ) );
-				}
-
-				return $transaction_data;
-			}
-
-			if ( 'yes' == $this->debug ) {
-				$this->log->add( $this->id, 'Transaction completed successfully! The transaction response is: ' . print_r( $transaction_data, true ) );
-			}
-
-			return $transaction_data;
-		}
-	}
-
-	/**
 	 * Add error messages in checkout.
 	 *
 	 * @param string $messages Error message.
@@ -456,16 +267,8 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	 * @return string          Displays the error messages.
 	 */
 	protected function add_error( $messages ) {
-		global $woocommerce;
-
-		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
-			foreach ( $messages as $message ) {
-				wc_add_notice( $message['message'], 'error' );
-			}
-		} else {
-			foreach ( $messages as $message ) {
-				$woocommerce->add_error( $message['message'] );
-			}
+		foreach ( $messages as $message ) {
+			wc_add_notice( $message['message'], 'error' );
 		}
 	}
 
@@ -475,18 +278,9 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	 * @param  string $subject Email subject.
 	 * @param  string $title   Email title.
 	 * @param  string $message Email message.
-	 *
-	 * @return void
 	 */
 	protected function send_email( $subject, $title, $message ) {
-		global $woocommerce;
-
-		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
-			$mailer = WC()->mailer();
-		} else {
-			$mailer = $woocommerce->mailer();
-		}
-
+		$mailer = WC()->mailer();
 		$mailer->send( get_option( 'admin_email' ), $subject, $mailer->wrap_message( $title, $message ) );
 	}
 
@@ -498,10 +292,9 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	 * @return array           Redirect data.
 	 */
 	public function process_payment( $order_id ) {
-		global $woocommerce;
-
-		$order       = new WC_Order( $order_id );
-		$transaction = $this->do_transaction( $order, $_POST );
+		$order            = new WC_Order( $order_id );
+		$transaciton_data = $this->api->generate_transaction_data( $order, $_POST );
+		$transaction      = $this->api->do_transaction( $order, $transaciton_data );
 
 		if ( isset( $transaction['errors'] ) ) {
 			$this->add_error( $transaction['errors'] );
@@ -533,25 +326,126 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 				update_post_meta( $order->id, __( 'Pagar.me Transaction details', 'woocommerce-pagarme' ), 'https://dashboard.pagar.me/#/transactions/' . intval( $transaction['id'] ) );
 			}
 
+			// Change the order status.
 			$this->process_order_status( $order, $transaction['status'] );
 
+			// Empty the cart.
+			WC()->cart->empty_cart();
+
 			// Redirect to thanks page.
-			if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
-				WC()->cart->empty_cart();
-
-				return array(
-					'result'   => 'success',
-					'redirect' => $this->get_return_url( $order )
-				);
-			} else {
-				$woocommerce->cart->empty_cart();
-
-				return array(
-					'result'   => 'success',
-					'redirect' => add_query_arg( 'key', $order->order_key, add_query_arg( 'order', $order_id, get_permalink( woocommerce_get_page_id( 'thanks' ) ) ) )
-				);
-			}
+			return array(
+				'result'   => 'success',
+				'redirect' => $this->get_return_url( $order )
+			);
 		}
+	}
+
+	/**
+	 * Payment fields.
+	 *
+	 * @return string
+	 */
+	public function payment_fields() {
+		wp_enqueue_script( 'wc-credit-card-form' );
+
+		$cart_total = 0;
+		$order_id = absint( get_query_var( 'order-pay' ) );
+
+		// Gets order total from "pay for order" page.
+		if ( 0 < $order_id ) {
+			$order      = new WC_Order( $order_id );
+			$cart_total = (float) $order->get_total();
+
+		// Gets order total from cart/checkout.
+		} elseif ( 0 < WC()->cart->total ) {
+			$cart_total = (float) WC()->cart->total;
+		}
+
+		if ( 'ticket' == $this->methods ) {
+			echo '<input id="pagarme-payment-method-banking-ticket" type="hidden" name="pagarme_payment_method" value="banking-ticket" />';
+		}
+
+		if ( $description = $this->get_description() ) {
+			echo wpautop( wptexturize( $description ) );
+		}
+
+		$installments = $this->api->get_installments( $cart_total );
+
+		if ( in_array( $this->methods, array( 'all', 'credit' ) ) ) {
+			include_once 'views/html-payment-form.php';
+		}
+	}
+
+	/**
+	 * Thank You page message.
+	 *
+	 * @param  int    $order_id Order ID.
+	 *
+	 * @return string
+	 */
+	public function thankyou_page( $order_id ) {
+		$data = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
+
+		include_once 'views/html-thankyou-page.php';
+	}
+
+	/**
+	 * Add content to the WC emails.
+	 *
+	 * @param  object $order         Order object.
+	 * @param  bool   $sent_to_admin Send to admin.
+	 * @param  bool   $plain_text    Plain text or HTML.
+	 *
+	 * @return string                Banking Ticket instructions.
+	 */
+	public function email_instructions( $order, $sent_to_admin, $plain_text ) {
+		if ( $sent_to_admin || 'on-hold' !== $order->status || $this->id !== $order->payment_method ) {
+			return;
+		}
+
+		$data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+
+		if ( $plain_text ) {
+			include_once 'views/plain-email-instructions.php';
+		} else {
+			include_once 'views/html-email-instructions.php';
+		}
+	}
+
+	/**
+	 * Check API Response.
+	 */
+	public function check_ipn_response() {
+		@ob_clean();
+
+		$ipn_response = ! empty( $_POST ) ? $_POST : false;
+
+		if ( $ipn_response && $this->api->check_fingerprint( $ipn_response ) ) {
+			header( 'HTTP/1.1 200 OK' );
+
+			do_action( 'wc_pagarme_valid_ipn_request', $ipn_response );
+		} else {
+			wp_die( __( 'Pagar.me Request Failure', 'woocommerce-pagarme' ), '', array( 'response' => 401 ) );
+		}
+	}
+
+	/**
+	 * IPN successful request.
+	 * This method change the order status with the IPN.
+	 */
+	public function ipn_successful_request( $posted ) {
+		global $wpdb;
+
+		$posted   = wp_unslash( $posted );
+		$order_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wc_pagarme_transaction_id' AND meta_value = %d", $posted['id'] ) );
+		$order    = new WC_Order( $order_id );
+		$status   = sanitize_text_field( $posted['current_status'] );
+
+		if ( $order->id == $order_id ) {
+			$this->process_order_status( $order, $status );
+		}
+
+		exit;
 	}
 
 	/**
@@ -559,8 +453,6 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	 *
 	 * @param  WC_Order $order  Order data.
 	 * @param  string   $status Transaction status.
-	 *
-	 * @return void
 	 */
 	public function process_order_status( $order, $status ) {
 		if ( 'yes' == $this->debug ) {
@@ -617,228 +509,12 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Get the installments.
-	 *
-	 * @param  float $amount
-	 *
-	 * @return array
-	 */
-	protected function get_installments( $amount ) {
-		// Set the installment data.
-		$data = http_build_query( array(
-			'encryption_key'    => $this->encryption_key,
-			'amount'            => $amount * 100,
-			'interest_rate'     => $this->get_interest_rate(),
-			'max_installments'  => $this->max_installment,
-			'free_installments' => $this->free_installments
-		) );
-
-		// Get saved installment data.
-		$_installments = get_transient( 'pgi_' . md5( $data ) );
-
-		if ( false !== $_installments ) {
-			return $_installments;
-		}
-
-		// Sets the post params.
-		$params = array(
-			'body'      => $data,
-			'sslverify' => false,
-			'timeout'   => 60
-		);
-
-		if ( 'yes' == $this->debug ) {
-			$this->log->add( $this->id, 'Getting the order installments...' );
-		}
-
-		$response = wp_remote_get( $this->api_url . 'transactions/calculate_installments_amount', $params );
-
-		if ( is_wp_error( $response ) ) {
-			if ( 'yes' == $this->debug ) {
-				$this->log->add( $this->id, 'WP_Error in getting the installments: ' . $response->get_error_message() );
-			}
-
-			return array();
-		} else {
-			$_installments = json_decode( $response['body'], true );
-
-			if ( isset( $_installments['installments'] ) ) {
-				$installments = $_installments['installments'];
-
-				if ( 'yes' == $this->debug ) {
-					$this->log->add( $this->id, 'Installments generated successfully: ' . print_r( $_installments, true ) );
-				}
-
-				set_transient( 'pgi_' . md5( $data ), $installments, MINUTE_IN_SECONDS * 5 );
-
-				return $installments;
-			}
-		}
-
-		if ( 'yes' == $this->debug ) {
-			$this->log->add( $this->id, 'Failed to get the installments: ' . print_r( $response, true ) );
-		}
-
-		return array();
-	}
-
-	/**
-	 * Payment fields.
-	 *
-	 * @return string
-	 */
-	public function payment_fields() {
-		global $woocommerce;
-
-		wp_enqueue_script( 'wc-credit-card-form' );
-
-		$cart_total = 0;
-		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
-			$order_id = absint( get_query_var( 'order-pay' ) );
-		} else {
-			$order_id = isset( $_GET['order_id'] ) ? absint( $_GET['order_id'] ) : 0;
-		}
-
-		// Gets order total from "pay for order" page.
-		if ( 0 < $order_id ) {
-			$order      = new WC_Order( $order_id );
-			$cart_total = (float) $order->get_total();
-
-		// Gets order total from cart/checkout.
-		} elseif ( 0 < $woocommerce->cart->total ) {
-			$cart_total = (float) $woocommerce->cart->total;
-		}
-
-		if ( 'ticket' == $this->methods ) {
-			echo '<input id="' . esc_attr( $this->id ) . '-payment-method-banking-ticket" type="hidden" name="' . $this->id . '_payment_method" value="banking-ticket" />';
-		}
-
-		if ( $description = $this->get_description() ) {
-			echo wpautop( wptexturize( $description ) );
-		}
-
-		$installments = $this->get_installments( $cart_total );
-
-		if ( 'all' == $this->methods || 'credit' == $this->methods ) {
-			include_once( 'views/html-payment-form.php' );
-		}
-	}
-
-	/**
-	 * Thank You page message.
-	 *
-	 * @param  int    $order_id Order ID.
-	 *
-	 * @return string
-	 */
-	public function thankyou_page( $order_id ) {
-		$data = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
-
-		include_once( 'views/html-thankyou-page.php' );
-	}
-
-	/**
-	 * Add content to the WC emails.
-	 *
-	 * @param  object $order         Order object.
-	 * @param  bool   $sent_to_admin Send to admin.
-	 * @param  bool   $plain_text    Plain text or HTML.
-	 *
-	 * @return string                Banking Ticket instructions.
-	 */
-	public function email_instructions( $order, $sent_to_admin, $plain_text ) {
-		if ( $sent_to_admin || 'on-hold' !== $order->status || $this->id !== $order->payment_method ) {
-			return;
-		}
-
-		$data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
-
-		if ( $plain_text ) {
-			include_once( 'views/plain-email-instructions.php' );
-		} else {
-			include_once( 'views/html-email-instructions.php' );
-		}
-	}
-
-	/**
-	 * Check if Pagar.me response is validity.
-	 *
-	 * @param  array $ipn_response IPN response data.
-	 *
-	 * @return bool
-	 */
-	public function check_ipn_request_is_valid( $ipn_response ) {
-		if ( isset( $ipn_response['id'] ) && isset( $ipn_response['current_status'] ) && isset( $ipn_response['fingerprint'] ) ) {
-			$fingerprint = sha1( $ipn_response['id'] . '#' . $this->api_key );
-
-			if ( $fingerprint === $ipn_response['fingerprint'] ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * IPN successful request.
-	 * This method change the order status with the IPN.
-	 *
-	 * @return void
-	 */
-	public function ipn_successful_request( $posted ) {
-		global $wpdb;
-
-		$posted   = stripslashes_deep( $posted );
-		$order_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wc_pagarme_transaction_id' AND meta_value = %d", $posted['id'] ) );
-		$order    = new WC_Order( $order_id );
-		$status   = sanitize_text_field( $posted['current_status'] );
-
-		if ( $order->id == $order_id ) {
-			$this->process_order_status( $order, $status );
-		}
-
-		exit;
-	}
-
-	/**
-	 * Check API Response.
-	 *
-	 * @return void
-	 */
-	public function check_ipn_response() {
-		@ob_clean();
-
-		$ipn_response = ! empty( $_POST ) ? $_POST : false;
-
-		if ( $ipn_response && $this->check_ipn_request_is_valid( $ipn_response ) ) {
-			header( 'HTTP/1.1 200 OK' );
-
-			do_action( 'wc_pagarme_valid_ipn_request', $ipn_response );
-		} else {
-			wp_die( __( 'Pagar.me Request Failure', 'woocommerce-pagarme' ), '', array( 'response' => 401 ) );
-		}
-	}
-
-	/**
-	 * Gets the admin url.
-	 *
-	 * @return string
-	 */
-	protected function admin_url() {
-		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.1', '>=' ) ) {
-			return admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_pagarme_gateway' );
-		}
-
-		return admin_url( 'admin.php?page=woocommerce_settings&tab=payment_gateways&section=WC_Pagarme_Gateway' );
-	}
-
-	/**
 	 * Adds error message when the plugin is not configured properly.
 	 *
 	 * @return string Error Mensage.
 	 */
 	public function plugin_not_configured_message() {
-		$id = 'woocommerce_' . $this->id . '_';
+		$id = 'woocommerce_pagarme_';
 		if (
 			isset( $_POST[ $id . 'api_key' ] ) && ! empty( $_POST[ $id . 'api_key' ] )
 			&& isset( $_POST[ $id . 'encryption_key' ] ) && ! empty( $_POST[ $id . 'encryption_key' ] )
@@ -846,7 +522,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 			return;
 		}
 
-		echo '<div class="error"><p><strong>' . __( 'Pagar.me Disabled', 'woocommerce-pagarme' ) . '</strong>: ' . sprintf( __( 'You should inform your API Key and Encryption Key. %s', 'woocommerce-pagarme' ), '<a href="' . $this->admin_url() . '">' . __( 'Click here to configure!', 'woocommerce-pagarme' ) . '</a>' ) . '</p></div>';
+		echo '<div class="error"><p><strong>' . __( 'Pagar.me Disabled', 'woocommerce-pagarme' ) . '</strong>: ' . sprintf( __( 'You should inform your API Key and Encryption Key. %s', 'woocommerce-pagarme' ), '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_pagarme_gateway' ) . '">' . __( 'Click here to configure!', 'woocommerce-pagarme' ) . '</a>' ) . '</p></div>';
 	}
 
 	/**
