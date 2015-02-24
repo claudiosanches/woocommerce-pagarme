@@ -319,7 +319,7 @@ msgstr "Por favor, utilize o botão a seguir para ver o boleto bancário."
 #: includes/views/html-thankyou-page.php:9
 #@ woocommerce-pagarme
 msgid "You can print and pay in your internet banking or in a lottery retailer."
-msgstr "Você pode imprimir e pagar pelo sue internet banking ou em uma casa lotérica."
+msgstr "Você pode imprimir e pagar pelo seu internet banking ou em uma casa lotérica."
 
 #. translators: plugin header field 'Name'
 #: woocommerce-pagarme.php:0
