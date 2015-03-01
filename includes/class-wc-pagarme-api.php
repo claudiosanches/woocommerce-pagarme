@@ -10,11 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Pagarme_API {
 
 	/**
-	 * API URL.
-	 */
-	const API_URL = 'https://api.pagar.me/1/';
-
-	/**
 	 * Gateway class.
 	 *
 	 * @var WC_Pagarme_Gateway
@@ -205,6 +200,7 @@ class WC_Pagarme_API {
 	 * @return array                    Transaction data.
 	 */
 	public function generate_transaction_data( $order, $payment_method = '', $card_hash = '', $installment = '' ) {
+		error_log( print_r( $order->order_total, true ) );
 		// Set the request data.
 		$wcbcf_settings = get_option( 'wcbcf_settings' );
 		$phone          = $this->only_numbers( $order->billing_phone );
@@ -265,12 +261,13 @@ class WC_Pagarme_API {
 				// Get installments data.
 				$installments = $this->get_installments( $order->order_total );
 				if ( isset( $installments[ $installment ] ) ) {
+					error_log( print_r( $installments[ $installment ], true ) );
 					$_installment         = $installments[ $installment ];
 					$smallest_installment = $this->get_smallest_installment();
 
 					if ( $_installment['installment'] <= $this->gateway->max_installment && $smallest_installment <= $_installment['installment_amount'] ) {
-						$data['installments'] = $installment['installment'];
-						$data['amount']       = $installment['amount'];
+						$data['installments'] = $_installment['installment'];
+						$data['amount']       = $_installment['amount'];
 					}
 				}
 			}
