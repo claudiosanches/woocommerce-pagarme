@@ -103,9 +103,8 @@ class WC_Pagarme_API {
 	 */
 	protected function do_request( $endpoint, $method = 'POST', $data = array(), $headers = array() ) {
 		$params = array(
-			'method'    => $method,
-			'sslverify' => false,
-			'timeout'   => 60
+			'method'  => $method,
+			'timeout' => 60
 		);
 
 		if ( ! empty( $data ) ) {
@@ -116,7 +115,7 @@ class WC_Pagarme_API {
 			$params['headers'] = $headers;
 		}
 
-		return wp_remote_post( $this->get_api_url() . $endpoint, $params );
+		return wp_safe_remote_post( $this->get_api_url() . $endpoint, $params );
 	}
 
 	/**
