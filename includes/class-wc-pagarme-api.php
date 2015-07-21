@@ -33,7 +33,7 @@ class WC_Pagarme_API {
 	 *
 	 * @var string
 	 */
-	protected $js_url = 'https://pagar.me/assets/pagarme-v2.min.js';
+	protected $js_url = 'https://assets.pagar.me/js/pagarme.min.js';
 
 	/**
 	 * Constructor.
