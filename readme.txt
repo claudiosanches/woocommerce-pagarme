@@ -1,9 +1,9 @@
 === WooCommerce Pagar.me ===
 Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
-Requires at least: 3.5
-Tested up to: 4.0
-Stable tag: 1.2.1
+Requires at least: 4.0
+Tested up to: 4.3
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ Saiba mais como o Pagar.em funciona:
 
 = Compatibilidade =
 
-Compatível com as versões 2.1.x e 2.2.x e 2.3.x do WooCommerce.
+Compatível com as versões 2.1.x, 2.2.x, 2.3.x e 2.4.x do WooCommerce.
 
 Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/), desta forma é possível enviar documentos do cliente como "CPF" ou "CNPJ", além dos campos "número" e "bairro" do endereço.
 
@@ -112,15 +112,19 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
-= 1.2.1 - 27/10/2014 =
+= 1.2.2 - 27/10/2014 =
+
+* Atualizada URL da biblioteca JavaScript do Pagar.me.
+
+= 1.2.1 - 2014/10/27 =
 
 * Corrigido o método que manipula os retornos do Pagar.me.
 
-= 1.2.0 - 12/10/2014 =
+= 1.2.0 - 2014/10/12 =
 
 * Adicionada opção para controlar o número de parcelas sem juros.
 
-= 1.1.0 - 07/09/2014 =
+= 1.1.0 - 2014/09/07 =
 
 * Adicionado suporte para a API de parcelas do Pagar.me.
 * Adicionada opção de taxa de juros para as parcelas.
@@ -132,9 +136,9 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Upgrade Notice ==
 
-= 1.2.1 =
+= 1.2.2 =
 
-* Corrigido o método que manipula os retornos do Pagar.me.
+* Atualizada URL da biblioteca JavaScript do Pagar.me.
 
 == License ==
 
