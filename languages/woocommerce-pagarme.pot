@@ -1,0 +1,342 @@
+# Copyright (C) 2016 Pagar.me, claudiosanches
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Pagar.me 1.2.3\n"
+"Report-Msgid-Bugs-To: "
+"https://wordpress.org/support/plugin/woocommerce-pagarme\n"
+"POT-Creation-Date: 2016-01-27 02:17:22+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2016-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: grunt-wp-i18n 0.5.3\n"
+
+#. Plugin Name of the plugin/theme
+msgid "WooCommerce Pagar.me"
+msgstr ""
+
+#: includes/admin/views/html-notice-missing-woocommerce.php:22
+msgid "depends on the last version of WooCommerce to work!"
+msgstr ""
+
+#: includes/admin/views/html-notice-missing-woocommerce.php:25
+msgid "Active WooCommerce"
+msgstr ""
+
+#: includes/admin/views/html-notice-missing-woocommerce.php:33
+msgid "Install WooCommerce"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:21
+#: includes/class-wc-pagarme-gateway.php:155
+msgid "Pagar.me"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:22
+msgid "Accept payments by Credit Card or Banking Ticket using Pagar.me."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:145
+msgid "Enable/Disable"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:147
+msgid "Enable Pagar.me"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:151
+msgid "Title"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:153
+msgid "This controls the title which the user sees during checkout."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:158
+msgid "Description"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:160
+msgid "This controls the description which the user sees during checkout."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:162
+msgid "Pay with Credit Card or Banking Ticket via Pagar.me"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:165
+msgid "Pagar.me API Key"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:167
+msgid ""
+"Please enter your Pagar.me API Key. This is needed to process the payment "
+"and notifications. Is possible get your API Key in %s."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:167
+#: includes/class-wc-pagarme-gateway.php:173
+msgid "Pagar.me Dashboard > My Account page"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:171
+msgid "Pagar.me Encryption Key"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:173
+msgid ""
+"Please enter your Pagar.me Encryption key. This is needed to process the "
+"payment. Is possible get your Encryption Key in %s."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:177
+msgid "Payment Methods"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:181
+msgid "Credit Card and Banking Ticket"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:182
+msgid "Only Credit Card"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:183
+msgid "Only Banking Ticket"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:187
+#: includes/views/html-payment-form.php:38
+msgid "Installments"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:192
+msgid "Number of Installment"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:195
+msgid "Maximum number of installments possible with payments by credit card."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:213
+msgid "Smallest Installment"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:215
+msgid ""
+"Please enter with the value of smallest installment, Note: it not can be "
+"less than 5."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:220
+msgid "Interest rate"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:222
+msgid ""
+"Please enter with the interest rate amount. Note: use 0 to not charge "
+"interest."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:227
+msgid "Free Installments"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:230
+msgid "Number of installments with interest free."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:248
+msgid "Gateway Testing"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:253
+msgid "Debug Log"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:255
+msgid "Enable logging"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:257
+msgid "Log Pagar.me events, such as API requests, inside %s"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:323
+msgid "Banking Ticket URL"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:331
+msgid "Pagar.me Transaction details"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:433
+msgid "Pagar.me Request Failure"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:469
+msgid "Pagar.me: The transaction is being processed."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:473
+msgid "Pagar.me: Transaction paid."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:480
+msgid "Pagar.me: The banking ticket was issued but not paid yet."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:484
+msgid "Pagar.me: The transaction was rejected by the card company or by fraud."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:490
+msgid "The transaction for order %s was rejected by the card company or by fraud"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:491
+msgid "Transaction failed"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:492
+msgid ""
+"Order %s has been marked as failed, because the transaction was rejected by "
+"the card company or by fraud, for more details, see %s."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:497
+msgid "Pagar.me: The transaction was refunded/canceled."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:503
+msgid "The transaction for order %s refunded"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:504
+msgid "Transaction refunded"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:505
+msgid "Order %s has been marked as refunded by Pagar.me, for more details, see %s."
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:530
+#: includes/class-wc-pagarme-gateway.php:539
+msgid "Pagar.me Disabled"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:530
+msgid "You should inform your API Key and Encryption Key. %s"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:530
+msgid "Click here to configure!"
+msgstr ""
+
+#: includes/class-wc-pagarme-gateway.php:539
+msgid "Currency <code>%s</code> is not supported. Works only with Brazilian Real."
+msgstr ""
+
+#: includes/views/html-email-instructions.php:8
+#: includes/views/plain-email-instructions.php:7
+msgid "Payment"
+msgstr ""
+
+#: includes/views/html-email-instructions.php:10
+#: includes/views/plain-email-instructions.php:11
+msgid ""
+"Please use the following link to view your Banking Ticket, you can print "
+"and pay in your internet banking or in a lottery retailer."
+msgstr ""
+
+#: includes/views/html-email-instructions.php:10
+#: includes/views/html-thankyou-page.php:9
+msgid "Pay the Banking Ticket"
+msgstr ""
+
+#: includes/views/html-payment-form.php:10
+msgid "Credit Card"
+msgstr ""
+
+#: includes/views/html-payment-form.php:11
+msgid "Banking Ticket"
+msgstr ""
+
+#: includes/views/html-payment-form.php:19
+msgid "Card Holder Name"
+msgstr ""
+
+#: includes/views/html-payment-form.php:19
+msgid "as recorded on the card"
+msgstr ""
+
+#: includes/views/html-payment-form.php:23
+msgid "Card Number"
+msgstr ""
+
+#: includes/views/html-payment-form.php:28
+msgid "Expiry (MM/YY)"
+msgstr ""
+
+#: includes/views/html-payment-form.php:29
+msgid "MM / YY"
+msgstr ""
+
+#: includes/views/html-payment-form.php:32
+msgid "Card Code"
+msgstr ""
+
+#: includes/views/html-payment-form.php:33
+msgid "CVC"
+msgstr ""
+
+#: includes/views/html-payment-form.php:48
+msgid "(total of %s)"
+msgstr ""
+
+#: includes/views/html-payment-form.php:48
+msgid "(interest-free)"
+msgstr ""
+
+#: includes/views/html-payment-form.php:52
+msgid "%dx of %s %s"
+msgstr ""
+
+#: includes/views/html-thankyou-page.php:9
+msgid "Attention!"
+msgstr ""
+
+#: includes/views/html-thankyou-page.php:9
+msgid "You will not get the Banking Ticket by mail."
+msgstr ""
+
+#: includes/views/html-thankyou-page.php:9
+msgid "Please click in the following button to view your Banking Ticket."
+msgstr ""
+
+#: includes/views/html-thankyou-page.php:9
+msgid "You can print and pay in your internet banking or in a lottery retailer."
+msgstr ""
+
+#: woocommerce-pagarme.php:114
+msgid "Print Banking Ticket"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://github.com/claudiosmweb/woocommerce-pagarme"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Gateway de pagamento Pagar.me para WooCommerce."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Pagar.me, claudiosanches"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://pagar.me/"
+msgstr ""
