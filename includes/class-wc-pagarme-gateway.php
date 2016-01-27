@@ -318,6 +318,11 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 			);
 			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $payment_data );
 
+			// Save boleto URL as post meta too.
+			if ( ! empty( $transaction['boleto_url'] ) ) {
+				update_post_meta( $order->id, __( 'Link do Boleto', 'woocommerce-pagarme' ), sanitize_text_field( $transaction['boleto_url'] ) );
+			}
+
 			// For WooCommerce 2.2 or later.
 			update_post_meta( $order->id, '_transaction_id', intval( $transaction['id'] ) );
 
@@ -502,7 +507,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 
 				break;
 
-			default:
+			default :
 				// No action xD.
 				break;
 		}
