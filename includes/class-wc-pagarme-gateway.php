@@ -320,7 +320,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 
 			// Save boleto URL as post meta too.
 			if ( ! empty( $transaction['boleto_url'] ) ) {
-				update_post_meta( $order->id, __( 'Link do Boleto', 'woocommerce-pagarme' ), sanitize_text_field( $transaction['boleto_url'] ) );
+				update_post_meta( $order->id, __( 'Banking Ticket URL', 'woocommerce-pagarme' ), sanitize_text_field( $transaction['boleto_url'] ) );
 			}
 
 			// For WooCommerce 2.2 or later.
