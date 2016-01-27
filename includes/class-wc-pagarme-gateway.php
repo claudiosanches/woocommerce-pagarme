@@ -100,7 +100,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function using_supported_currency() {
-		return ( 'BRL' == get_woocommerce_currency() );
+		return 'BRL' == get_woocommerce_currency();
 	}
 
 	/**
@@ -115,8 +115,8 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 				add_action( 'admin_notices', array( $this, 'plugin_not_configured_message' ) );
 			}
 
-			// Checks that the currency is supported
-			if ( ! $this->using_supported_currency() ) {
+			// Checks that the currency is supported.
+			if ( ! $this->using_supported_currency() && ! class_exists( 'woocommerce_wpml' ) ) {
 				add_action( 'admin_notices', array( $this, 'currency_not_supported_message' ) );
 			}
 		}
