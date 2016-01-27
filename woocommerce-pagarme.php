@@ -79,9 +79,6 @@ class WC_Pagarme {
 	 * Load the plugin text domain for translation.
 	 */
 	public function load_plugin_textdomain() {
-		$locale = apply_filters( 'plugin_locale', get_locale(), 'woocommerce-pagarme' );
-
-		load_textdomain( 'woocommerce-pagarme', trailingslashit( WP_LANG_DIR ) . 'woocommerce-pagarme/woocommerce-pagarme-' . $locale . '.mo' );
 		load_plugin_textdomain( 'woocommerce-pagarme', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
