@@ -184,7 +184,6 @@ class WC_Pagarme_API {
 		return array();
 	}
 
-
 	/**
 	 * Generate the transaction data.
 	 *
@@ -195,9 +194,8 @@ class WC_Pagarme_API {
 	 */
 	public function generate_transaction_data( $order, $posted ) {
 		// Set the request data.
-		$wcbcf_settings = get_option( 'wcbcf_settings' );
-		$phone          = $this->only_numbers( $order->billing_phone );
-		$data           = array(
+		$phone = $this->only_numbers( $order->billing_phone );
+		$data  = array(
 			'api_key'        => $this->gateway->api_key,
 			'amount'         => $order->order_total * 100,
 			'postback_url'   => WC()->api_request_url( 'WC_Pagarme_Gateway' ),
@@ -206,37 +204,54 @@ class WC_Pagarme_API {
 				'email'   => $order->billing_email,
 				'address' => array(
 					'street'        => $order->billing_address_1,
-					'street_number' => $order->billing_number,
 					'complementary' => $order->billing_address_2,
-					'neighborhood'  => $order->billing_neighborhood,
-					'zipcode'       => $this->only_numbers( $order->billing_postcode )
+					'zipcode'       => $this->only_numbers( $order->billing_postcode ),
 				),
 				'phone' => array(
 					'ddd'    => substr( $phone, 0, 2 ),
-					'number' => substr( $phone, 2 )
-				)
-			)
+					'number' => substr( $phone, 2 ),
+				),
+			),
 		);
 
+		// Non-WooCommerce default fields.
+		if ( ! empty( $order->billing_number ) ) {
+			$data['customer']['address']['street_number'] = $order->billing_number;
+		}
+		if ( ! empty( $order->billing_neighborhood ) ) {
+			$data['customer']['address']['neighborhood'] = $order->billing_neighborhood;
+		}
+
 		// Set the document number.
-		if ( 0 != $wcbcf_settings['person_type'] ) {
-			if ( ( 1 == $wcbcf_settings['person_type'] && 1 == $order->billing_persontype ) || 2 == $wcbcf_settings['person_type'] ) {
+		if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
+			$wcbcf_settings = get_option( 'wcbcf_settings' );
+			if ( 0 != $wcbcf_settings['person_type'] ) {
+				if ( ( 1 == $wcbcf_settings['person_type'] && 1 == $order->billing_persontype ) || 2 == $wcbcf_settings['person_type'] ) {
+					$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
+				}
+
+				if ( ( 1 == $wcbcf_settings['person_type'] && 2 == $order->billing_persontype ) || 3 == $wcbcf_settings['person_type'] ) {
+					$data['customer']['name']            = $order->billing_company;
+					$data['customer']['document_number'] = $this->only_numbers( $order->billing_cnpj );
+				}
+			}
+		} else {
+			if ( ! empty( $order->billing_cpf ) ) {
 				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
 			}
-
-			if ( ( 1 == $wcbcf_settings['person_type'] && 2 == $order->billing_persontype ) || 3 == $wcbcf_settings['person_type'] ) {
+			if ( ! empty( $order->billing_cnpj ) ) {
 				$data['customer']['name']            = $order->billing_company;
 				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cnpj );
 			}
 		}
 
 		// Set the customer gender.
-		if ( isset( $order->billing_sex ) && ! empty( $order->billing_sex ) ) {
+		if ( ! empty( $order->billing_sex ) ) {
 			$data['customer']['sex'] = strtoupper( substr( $order->billing_sex, 0, 1 ) );
 		}
 
 		// Set the customer birthdate.
-		if ( isset( $order->billing_birthdate ) && ! empty( $order->billing_birthdate ) ) {
+		if ( ! empty( $order->billing_birthdate ) ) {
 			$birthdate = explode( '/', $order->billing_birthdate );
 
 			$data['customer']['born_at'] = $birthdate[1] . '-' . $birthdate[0] . '-' . $birthdate[2];

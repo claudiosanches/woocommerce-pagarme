@@ -40,11 +40,11 @@ class WC_Pagarme {
 	 * Initialize the plugin public actions.
 	 */
 	private function __construct() {
-		// Load plugin text domain
+		// Load plugin text domain.
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
-		// Checks with WooCommerce and WooCommerce Extra Checkout Fields for Brazil is installed.
-		if ( class_exists( 'WC_Payment_Gateway' ) && class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
+		// Checks with WooCommerce is installed.
+		if ( class_exists( 'WC_Payment_Gateway' ) ) {
 			$this->includes();
 
 			add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
@@ -104,14 +104,10 @@ class WC_Pagarme {
 	 * @return string
 	 */
 	public function woocommerce_missing_notice() {
-		echo '<div class="error"><p>' . sprintf(
-			__( 'WooCommerce Pagar.me depends on the last version of the %s and the %s to work!', 'woocommerce-pagarme' ),
-			'<a href="http://wordpress.org/extend/plugins/woocommerce/">' . __( 'WooCommerce', 'woocommerce-pagarme' ) . '</a>',
-			'<a href="http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/">' . __( 'WooCommerce Extra Checkout Fields for Brazil', 'woocommerce-pagarme' ) . '</a>'
-		) . '</p></div>';
+		include 'includes/admin/views/html-notice-missing-woocommerce.php';
 	}
 }
 
-add_action( 'plugins_loaded', array( 'WC_Pagarme', 'get_instance' ), 0 );
+add_action( 'plugins_loaded', array( 'WC_Pagarme', 'get_instance' ) );
 
 endif;
