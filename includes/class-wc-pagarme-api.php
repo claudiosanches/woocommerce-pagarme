@@ -194,32 +194,41 @@ class WC_Pagarme_API {
 	 */
 	public function generate_transaction_data( $order, $posted ) {
 		// Set the request data.
-		$phone = $this->only_numbers( $order->billing_phone );
 		$data  = array(
-			'api_key'        => $this->gateway->api_key,
-			'amount'         => $order->order_total * 100,
-			'postback_url'   => WC()->api_request_url( 'WC_Pagarme_Gateway' ),
-			'customer'       => array(
-				'name'    => $order->billing_first_name . ' ' . $order->billing_last_name,
-				'email'   => $order->billing_email,
-				'address' => array(
-					'street'        => $order->billing_address_1,
-					'complementary' => $order->billing_address_2,
-					'zipcode'       => $this->only_numbers( $order->billing_postcode ),
-				),
-				'phone' => array(
-					'ddd'    => substr( $phone, 0, 2 ),
-					'number' => substr( $phone, 2 ),
-				),
+			'api_key'      => $this->gateway->api_key,
+			'amount'       => $order->order_total * 100,
+			'postback_url' => WC()->api_request_url( 'WC_Pagarme_Gateway' ),
+			'customer'     => array(
+				'name'  => $order->billing_first_name . ' ' . $order->billing_last_name,
+				'email' => $order->billing_email,
 			),
 		);
 
-		// Non-WooCommerce default fields.
-		if ( ! empty( $order->billing_number ) ) {
-			$data['customer']['address']['street_number'] = $order->billing_number;
+		// Phone.
+		if ( ! empty( $order->billing_phone ) ) {
+			$phone = $this->only_numbers( $order->billing_phone );
+
+			$data['customer']['phone'] = array(
+				'ddd'    => substr( $phone, 0, 2 ),
+				'number' => substr( $phone, 2 ),
+			);
 		}
-		if ( ! empty( $order->billing_neighborhood ) ) {
-			$data['customer']['address']['neighborhood'] = $order->billing_neighborhood;
+
+		// Address.
+		if ( ! empty( $order->billing_address_1 ) ) {
+			$data['customer']['address'] = array(
+				'street'        => $order->billing_address_1,
+				'complementary' => $order->billing_address_2,
+				'zipcode'       => $this->only_numbers( $order->billing_postcode ),
+			);
+
+			// Non-WooCommerce default address fields.
+			if ( ! empty( $order->billing_number ) ) {
+				$data['customer']['address']['street_number'] = $order->billing_number;
+			}
+			if ( ! empty( $order->billing_neighborhood ) ) {
+				$data['customer']['address']['neighborhood'] = $order->billing_neighborhood;
+			}
 		}
 
 		// Set the document number.
