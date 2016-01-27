@@ -3,7 +3,7 @@ Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
 Tested up to: 4.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ Saiba mais como o Pagar.em funciona:
 
 = Compatibilidade =
 
-Compatível com as versões 2.1.x, 2.2.x, 2.3.x, 2.4.x e 2.5.x do WooCommerce.
+Compatível com as versões 2.2.x, 2.3.x, 2.4.x e 2.5.x do WooCommerce.
 
 Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/), desta forma é possível enviar documentos do cliente como "CPF" ou "CNPJ", além dos campos "número" e "bairro" do endereço.
 
@@ -59,7 +59,7 @@ API Keys**.
 
 = Configurações no WooCommerce =
 
-No WooCommerce 2.0 ou superior existe uma opção para cancelar a compra e liberar o estoque depois de alguns minutos.
+No WooCommerce 2.2 ou superior existe uma opção para cancelar a compra e liberar o estoque depois de alguns minutos.
 
 Esta opção não funciona muito bem com o Pagar.me, pois pagamentos por boleto bancário pode demorar até 48 horas para serem validados.
 
@@ -75,7 +75,7 @@ Este plugin esta licenciado como GPL.
 
 = O que eu preciso para utilizar este plugin? =
 
-* Ter instalado o plugin WooCommerce 2.0 ou superior.
+* Ter instalado o plugin WooCommerce 2.2 ou superior.
 * Possuir uma conta no [Pagar.me](https://pagar.me/).
 * Pegar sua **Chave de API** e **Chave de Criptografia** no Pagar.me.
 * Desativar a opção **Manter Estoque (minutos)** do WooCommerce.
@@ -88,6 +88,10 @@ Confira os preços em "[Pagar.me - Preços](https://pagar.me/precos/)".
 
 No momento ainda não é possível, entretanto iremos fazer esta integração em breve.
 
+= Funciona com o Checkout Pagar.me? =
+
+Ainda não, mas será no futuro.
+
 = O pedido foi pago e ficou com o status de "processando" e não como "concluído", isto esta certo ? =
 
 Sim, esta certo e significa que o plugin esta trabalhando como deveria.
@@ -95,6 +99,12 @@ Sim, esta certo e significa que o plugin esta trabalhando como deveria.
 Todo gateway de pagamentos no WooCommerce deve mudar o status do pedido para "processando" no momento que é confirmado o pagamento e nunca deve ser alterado sozinho para "concluído", pois o pedido deve ir apenas para o status "concluído" após ele ter sido entregue.
 
 Para produtos baixáveis a configuração padrão do WooCommerce é permitir o acesso apenas quando o pedido tem o status "concluído", entretanto nas configurações do WooCommerce na aba *Produtos* é possível ativar a opção **"Conceder acesso para download do produto após o pagamento"** e assim liberar o download quando o status do pedido esta como "processando".
+
+= É obrigatório enviar todos os campos para processar o pagamento? =
+
+Não é obrigatório caso você não utilize anti-fraude, no caso para digital goods.
+
+É possível remover os campos de endereço, empresa e telefone, mantendo apenas nome, sobrenome e e-mail utilizando [este plugin](https://gist.github.com/claudiosmweb/590bf8e9e5d9dd0ba104).
 
 = Problemas com a integração? =
 
@@ -112,7 +122,13 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
-= 1.2.2 - 27/10/2014 =
+= 1.2.3 - 2015/01/27 =
+
+* Removida dependência do plugin WooCommerce Extra Checkout Fields From Brazil.
+* Removida dependência dos campis de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
+* Adicionado link para segunda via do boleto na tela de administração de pedidos e na página "Minha Conta".
+
+= 1.2.2 - 2014/10/27 =
 
 * Atualizada URL da biblioteca JavaScript do Pagar.me.
 
@@ -136,14 +152,8 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Upgrade Notice ==
 
-= 1.2.2 =
+= 1.2.3 =
 
-* Atualizada URL da biblioteca JavaScript do Pagar.me.
-
-== License ==
-
-WooCommerce Pagar.me is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-WooCommerce Pagar.me is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with WooCommerce Pagar.me. If not, see <http://www.gnu.org/licenses/>.
+* Removida dependência do plugin WooCommerce Extra Checkout Fields From Brazil.
+* Removida dependência dos campis de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
+* Adicionado link para segunda via do boleto na tela de administração de pedidos e na página "Minha Conta".
