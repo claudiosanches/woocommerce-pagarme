@@ -21,7 +21,7 @@ Saiba mais como o Pagar.em funciona:
 
 Compatível com as versões 2.2.x, 2.3.x, 2.4.x e 2.5.x do WooCommerce.
 
-Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/), desta forma é possível enviar documentos do cliente como "CPF" ou "CNPJ", além dos campos "número" e "bairro" do endereço.
+Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/), desta forma é possível enviar documentos do cliente como "CPF" ou "CNPJ", além dos campos "número" e "bairro" do endereço. Caso você queira remover todos os campos adicionais de endereço, é possível utilizar o plugin [WooCommerce Remove billing fields](https://gist.github.com/claudiosmweb/590bf8e9e5d9dd0ba104) [[Download ZIP]](https://gist.github.com/claudiosmweb/590bf8e9e5d9dd0ba104/archive/854f52632c6a6092f6d88e294058c898609f36a9.zip)
 
 ### Instalação ###
 
@@ -118,10 +118,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 ## Screenshots ##
 
 ### 1. Configurações do plugin. ###
-![1. Configurações do plugin.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-1.png)
+![1. Configurações do plugin.](https://cloud.githubusercontent.com/assets/4248081/12734108/a35c0f66-c925-11e5-8072-87c0481caa29.png)
 
 ### 2. Plugin em funcionamento na página de finalizar pedido. ###
-![2. Plugin em funcionamento na página de finalizar pedido.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-2.png)
+![2. Plugin em funcionamento na página de finalizar pedido.](https://cloud.githubusercontent.com/assets/4248081/12734135/b823be58-c925-11e5-9b23-0ac085825f9c.png)
 
 
 ## Changelog ##
@@ -129,7 +129,7 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 ### 1.2.3 - 2015/01/27 ###
 
 * Removida dependência do plugin WooCommerce Extra Checkout Fields From Brazil.
-* Removida dependência dos campis de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
+* Removida dependência dos campos de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
 * Adicionado link para segunda via do boleto na tela de administração de pedidos e na página "Minha Conta".
 
 ### 1.2.2 - 2014/10/27 ###
