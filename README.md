@@ -129,7 +129,7 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 ### 1.2.3 - 2015/01/27 ###
 
 * Removida dependência do plugin WooCommerce Extra Checkout Fields From Brazil.
-* Removida dependência dos campis de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
+* Removida dependência dos campos de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
 * Adicionado link para segunda via do boleto na tela de administração de pedidos e na página "Minha Conta".
 
 ### 1.2.2 - 2014/10/27 ###
@@ -159,5 +159,5 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 ### 1.2.3 ###
 
 * Removida dependência do plugin WooCommerce Extra Checkout Fields From Brazil.
-* Removida dependência dos campis de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
+* Removida dependência dos campos de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
 * Adicionado link para segunda via do boleto na tela de administração de pedidos e na página "Minha Conta".
