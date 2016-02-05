@@ -246,7 +246,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 				'description' => __( 'Number of installments with interest free.', 'woocommerce-pagarme' ),
 				'desc_tip'    => true,
 				'options'     => array(
-					'0'  => '0',
+					'0'  => _x( 'None', 'no free installments', 'woocommerce-pagarme' ),
 					'1'  => '1',
 					'2'  => '2',
 					'3'  => '3',
@@ -271,7 +271,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 				'type'        => 'checkbox',
 				'label'       => __( 'Enable logging', 'woocommerce-pagarme' ),
 				'default'     => 'no',
-				'description' => sprintf( __( 'Log Pagar.me events, such as API requests. You can check the log in %s', 'woocommerce-pagseguro' ), $this->get_log_view() ),
+				'description' => sprintf( __( 'Log Pagar.me events, such as API requests. You can check the log in %s', 'woocommerce-pagarme' ), $this->get_log_view() ),
 			)
 		);
 	}
