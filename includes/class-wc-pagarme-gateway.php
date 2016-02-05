@@ -246,6 +246,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 				'description' => __( 'Number of installments with interest free.', 'woocommerce-pagarme' ),
 				'desc_tip'    => true,
 				'options'     => array(
+					'0'  => '0',
 					'1'  => '1',
 					'2'  => '2',
 					'3'  => '3',
