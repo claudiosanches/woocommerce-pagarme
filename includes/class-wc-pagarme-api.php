@@ -142,13 +142,6 @@ class WC_Pagarme_API {
 			return $_installments;
 		}
 
-		// Sets the post params.
-		$params = array(
-			'body'      => $data,
-			'sslverify' => false,
-			'timeout'   => 60
-		);
-
 		if ( 'yes' == $this->gateway->debug ) {
 			$this->gateway->log->add( $this->gateway->id, 'Getting the order installments...' );
 		}
