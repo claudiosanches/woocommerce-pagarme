@@ -3,7 +3,7 @@ Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
 Tested up to: 4.4
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -122,6 +122,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
+= 1.2.4 - 2015/02/04 =
+
+* Adiciona opção para cobrar juros de todas as parcelas do cartão de crédito.
+
 = 1.2.3 - 2015/01/27 =
 
 * Removida dependência do plugin WooCommerce Extra Checkout Fields From Brazil.
@@ -152,8 +156,6 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Upgrade Notice ==
 
-= 1.2.3 =
+= 1.2.4 =
 
-* Removida dependência do plugin WooCommerce Extra Checkout Fields From Brazil.
-* Removida dependência dos campos de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
-* Adicionado link para segunda via do boleto na tela de administração de pedidos e na página "Minha Conta".
+* Adiciona opção para cobrar juros de todas as parcelas do cartão de crédito.

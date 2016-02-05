@@ -3,9 +3,9 @@
  * Plugin Name: WooCommerce Pagar.me
  * Plugin URI: http://github.com/claudiosmweb/woocommerce-pagarme
  * Description: Gateway de pagamento Pagar.me para WooCommerce.
- * Author: Pagar.me, claudiosanches
+ * Author: Pagar.me, Claudio Sanches
  * Author URI: https://pagar.me/
- * Version: 1.2.3
+ * Version: 1.2.4
  * License: GPLv2 or later
  * Text Domain: woocommerce-pagarme
  * Domain Path: /languages/
@@ -27,7 +27,7 @@ class WC_Pagarme {
 	 *
 	 * @var string
 	 */
-	const VERSION = '1.2.3';
+	const VERSION = '1.2.4';
 
 	/**
 	 * Instance of this class.
