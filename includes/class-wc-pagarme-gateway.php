@@ -176,6 +176,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 			'methods' => array(
 				'title'   => __( 'Payment Methods', 'woocommerce-pagarme' ),
 				'type'    => 'select',
+				'class'   => 'wc-enhanced-select',
 				'default' => 'all',
 				'options' => array(
 					'all'    => __( 'Credit Card and Banking Ticket', 'woocommerce-pagarme' ),
@@ -191,6 +192,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 			'max_installment' => array(
 				'title'       => __( 'Number of Installment', 'woocommerce-pagarme' ),
 				'type'        => 'select',
+				'class'       => 'wc-enhanced-select',
 				'default'     => '12',
 				'description' => __( 'Maximum number of installments possible with payments by credit card.', 'woocommerce-pagarme' ),
 				'desc_tip'    => true,
@@ -226,6 +228,7 @@ class WC_Pagarme_Gateway extends WC_Payment_Gateway {
 			'free_installments' => array(
 				'title'       => __( 'Free Installments', 'woocommerce-pagarme' ),
 				'type'        => 'select',
+				'class'       => 'wc-enhanced-select',
 				'default'     => '1',
 				'description' => __( 'Number of installments with interest free.', 'woocommerce-pagarme' ),
 				'desc_tip'    => true,
