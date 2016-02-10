@@ -21,7 +21,7 @@ Saiba mais como o Pagar.em funciona:
 
 Compatível com as versões 2.2.x, 2.3.x, 2.4.x e 2.5.x do WooCommerce.
 
-Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/), desta forma é possível enviar documentos do cliente como "CPF" ou "CNPJ", além dos campos "número" e "bairro" do endereço.
+Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/), desta forma é possível enviar documentos do cliente como "CPF" ou "CNPJ", além dos campos "número" e "bairro" do endereço. Caso você queira remover todos os campos adicionais de endereço para vender Digital Goods, é possível utilizar o plugin [WooCommerce Digital Goods Checkout](https://wordpress.org/plugins/wc-digital-goods-checkout/).
 
 = Instalação =
 
@@ -104,7 +104,7 @@ Para produtos baixáveis a configuração padrão do WooCommerce é permitir o a
 
 Não é obrigatório caso você não utilize anti-fraude, no caso para digital goods.
 
-É possível remover os campos de endereço, empresa e telefone, mantendo apenas nome, sobrenome e e-mail utilizando [este plugin](https://gist.github.com/claudiosmweb/590bf8e9e5d9dd0ba104).
+É possível remover os campos de endereço, empresa e telefone, mantendo apenas nome, sobrenome e e-mail utilizando o plugin [WooCommerce Digital Goods Checkout](https://wordpress.org/plugins/wc-digital-goods-checkout/).
 
 = Problemas com a integração? =
 
