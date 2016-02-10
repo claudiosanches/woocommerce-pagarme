@@ -110,7 +110,19 @@ module.exports = function( grunt ) {
 				],
 				expand: true
 			}
-		}
+		},
+
+		// Create README.md for GitHub.
+		wp_readme_to_markdown: {
+			options: {
+				screenshot_url: 'http://ps.w.org/<%= pkg.name %>/assets/{screenshot}.png'
+			},
+			dest: {
+				files: {
+					'README.md': 'readme.txt',
+				},
+			},
+		},
 	});
 
 	// Load NPM tasks to be used here.
@@ -120,10 +132,13 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( 'grunt-contrib-imagemin' );
 	grunt.loadNpmTasks( 'grunt-checktextdomain' );
 	grunt.loadNpmTasks( 'grunt-wp-i18n' );
+	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
 
 	// Register tasks.
 	grunt.registerTask( 'default', [
 		'jshint',
 		'uglify'
 	]);
+
+	grunt.registerTask( 'readme', 'wp_readme_to_markdown' );
 };

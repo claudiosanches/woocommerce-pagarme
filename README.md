@@ -118,10 +118,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 ## Screenshots ##
 
 ### 1. Configurações do plugin. ###
-![1. Configurações do plugin.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-1.png)
+![Configurações do plugin.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-1.png)
 
 ### 2. Plugin em funcionamento na página de finalizar pedido. ###
-![2. Plugin em funcionamento na página de finalizar pedido.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-2.png)
+![Plugin em funcionamento na página de finalizar pedido.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-2.png)
 
 
 ## Changelog ##
