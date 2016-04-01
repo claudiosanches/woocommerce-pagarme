@@ -49,6 +49,7 @@ class WC_Pagarme {
 
 			add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
 			add_filter( 'woocommerce_my_account_my_orders_actions', array( $this, 'my_orders_banking_ticket_link' ), 10, 2 );
+			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
 		} else {
 			add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
 		}
@@ -73,7 +74,8 @@ class WC_Pagarme {
 	 */
 	private function includes() {
 		include_once 'includes/class-wc-pagarme-api.php';
-		include_once 'includes/class-wc-pagarme-gateway.php';
+		include_once 'includes/class-wc-pagarme-credit-card-gateway.php';
+		include_once 'includes/class-wc-pagarme-banking-ticket-gateway.php';
 	}
 
 	/**
@@ -84,6 +86,15 @@ class WC_Pagarme {
 	}
 
 	/**
+	 * Get templates path.
+	 *
+	 * @return string
+	 */
+	public static function get_templates_path() {
+		return plugin_dir_path( __FILE__ ) . 'templates/';
+	}
+
+	/**
 	 * Add the gateway to WooCommerce.
 	 *
 	 * @param  array $methods WooCommerce payment methods.
@@ -91,7 +102,8 @@ class WC_Pagarme {
 	 * @return array
 	 */
 	public function add_gateway( $methods ) {
-		$methods[] = 'WC_Pagarme_Gateway';
+		$methods[] = 'WC_Pagarme_Credit_Card_Gateway';
+		$methods[] = 'WC_Pagarme_Banking_Ticket_Gateway';
 
 		return $methods;
 	}
@@ -117,6 +129,26 @@ class WC_Pagarme {
 		}
 
 		return $actions;
+	}
+
+	/**
+	 * Action links.
+	 *
+	 * @param  array $links
+	 *
+	 * @return array
+	 */
+	public function plugin_action_links( $links ) {
+		$plugin_links = array();
+
+		$credit_card    = 'wc_pagarme_credit_card_gateway';
+		$banking_ticket = 'wc_pagarme_banking_ticket_gateway';
+
+		$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $credit_card ) ) . '">' . __( 'Credit Card Settings', 'woocommerce-pagarme' ) . '</a>';
+
+		$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $banking_ticket ) ) . '">' . __( 'Bank Slip Settings', 'woocommerce-pagarme' ) . '</a>';
+
+		return array_merge( $plugin_links, $links );
 	}
 
 	/**

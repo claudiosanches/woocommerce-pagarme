@@ -1,11 +1,12 @@
 <?php
-
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 /**
  * WC Pagar.me API.
+ *
+ * @package WC_Pagarme/API
  */
 class WC_Pagarme_API {
 
@@ -60,6 +61,15 @@ class WC_Pagarme_API {
 	 */
 	public function get_js_url() {
 		return $this->js_url;
+	}
+
+	/**
+	 * Returns a bool that indicates if currency is amongst the supported ones.
+	 *
+	 * @return bool
+	 */
+	public function using_supported_currency() {
+		return 'BRL' == get_woocommerce_currency();
 	}
 
 	/**
@@ -187,10 +197,10 @@ class WC_Pagarme_API {
 	 */
 	public function generate_transaction_data( $order, $posted ) {
 		// Set the request data.
-		$data  = array(
+		$data = array(
 			'api_key'      => $this->gateway->api_key,
 			'amount'       => $order->order_total * 100,
-			'postback_url' => WC()->api_request_url( 'WC_Pagarme_Gateway' ),
+			'postback_url' => WC()->api_request_url( get_class( $this->gateway ) ),
 			'customer'     => array(
 				'name'  => $order->billing_first_name . ' ' . $order->billing_last_name,
 				'email' => $order->billing_email,
@@ -259,15 +269,15 @@ class WC_Pagarme_API {
 			$data['customer']['born_at'] = $birthdate[1] . '-' . $birthdate[0] . '-' . $birthdate[2];
 		}
 
-		if ( in_array( $this->gateway->methods, array( 'all', 'credit' ) ) && 'credit-card' == $posted[ 'pagarme_payment_method' ] ) {
-			if ( isset( $posted[ 'pagarme_card_hash' ] ) ) {
+		if ( 'pagarme-credit-card' === $this->gateway->id ) {
+			if ( isset( $posted['pagarme_card_hash'] ) ) {
 				$data['payment_method'] = 'credit_card';
-				$data['card_hash']      = $posted[ 'pagarme_card_hash' ];
+				$data['card_hash']      = $posted['pagarme_card_hash'];
 			}
 
 			// Validate the installments.
-			if ( isset( $posted[ 'pagarme_installments' ] ) ) {
-				$_installment = $posted[ 'pagarme_installments' ];
+			if ( isset( $posted['pagarme_installments'] ) ) {
+				$_installment = $posted['pagarme_installments'];
 
 				// Get installments data.
 				$installments = $this->get_installments( $order->order_total );
@@ -281,7 +291,7 @@ class WC_Pagarme_API {
 					}
 				}
 			}
-		} elseif ( in_array( $this->gateway->methods, array( 'all', 'ticket' ) ) && 'banking-ticket' == $posted[ 'pagarme_payment_method' ] ) {
+		} elseif ( 'pagarme-banking-ticket' === $this->gateway->id ) {
 			$data['payment_method'] = 'boleto';
 		}
 
@@ -332,6 +342,104 @@ class WC_Pagarme_API {
 	}
 
 	/**
+	 * Get card brand name.
+	 *
+	 * @param string $brand
+	 * @return string
+	 */
+	protected function get_card_brand_name( $brand ) {
+		$names = array(
+			'visa'       => __( 'Visa', 'woocommerce-pagarme' ),
+			'mastercard' => __( 'MasterCard', 'woocommerce-pagarme' ),
+			'amex'       => __( 'American Express', 'woocommerce-pagarme' ),
+			'diners'     => __( 'Diners', 'woocommerce-pagarme' ),
+			'hipercard'  => __( 'Hipercard', 'woocommerce-pagarme' ),
+			'aura'       => __( 'Aura', 'woocommerce-pagarme' ),
+			'elo'        => __( 'Elo', 'woocommerce-pagarme' ),
+			'jcb'        => __( 'JCB', 'woocommerce-pagarme' ),
+			'discover'   => __( 'Discover', 'woocommerce-pagarme' ),
+		);
+
+		return isset( $names[ $brand ] ) ? $names[ $brand ] : $brand;
+	}
+
+	/**
+	 * Save order meta fields.
+	 * Save fields as meta data to display on order's admin screen.
+	 *
+	 * @param int $order_id
+	 * @param array $data
+	 */
+	protected function save_order_meta_fields( $order_id, $data ) {
+		if ( 'boleto' == $data['payment_method'] ) {
+			if ( ! empty( $data['boleto_url'] ) ) {
+				update_post_meta( $order_id, __( 'Banking Ticket URL', 'woocommerce-pagarme' ), sanitize_text_field( $data['boleto_url'] ) );
+			}
+		} else {
+			if ( ! empty( $data['card_brand'] ) ) {
+				update_post_meta( $order_id, __( 'Credit Card', 'woocommerce-pagarme' ), $this->get_card_brand_name( sanitize_text_field( $data['card_brand'] ) ) );
+			}
+			if ( ! empty( $data['installments'] ) ) {
+				update_post_meta( $order_id, __( 'Installments', 'woocommerce-pagarme' ), sanitize_text_field( $data['installments'] ) );
+			}
+			if ( ! empty( $data['antifraud_score'] ) ) {
+				update_post_meta( $order_id, __( 'Anti Fraud Score', 'woocommerce-pagarme' ), sanitize_text_field( $data['antifraud_score'] ) );
+			}
+		}
+	}
+
+	/**
+	 * Process regular payment.
+	 *
+	 * @param int $order_id Order ID.
+	 *
+	 * @return array Redirect data.
+	 */
+	public function process_regular_payment( $order_id ) {
+		$order       = wc_get_order( $order_id );
+		$data        = $this->generate_transaction_data( $order, $_POST );
+		$transaction = $this->do_transaction( $order, $data );
+
+		if ( isset( $transaction['errors'] ) ) {
+			foreach ( $transaction['errors'] as $error ) {
+				wc_add_notice( $error['message'], 'error' );
+			}
+
+			return array(
+				'result' => 'fail'
+			);
+		} else {
+			// Save transaction data.
+			update_post_meta( $order->id, '_wc_pagarme_transaction_id', intval( $transaction['id'] ) );
+			$payment_data = array_map(
+				'sanitize_text_field',
+				array(
+					'payment_method'  => $transaction['payment_method'],
+					'installments'    => $transaction['installments'],
+					'card_brand'      => $this->get_card_brand_name( $transaction['card_brand'] ),
+					'antifraud_score' => $transaction['antifraud_score'],
+					'boleto_url'      => $transaction['boleto_url'],
+				)
+			);
+			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $payment_data );
+			update_post_meta( $order->id, '_transaction_id', intval( $transaction['id'] ) );
+			$this->save_order_meta_fields( $order->id, $transaction );
+
+			// Change the order status.
+			$this->process_order_status( $order, $transaction['status'] );
+
+			// Empty the cart.
+			WC()->cart->empty_cart();
+
+			// Redirect to thanks page.
+			return array(
+				'result'   => 'success',
+				'redirect' => $this->gateway->get_return_url( $order )
+			);
+		}
+	}
+
+	/**
 	 * Check if Pagar.me response is validity.
 	 *
 	 * @param  array $ipn_response IPN response data.
@@ -348,5 +456,115 @@ class WC_Pagarme_API {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Send email notification.
+	 *
+	 * @param string $subject Email subject.
+	 * @param string $title   Email title.
+	 * @param string $message Email message.
+	 */
+	protected function send_email( $subject, $title, $message ) {
+		$mailer = WC()->mailer();
+		$mailer->send( get_option( 'admin_email' ), $subject, $mailer->wrap_message( $title, $message ) );
+	}
+
+	/**
+	 * IPN handler.
+	 */
+	public function ipn_handler() {
+		@ob_clean();
+
+		$ipn_response = ! empty( $_POST ) ? $_POST : false;
+
+		if ( $ipn_response && $this->check_fingerprint( $ipn_response ) ) {
+			header( 'HTTP/1.1 200 OK' );
+
+			$this->process_successful_ipn( $ipn_response );
+
+			do_action( 'wc_pagarme_valid_ipn_request', $ipn_response );
+
+			exit;
+		} else {
+			wp_die( __( 'Pagar.me Request Failure', 'woocommerce-pagarme' ), '', array( 'response' => 401 ) );
+		}
+	}
+
+	/**
+	 * Process successeful IPN requests.
+	 */
+	public function process_successful_ipn( $posted ) {
+		global $wpdb;
+
+		$posted   = wp_unslash( $posted );
+		$order_id = (int) $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wc_pagarme_transaction_id' AND meta_value = %d", $posted['id'] ) );
+		$order    = wc_get_order( $order_id );
+		$status   = sanitize_text_field( $posted['current_status'] );
+
+		if ( $order->id == $order_id ) {
+			$this->process_order_status( $order, $status );
+		}
+	}
+
+	/**
+	 * Process the order status.
+	 *
+	 * @param  WC_Order $order  Order data.
+	 * @param  string   $status Transaction status.
+	 */
+	public function process_order_status( $order, $status ) {
+		if ( 'yes' == $this->gateway->debug ) {
+			$this->gateway->log->add( $this->gateway->id, 'Payment status for order ' . $order->get_order_number() . ' is now: ' . $status );
+		}
+
+		switch ( $status ) {
+			case 'processing' :
+				$order->update_status( 'on-hold', __( 'Pagar.me: The transaction is being processed.', 'woocommerce-pagarme' ) );
+
+				break;
+			case 'paid' :
+				if ( ! in_array( $order->get_status(), array( 'processing', 'completed' ) ) ) {
+					$order->add_order_note( __( 'Pagar.me: Transaction paid.', 'woocommerce-pagarme' ) );
+				}
+
+				// Changing the order for processing and reduces the stock.
+				$order->payment_complete();
+
+				break;
+			case 'waiting_payment' :
+				$order->update_status( 'on-hold', __( 'Pagar.me: The banking ticket was issued but not paid yet.', 'woocommerce-pagarme' ) );
+
+				break;
+			case 'refused' :
+				$order->update_status( 'failed', __( 'Pagar.me: The transaction was rejected by the card company or by fraud.', 'woocommerce-pagarme' ) );
+
+				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
+
+				$this->send_email(
+					sprintf( __( 'The transaction for order %s was rejected by the card company or by fraud', 'woocommerce-pagarme' ), $order->get_order_number() ),
+					__( 'Transaction failed', 'woocommerce-pagarme' ),
+					sprintf( __( 'Order %s has been marked as failed, because the transaction was rejected by the card company or by fraud, for more details, see %s.', 'woocommerce-pagarme' ), $order->get_order_number(), $transaction_url )
+				);
+
+				break;
+			case 'refunded' :
+				$order->update_status( 'refunded', __( 'Pagar.me: The transaction was refunded/canceled.', 'woocommerce-pagarme' ) );
+
+				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
+
+				$this->send_email(
+					sprintf( __( 'The transaction for order %s refunded', 'woocommerce-pagarme' ), $order->get_order_number() ),
+					__( 'Transaction refunded', 'woocommerce-pagarme' ),
+					sprintf( __( 'Order %s has been marked as refunded by Pagar.me, for more details, see %s.', 'woocommerce-pagarme' ), $order->get_order_number(), $transaction_url )
+				);
+
+				break;
+
+			default :
+				break;
+		}
 	}
 }

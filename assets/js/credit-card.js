@@ -1,67 +1,15 @@
 /* global wc_pagarme_params, PagarMe */
-(function ( $ ) {
+(function( $ ) {
 	'use strict';
 
-	$( function () {
-
-		/**
-		 * Hide and display the credit card form.
-		 *
-		 * @param  {string} method
-		 * @return {void}
-		 */
-		function wcPagarMeFormSwitch( method ) {
-			var creditCardForm = $( '#pagarme-credit-cart-form' );
-
-			if ( 'credit-card' === method ) {
-				creditCardForm.slideDown( 200 );
-			} else {
-				creditCardForm.slideUp( 200 );
-			}
-		}
-
-		/**
-		 * Controls the credit card display.
-		 *
-		 * @return {void}
-		 */
-		function wcPagarMeFormDisplay() {
-			var method = $( '#pagarme-payment-form input[name=pagarme_payment_method]' ).val();
-			wcPagarMeFormSwitch( method );
-		}
-
-		wcPagarMeFormDisplay();
-
-		/**
-		 * Display or hide the credit card for when change the payment method.
-		 */
-		$( 'body' ).on( 'click', 'li.payment_method_pagarme input[name=pagarme_payment_method]', function () {
-			wcPagarMeFormSwitch( $( this ).val() );
-		});
-
-		/**
-		 * Display or hide the credit card for when change the payment gateway.
-		 */
-		$( 'body' ).on( 'updated_checkout', function () {
-			wcPagarMeFormDisplay();
-		});
+	$( function() {
 
 		/**
 		 * Process the credit card data when submit the checkout form.
 		 */
-		$( 'body' ).on( 'click', '#place_order', function () {
-			if ( ! $( '#payment_method_pagarme' ).is( ':checked' ) ) {
+		$( 'body' ).on( 'click', '#place_order', function() {
+			if ( ! $( '#payment_method_pagarme-credit-card' ).is( ':checked' ) ) {
 				return true;
-			}
-
-			if ( 'radio' === $( 'body li.payment_method_pagarme input[name=pagarme_payment_method]' ).attr( 'type' ) ) {
-				if ( 'credit-card' !== $( 'body li.payment_method_pagarme input[name=pagarme_payment_method]:checked' ).val() ) {
-					return true;
-				}
-			} else {
-				if ( 'credit-card' !== $( 'body li.payment_method_pagarme input[name=pagarme_payment_method]' ).val() ) {
-					return true;
-				}
 			}
 
 			PagarMe.encryption_key = wc_pagarme_params.encryption_key;

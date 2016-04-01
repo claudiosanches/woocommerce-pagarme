@@ -1,6 +1,6 @@
 <?php
 /**
- * Missing WooCommerce notice.
+ * Notice: Missing WooCommerce.
  *
  * @package WooCommerce_Pagarme/Admin/Notices
  */

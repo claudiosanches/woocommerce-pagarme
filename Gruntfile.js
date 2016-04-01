@@ -30,7 +30,7 @@ module.exports = function( grunt ) {
 		// Minify .js files.
 		uglify: {
 			options: {
-				preserveComments: 'some'
+				preserveComments: /^!/
 			},
 			dist: {
 				files: [{
@@ -119,10 +119,10 @@ module.exports = function( grunt ) {
 			},
 			dest: {
 				files: {
-					'README.md': 'readme.txt',
-				},
-			},
-		},
+					'README.md': 'readme.txt'
+				}
+			}
+		}
 	});
 
 	// Load NPM tasks to be used here.
