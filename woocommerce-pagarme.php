@@ -45,6 +45,7 @@ class WC_Pagarme {
 
 		// Checks with WooCommerce is installed.
 		if ( class_exists( 'WC_Payment_Gateway' ) ) {
+			$this->upgrade();
 			$this->includes();
 
 			add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
@@ -74,8 +75,8 @@ class WC_Pagarme {
 	private function includes() {
 		include_once 'includes/class-wc-pagarme-api.php';
 		include_once 'includes/class-wc-pagarme-my-account.php';
-		include_once 'includes/class-wc-pagarme-credit-card-gateway.php';
 		include_once 'includes/class-wc-pagarme-banking-ticket-gateway.php';
+		include_once 'includes/class-wc-pagarme-credit-card-gateway.php';
 	}
 
 	/**
@@ -102,8 +103,8 @@ class WC_Pagarme {
 	 * @return array
 	 */
 	public function add_gateway( $methods ) {
-		$methods[] = 'WC_Pagarme_Credit_Card_Gateway';
 		$methods[] = 'WC_Pagarme_Banking_Ticket_Gateway';
+		$methods[] = 'WC_Pagarme_Credit_Card_Gateway';
 
 		return $methods;
 	}
@@ -118,12 +119,12 @@ class WC_Pagarme {
 	public function plugin_action_links( $links ) {
 		$plugin_links = array();
 
-		$credit_card    = 'wc_pagarme_credit_card_gateway';
 		$banking_ticket = 'wc_pagarme_banking_ticket_gateway';
-
-		$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $credit_card ) ) . '">' . __( 'Credit Card Settings', 'woocommerce-pagarme' ) . '</a>';
+		$credit_card    = 'wc_pagarme_credit_card_gateway';
 
 		$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $banking_ticket ) ) . '">' . __( 'Bank Slip Settings', 'woocommerce-pagarme' ) . '</a>';
+
+		$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $credit_card ) ) . '">' . __( 'Credit Card Settings', 'woocommerce-pagarme' ) . '</a>';
 
 		return array_merge( $plugin_links, $links );
 	}
@@ -135,6 +136,47 @@ class WC_Pagarme {
 	 */
 	public function woocommerce_missing_notice() {
 		include 'includes/admin/views/html-notice-missing-woocommerce.php';
+	}
+
+	/**
+	 * Upgrade.
+	 *
+	 * @since 2.0.0
+	 */
+	private function upgrade() {
+		if ( is_admin() ) {
+			if ( $old_options = get_option( 'woocommerce_pagarme_settings' ) ) {
+				// Banking ticket options.
+				$banking_ticket = array(
+					'enabled'        => $old_options['enabled'],
+					'title'          => 'Boleto bancário',
+					'description'    => '',
+					'api_key'        => $old_options['api_key'],
+					'encryption_key' => $old_options['encryption_key'],
+					'debug'          => $old_options['debug'],
+				);
+
+				// Credit card options.
+				$credit_card = array(
+					'enabled'              => $old_options['enabled'],
+					'title'                => 'Cartão de crédito',
+					'description'          => '',
+					'api_key'              => $old_options['api_key'],
+					'encryption_key'       => $old_options['encryption_key'],
+					'checkout'             => 'no',
+					'max_installment'      => $old_options['max_installment'],
+					'smallest_installment' => $old_options['smallest_installment'],
+					'interest_rate'        => $old_options['interest_rate'],
+					'free_installments'    => $old_options['free_installments'],
+					'debug'                => $old_options['debug'],
+				);
+
+				update_option( 'woocommerce_pagarme-banking-ticket_settings', $banking_ticket );
+				update_option( 'woocommerce_pagarme-credit-card_settings', $credit_card );
+
+				delete_option( 'woocommerce_pagarme_settings' );
+			}
+		}
 	}
 }
 
