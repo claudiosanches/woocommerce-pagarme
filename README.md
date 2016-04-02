@@ -3,7 +3,7 @@
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
 **Tested up to:** 4.4  
-**Stable tag:** 1.2.4  
+**Stable tag:** 2.0.0  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -25,17 +25,17 @@ Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Braz
 
 ### Instalação ###
 
-Confira o nosso guia de instalação e configuração do Pagar.me na aba [Installation](http://wordpress.org/extend/plugins/woocommerce-pagarme/installation/).
+Confira o nosso guia de instalação e configuração do Pagar.me na aba [Installation](http://wordpress.org/plugins/woocommerce-pagarme/installation/).
 
 ### Dúvidas? ###
 
 Você pode esclarecer suas dúvidas usando:
 
-* A nossa sessão de [FAQ](http://wordpress.org/extend/plugins/woocommerce-pagarme/faq/).
+* A nossa sessão de [FAQ](http://wordpress.org/plugins/woocommerce-pagarme/faq/).
 * Criando um tópico no [fórum de ajuda do WordPress](http://wordpress.org/support/plugin/woocommerce-pagarme).
 * Criando um tópico no [fórum do Github](https://github.com/claudiosmweb/woocommerce-pagarme/issues).
 
-### Coloborar ###
+### Colaborar ###
 
 Você pode contribuir com código-fonte em nossa página no [GitHub](https://github.com/claudiosmweb/woocommerce-pagarme).
 
@@ -48,22 +48,13 @@ Você pode contribuir com código-fonte em nossa página no [GitHub](https://git
 
 ### Requerimentos: ###
 
-É necessário possuir uma conta no [Pagar.me](https://pagar.me/) e ter instalado o [WooCommerce](http://wordpress.org/extend/plugins/woocommerce/).
+É necessário possuir uma conta no [Pagar.me](https://pagar.me/) e ter instalado o [WooCommerce](http://wordpress.org/plugins/woocommerce/).
 
 ### Configurações do Plugin: ###
 
-Com o plugin instalado acesse o admin do WordPress e entre em "WooCommerce" > "Configurações" > "Finalizar compra" > "Pagar.me".
+Com o plugin instalado acesse o admin do WordPress e entre em "WooCommerce" > "Configurações" > "Finalizar compra" e configure as opção "Pagar.me - Boleto bancário" e "Pagar.me - Cartão de crédito".
 
-Habilite o Pagar.me, preencha as opções de **Chave de API** e **Chave de Criptografia** que você pode encontrar dentro da sua conta no Pagar.me em **
-API Keys**.
-
-### Configurações no WooCommerce ###
-
-No WooCommerce 2.2 ou superior existe uma opção para cancelar a compra e liberar o estoque depois de alguns minutos.
-
-Esta opção não funciona muito bem com o Pagar.me, pois pagamentos por boleto bancário pode demorar até 48 horas para serem validados.
-
-Para corrigir isso é necessário ir em "WooCommerce" > "Configurações" > "Produtos" > "Inventário" e limpar (deixe em branco) a opção **Manter Estoque (minutos)**.
+Habilite o a opção que você deseja, preencha as opções de **Chave de API** e **Chave de Criptografia** que você pode encontrar dentro da sua conta no Pagar.me em **API Keys**.
 
 Pronto, sua loja já pode receber pagamentos pelo Pagar.me.
 
@@ -84,13 +75,13 @@ Este plugin esta licenciado como GPL.
 
 Confira os preços em "[Pagar.me - Preços](https://pagar.me/precos/)".
 
+### Funciona com o Checkout Pagar.me? ###
+
+Sim, funciona desde a versão 2.0.0 para pagamentos com cartão de crédito.
+
 ### É possível utilizar a opção de pagamento recorrente? ###
 
 No momento ainda não é possível, entretanto iremos fazer esta integração em breve.
-
-### Funciona com o Checkout Pagar.me? ###
-
-Ainda não, mas será no futuro.
 
 ### O pedido foi pago e ficou com o status de "processando" e não como "concluído", isto esta certo ? ###
 
@@ -102,7 +93,7 @@ Para produtos baixáveis a configuração padrão do WooCommerce é permitir o a
 
 ### É obrigatório enviar todos os campos para processar o pagamento? ###
 
-Não é obrigatório caso você não utilize anti-fraude, no caso para digital goods.
+Não é obrigatório caso você não utilize antifraude, no caso para digital goods.
 
 É possível remover os campos de endereço, empresa e telefone, mantendo apenas nome, sobrenome e e-mail utilizando o plugin [WooCommerce Digital Goods Checkout](https://wordpress.org/plugins/wc-digital-goods-checkout/).
 
@@ -125,6 +116,13 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 
 ## Changelog ##
+
+### 2.0.0 - 2015/04/02 ###
+
+* Adicionado novo método para pagamento com cartões de crédito.
+* Adicionado novo método para pagamentos com boleto bancário.
+* Adicionado suporte ao Checkout Pagar.me para pagamentos com cartão de crédito.
+* Corrigida a exibição do boleto na página "Minha conta", fazendo os boletos aparecer apenas quando o pedido esta com os status de pendente ou aguardando.
 
 ### 1.2.4 - 2015/02/04 ###
 
@@ -160,6 +158,9 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 1.2.4 ###
+### 2.0.0 - 2015/04/02 ###
 
-* Adiciona opção para cobrar juros de todas as parcelas do cartão de crédito.
+* Adicionado novo método para pagamento com cartões de crédito.
+* Adicionado novo método para pagamentos com boleto bancário.
+* Adicionado suporte ao Checkout Pagar.me para pagamentos com cartão de crédito.
+* Corrigida a exibição do boleto na página "Minha conta", fazendo os boletos aparecer apenas quando o pedido esta com os status de pendente ou aguardando.
