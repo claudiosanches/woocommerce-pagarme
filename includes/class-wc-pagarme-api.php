@@ -37,9 +37,16 @@ class WC_Pagarme_API {
 	protected $js_url = 'https://assets.pagar.me/js/pagarme.min.js';
 
 	/**
+	 * Checkout JS Library URL.
+	 *
+	 * @var string
+	 */
+	protected $checkout_js_url = 'https://assets.pagar.me/checkout/checkout.js';
+
+	/**
 	 * Constructor.
 	 *
-	 * @param WC_PagSeguro_Gateway $gateway
+	 * @param WC_Payment_Gateway $gateway
 	 */
 	public function __construct( $gateway = null ) {
 		$this->gateway = $gateway;
@@ -61,6 +68,15 @@ class WC_Pagarme_API {
 	 */
 	public function get_js_url() {
 		return $this->js_url;
+	}
+
+	/**
+	 * Get Checkout JS Library URL.
+	 *
+	 * @return string
+	 */
+	public function get_checkout_js_url() {
+		return $this->checkout_js_url;
 	}
 
 	/**
@@ -131,7 +147,7 @@ class WC_Pagarme_API {
 	/**
 	 * Get the installments.
 	 *
-	 * @param  float $amount
+	 * @param float $amount
 	 *
 	 * @return array
 	 */
@@ -188,6 +204,29 @@ class WC_Pagarme_API {
 	}
 
 	/**
+	 * Get max installment.
+	 *
+	 * @param float $amount
+	 *
+	 * @return int
+	 */
+	public function get_max_installment( $amount ) {
+		$installments         = $this->get_installments( $amount );
+		$smallest_installment = $this->get_smallest_installment();
+		$max                  = 1;
+
+		foreach ( $installments as $number => $installment ) {
+			if ( $smallest_installment > $installment['installment_amount'] ) {
+				break;
+			}
+
+			$max = $number;
+		}
+
+		return $max;
+	}
+
+	/**
 	 * Generate the transaction data.
 	 *
 	 * @param  WC_Order $order  Order data.
@@ -199,10 +238,10 @@ class WC_Pagarme_API {
 		// Set the request data.
 		$data = array(
 			'api_key'      => $this->gateway->api_key,
-			'amount'       => $order->order_total * 100,
+			'amount'       => $order->get_total() * 100,
 			'postback_url' => WC()->api_request_url( get_class( $this->gateway ) ),
 			'customer'     => array(
-				'name'  => $order->billing_first_name . ' ' . $order->billing_last_name,
+				'name'  => trim( $order->billing_first_name . ' ' . $order->billing_last_name ),
 				'email' => $order->billing_email,
 			),
 		);
@@ -280,7 +319,7 @@ class WC_Pagarme_API {
 				$_installment = $posted['pagarme_installments'];
 
 				// Get installments data.
-				$installments = $this->get_installments( $order->order_total );
+				$installments = $this->get_installments( $order->get_total() );
 				if ( isset( $installments[ $_installment ] ) ) {
 					$installment          = $installments[ $_installment ];
 					$smallest_installment = $this->get_smallest_installment();
@@ -296,9 +335,68 @@ class WC_Pagarme_API {
 		}
 
 		// Add filter for Third Party plugins.
-		$data = apply_filters( 'wc_pagarme_transaction_data', $data );
+		return apply_filters( 'wc_pagarme_transaction_data', $data );
+	}
 
-		return $data;
+	/**
+	 * Get customer data from checkout pay page.
+	 *
+	 * @return array
+	 */
+	public function get_customer_data_from_checkout_pay_page() {
+		global $wp;
+
+		$order    = wc_get_order( (int) $wp->query_vars['order-pay'] );
+		$data     = $this->generate_transaction_data( $order, array() );
+		$customer = array();
+
+		if ( empty( $data['customer'] ) ) {
+			return $customer;
+		}
+
+		$_customer = $data['customer'];
+		$customer['customerName']  = $_customer['name'];
+		$customer['customerEmail'] = $_customer['email'];
+
+		if ( isset( $_customer['document_number'] ) ) {
+			$customer['customerDocumentNumber'] = $_customer['document_number'];
+		}
+
+		if ( isset( $_customer['address'] ) ) {
+			$customer['customerAddressStreet']        = $_customer['address']['street'];
+			$customer['customerAddressComplementary'] = $_customer['address']['complementary'];
+			$customer['customerAddressZipcode']       = $_customer['address']['zipcode'];
+
+			if ( isset( $_customer['address']['street_number'] ) ) {
+				$customer['customerAddressStreetNumber'] = $_customer['address']['street_number'];
+			}
+			if ( isset( $_customer['address']['neighborhood'] ) ) {
+				$customer['customerAddressNeighborhood'] = $_customer['address']['neighborhood'];
+			}
+		}
+
+		if ( isset( $_customer['phone'] ) ) {
+			$customer['customerPhoneDdd']    = $_customer['phone']['ddd'];
+			$customer['customerPhoneNumber'] = $_customer['phone']['number'];
+		}
+
+		return $customer;
+	}
+
+	/**
+	 * Generate checkout data.
+	 *
+	 * @param  WC_Order $order Order data.
+	 *
+	 * @return array           Checkout data.
+	 */
+	public function generate_checkout_data( $order ) {
+		$data = array(
+			'api_key' => $this->gateway->api_key,
+			'amount'  => $order->get_total() * 100,
+		);
+
+		return apply_filters( 'wc_pagarme_checkout_data', $data );
 	}
 
 	/**
@@ -306,15 +404,21 @@ class WC_Pagarme_API {
 	 *
 	 * @param  WC_Order $order Order data.
 	 * @param  array    $data  Transaction data.
+	 * @param  string   $token Checkout token.
 	 *
 	 * @return array           Response data.
 	 */
-	public function do_transaction( $order, $data ) {
+	public function do_transaction( $order, $data, $token = '' ) {
 		if ( 'yes' == $this->gateway->debug ) {
 			$this->gateway->log->add( $this->gateway->id, 'Doing a transaction for order ' . $order->get_order_number() . '...' );
 		}
 
-		$response = $this->do_request( 'transactions', 'POST', http_build_query( $data ) );
+		$endpoint = 'transactions';
+		if ( ! empty( $token ) ) {
+			$endpoint .= '/' . $token . '/capture';
+		}
+
+		$response = $this->do_request( $endpoint, 'POST', http_build_query( $data ) );
 
 		if ( is_wp_error( $response ) ) {
 			if ( 'yes' == $this->gateway->debug ) {
@@ -352,11 +456,11 @@ class WC_Pagarme_API {
 			'visa'       => __( 'Visa', 'woocommerce-pagarme' ),
 			'mastercard' => __( 'MasterCard', 'woocommerce-pagarme' ),
 			'amex'       => __( 'American Express', 'woocommerce-pagarme' ),
-			'diners'     => __( 'Diners', 'woocommerce-pagarme' ),
-			'hipercard'  => __( 'Hipercard', 'woocommerce-pagarme' ),
 			'aura'       => __( 'Aura', 'woocommerce-pagarme' ),
-			'elo'        => __( 'Elo', 'woocommerce-pagarme' ),
 			'jcb'        => __( 'JCB', 'woocommerce-pagarme' ),
+			'diners'     => __( 'Diners', 'woocommerce-pagarme' ),
+			'elo'        => __( 'Elo', 'woocommerce-pagarme' ),
+			'hipercard'  => __( 'Hipercard', 'woocommerce-pagarme' ),
 			'discover'   => __( 'Discover', 'woocommerce-pagarme' ),
 		);
 
@@ -396,9 +500,15 @@ class WC_Pagarme_API {
 	 * @return array Redirect data.
 	 */
 	public function process_regular_payment( $order_id ) {
-		$order       = wc_get_order( $order_id );
-		$data        = $this->generate_transaction_data( $order, $_POST );
-		$transaction = $this->do_transaction( $order, $data );
+		$order = wc_get_order( $order_id );
+		if ( 'yes' === $this->gateway->checkout ) {
+			$token       = isset( $_POST['pagarme_checkout_token'] ) ? sanitize_text_field( $_POST['pagarme_checkout_token'] ) : 'null';
+			$data        = $this->generate_checkout_data( $order );
+			$transaction = $this->do_transaction( $order, $data, $token );
+		} else {
+			$data        = $this->generate_transaction_data( $order, $_POST );
+			$transaction = $this->do_transaction( $order, $data );
+		}
 
 		if ( isset( $transaction['errors'] ) ) {
 			foreach ( $transaction['errors'] as $error ) {
@@ -483,6 +593,7 @@ class WC_Pagarme_API {
 
 			$this->process_successful_ipn( $ipn_response );
 
+			// Deprecated action since 2.0.0.
 			do_action( 'wc_pagarme_valid_ipn_request', $ipn_response );
 
 			exit;
@@ -510,8 +621,8 @@ class WC_Pagarme_API {
 	/**
 	 * Process the order status.
 	 *
-	 * @param  WC_Order $order  Order data.
-	 * @param  string   $status Transaction status.
+	 * @param WC_Order $order  Order data.
+	 * @param string   $status Transaction status.
 	 */
 	public function process_order_status( $order, $status ) {
 		if ( 'yes' == $this->gateway->debug ) {
@@ -519,6 +630,10 @@ class WC_Pagarme_API {
 		}
 
 		switch ( $status ) {
+			case 'authorized' :
+				$order->update_status( 'on-hold', __( 'Pagar.me: The transaction was authorized.', 'woocommerce-pagarme' ) );
+
+				break;
 			case 'processing' :
 				$order->update_status( 'on-hold', __( 'Pagar.me: The transaction is being processed.', 'woocommerce-pagarme' ) );
 

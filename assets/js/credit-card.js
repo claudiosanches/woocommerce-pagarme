@@ -1,4 +1,4 @@
-/* global wc_pagarme_params, PagarMe */
+/* global wcPagarmeParams, PagarMe */
 (function( $ ) {
 	'use strict';
 
@@ -12,7 +12,7 @@
 				return true;
 			}
 
-			PagarMe.encryption_key = wc_pagarme_params.encryption_key;
+			PagarMe.encryption_key = wcPagarmeParams.encryptionKey;
 
 			var form           = $( 'form.checkout, form#order_review' ),
 				creditCard     = new PagarMe.creditCard(),
@@ -35,6 +35,7 @@
 
 			// Display the errors in credit card form.
 			if ( ! $.isEmptyObject( errors ) ) {
+				form.removeClass( 'processing' );
 				$( '.woocommerce-error', creditCardForm ).remove();
 
 				errorHtml += '<ul>';

@@ -33,6 +33,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		$this->description          = $this->get_option( 'description' );
 		$this->api_key              = $this->get_option( 'api_key' );
 		$this->encryption_key       = $this->get_option( 'encryption_key' );
+		$this->checkout             = $this->get_option( 'checkout' );
 		$this->max_installment      = $this->get_option( 'max_installment' );
 		$this->smallest_installment = $this->get_option( 'smallest_installment' );
 		$this->interest_rate        = $this->get_option( 'interest_rate', '0' );
@@ -96,6 +97,11 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'default'     => __( 'Pay with Credit Card', 'woocommerce-pagarme' ),
 			),
+			'integration' => array(
+				'title'       => __( 'Integration Settings', 'woocommerce-pagarme' ),
+				'type'        => 'title',
+				'description' => ''
+			),
 			'api_key' => array(
 				'title'             => __( 'Pagar.me API Key', 'woocommerce-pagarme' ),
 				'type'              => 'text',
@@ -113,6 +119,14 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 				'custom_attributes' => array(
 					'required' => 'required',
 				),
+			),
+			'checkout' => array(
+				'title'       => __( 'Checkout Pagar.me', 'woocommerce-pagarme' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Enable checkout Pagar.me', 'woocommerce-pagarme' ),
+				'default'     => 'no',
+				'desc_tip'    => true,
+				'description' => __( "When enabled opens a Pagar.me modal window to receive the customer's credit card information.", 'woocommerce-pagarme' ),
 			),
 			'installments' => array(
 				'title'       => __( 'Installments', 'woocommerce-pagarme' ),
@@ -200,17 +214,42 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		if ( is_checkout() ) {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-			wp_enqueue_script( 'wc-credit-card-form' );
-			wp_enqueue_script( 'pagarme-library', $this->api->get_js_url(), array( 'jquery' ), null );
-			wp_enqueue_script( 'pagarme-credit-card', plugins_url( 'assets/js/credit-card' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery', 'pagarme-library' ), WC_Pagarme::VERSION, true );
+			if ( 'yes' === $this->checkout ) {
+				$customer = array();
 
-			wp_localize_script(
-				'pagarme-credit-card',
-				'wc_pagarme_params',
-				array(
-					'encryption_key' => $this->encryption_key
-				)
-			);
+				wp_enqueue_script( 'pagarme-checkout-library', $this->api->get_checkout_js_url(), array( 'jquery' ), null );
+				wp_enqueue_script( 'pagarme-checkout', plugins_url( 'assets/js/checkout' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery', 'jquery-blockui', 'pagarme-checkout-library' ), WC_Pagarme::VERSION, true );
+
+				if ( is_checkout_pay_page() ) {
+					$customer = $this->api->get_customer_data_from_checkout_pay_page();
+				}
+
+				wp_localize_script(
+					'pagarme-checkout',
+					'wcPagarmeParams',
+					array(
+						'encryptionKey'    => $this->encryption_key,
+						'interestRate'     => $this->interest_rate,
+						'freeInstallments' => $this->free_installments,
+						'postbackUrl'      => WC()->api_request_url( get_class( $this ) ),
+						'customerFields'   => $customer,
+						'checkoutPayPage'  => ! empty( $customer ),
+						'uiColor'          => apply_filters( 'wc_pagarme_checkout_ui_color', '#1a6ee1' ),
+					)
+				);
+			} else {
+				wp_enqueue_script( 'wc-credit-card-form' );
+				wp_enqueue_script( 'pagarme-library', $this->api->get_js_url(), array( 'jquery' ), null );
+				wp_enqueue_script( 'pagarme-credit-card', plugins_url( 'assets/js/credit-card' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery', 'jquery-blockui', 'pagarme-library' ), WC_Pagarme::VERSION, true );
+
+				wp_localize_script(
+					'pagarme-credit-card',
+					'wcPagarmeParams',
+					array(
+						'encryptionKey' => $this->encryption_key,
+					)
+				);
+			}
 		}
 	}
 
@@ -224,20 +263,28 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 			echo wpautop( wptexturize( $description ) );
 		}
 
-		$cart_total   = $this->get_order_total();
-		$installments = $this->api->get_installments( $cart_total );
+		$cart_total = $this->get_order_total();
 
-		wc_get_template(
-			'credit-card/payment-form.php',
-			array(
-				'cart_total'           => $cart_total,
-				'max_installment'      => $this->max_installment,
-				'smallest_installment' => $this->api->get_smallest_installment(),
-				'installments'         => $installments,
-			),
-			'woocommerce/pagarme/',
-			WC_Pagarme::get_templates_path()
-		);
+		if ( 'no' === $this->checkout ) {
+			$installments = $this->api->get_installments( $cart_total );
+
+			wc_get_template(
+				'credit-card/payment-form.php',
+				array(
+					'cart_total'           => $cart_total,
+					'max_installment'      => $this->max_installment,
+					'smallest_installment' => $this->api->get_smallest_installment(),
+					'installments'         => $installments,
+				),
+				'woocommerce/pagarme/',
+				WC_Pagarme::get_templates_path()
+			);
+		} else {
+			echo '<div id="pagarme-checkout-params" ';
+			echo 'data-total="' . esc_attr( $cart_total * 100 ) . '" ';
+			echo 'data-max_installment="' . esc_attr( $this->api->get_max_installment( $cart_total ) ) . '"';
+			echo '></div>';
+		}
 	}
 
 	/**
@@ -254,7 +301,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Thank You page message.
 	 *
-	 * @param  int    $order_id Order ID.
+	 * @param int $order_id Order ID.
 	 *
 	 * @return string
 	 */

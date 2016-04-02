@@ -91,6 +91,11 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'default'     => __( 'Pay with Banking Ticket', 'woocommerce-pagarme' ),
 			),
+			'integration' => array(
+				'title'       => __( 'Integration Settings', 'woocommerce-pagarme' ),
+				'type'        => 'title',
+				'description' => ''
+			),
 			'api_key' => array(
 				'title'             => __( 'Pagar.me API Key', 'woocommerce-pagarme' ),
 				'type'              => 'text',
