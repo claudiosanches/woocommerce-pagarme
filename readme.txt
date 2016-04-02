@@ -108,8 +108,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Screenshots ==
 
-1. Configurações do plugin.
-2. Plugin em funcionamento na página de finalizar pedido.
+1. Exemplo de checkout com cartão de crédito e boleto bancário do Pagar.me no tema Storefront.
+2. Exemplo do Checkout Pagar.me para cartão de crédito.
+3. Configurações para boleto bancário.
+4. Configurações para cartão de crédito.
 
 == Changelog ==
 

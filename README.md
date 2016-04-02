@@ -108,11 +108,17 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Screenshots ##
 
-### 1. Configurações do plugin. ###
-![Configurações do plugin.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-1.png)
+### 1. Exemplo de checkout com cartão de crédito e boleto bancário do Pagar.me no tema Storefront. ###
+![Exemplo de checkout com cartão de crédito e boleto bancário do Pagar.me no tema Storefront.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-1.png)
 
-### 2. Plugin em funcionamento na página de finalizar pedido. ###
-![Plugin em funcionamento na página de finalizar pedido.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-2.png)
+### 2. Exemplo do Checkout Pagar.me para cartão de crédito. ###
+![Exemplo do Checkout Pagar.me para cartão de crédito.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-2.png)
+
+### 3. Configurações para boleto bancário. ###
+![Configurações para boleto bancário.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-3.png)
+
+### 4. Configurações para cartão de crédito. ###
+![Configurações para cartão de crédito.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-4.png)
 
 
 ## Changelog ##
