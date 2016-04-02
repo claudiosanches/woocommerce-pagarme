@@ -48,7 +48,6 @@ class WC_Pagarme {
 			$this->includes();
 
 			add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
-			add_filter( 'woocommerce_my_account_my_orders_actions', array( $this, 'my_orders_banking_ticket_link' ), 10, 2 );
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
 		} else {
 			add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
@@ -74,6 +73,7 @@ class WC_Pagarme {
 	 */
 	private function includes() {
 		include_once 'includes/class-wc-pagarme-api.php';
+		include_once 'includes/class-wc-pagarme-my-account.php';
 		include_once 'includes/class-wc-pagarme-credit-card-gateway.php';
 		include_once 'includes/class-wc-pagarme-banking-ticket-gateway.php';
 	}
@@ -106,29 +106,6 @@ class WC_Pagarme {
 		$methods[] = 'WC_Pagarme_Banking_Ticket_Gateway';
 
 		return $methods;
-	}
-
-	/**
-	 * Add banking ticket link/button in My Orders section on My Accout page.
-	 *
-	 * @param array    $actions Actions.
-	 * @param WC_Order $order   Order data.
-	 *
-	 * @return array
-	 */
-	public function my_orders_banking_ticket_link( $actions, $order ) {
-		if ( 'pagarme' === $order->payment_method ) {
-			$data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
-
-			if ( ! empty( $data['boleto_url'] ) ) {
-				$actions[] = array(
-					'url'  => $data['boleto_url'],
-					'name' => __( 'Print Banking Ticket', 'woocommerce-pagarme' ),
-				);
-			}
-		}
-
-		return $actions;
 	}
 
 	/**

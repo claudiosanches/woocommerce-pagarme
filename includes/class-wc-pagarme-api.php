@@ -501,7 +501,7 @@ class WC_Pagarme_API {
 	 */
 	public function process_regular_payment( $order_id ) {
 		$order = wc_get_order( $order_id );
-		if ( 'yes' === $this->gateway->checkout ) {
+		if ( isset( $this->gateway->checkout ) && 'yes' === $this->gateway->checkout ) {
 			$token       = isset( $_POST['pagarme_checkout_token'] ) ? sanitize_text_field( $_POST['pagarme_checkout_token'] ) : 'null';
 			$data        = $this->generate_checkout_data( $order );
 			$transaction = $this->do_transaction( $order, $data, $token );
