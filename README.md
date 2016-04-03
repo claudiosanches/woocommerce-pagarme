@@ -123,18 +123,18 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Changelog ##
 
-### 2.0.0 - 2015/04/02 ###
+### 2.0.0 - 2016/04/02 ###
 
 * Adicionado novo método para pagamento com cartões de crédito.
 * Adicionado novo método para pagamentos com boleto bancário.
 * Adicionado suporte ao Checkout Pagar.me para pagamentos com cartão de crédito.
 * Corrigida a exibição do boleto na página "Minha conta", fazendo os boletos aparecer apenas quando o pedido esta com os status de pendente ou aguardando.
 
-### 1.2.4 - 2015/02/04 ###
+### 1.2.4 - 2016/02/04 ###
 
 * Adiciona opção para cobrar juros de todas as parcelas do cartão de crédito.
 
-### 1.2.3 - 2015/01/27 ###
+### 1.2.3 - 2016/01/27 ###
 
 * Removida dependência do plugin WooCommerce Extra Checkout Fields From Brazil.
 * Removida dependência dos campos de endereço, telefone e empresa (obrigatório apenas nome, sobrenome e e-mail).
@@ -164,7 +164,7 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 2.0.0 - 2015/04/02 ###
+### 2.0.0 - 2016/04/02 ###
 
 * Adicionado novo método para pagamento com cartões de crédito.
 * Adicionado novo método para pagamentos com boleto bancário.
