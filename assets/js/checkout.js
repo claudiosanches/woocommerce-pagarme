@@ -4,6 +4,81 @@
 
 	$( function() {
 
+		var formSubmit = false;
+
+		$( 'form.checkout' ).on( 'click', '#place_order', function() {
+			return openCheckout();
+		} );
+
+		$( 'form.checkout' ).on( 'checkout_place_order_pagarme-credit-card', {
+			preservePagarmeCheckoutSubmitValue: true
+		}, isCheckoutInvalid );
+
+		$( 'form#order_review' ).submit( function() {
+			return openCheckout();
+		} );
+
+		/**
+		 * Check if checkout is valid.
+		 *
+		 * @param {Object} evt
+		 *
+		 * @return {Bool}
+		 */
+		function isCheckoutInvalid( evt ) {
+			var requiredInputs = null;
+
+			// If this submit is a result of the request callback firing,
+			// let submit proceed by returning true immediately.
+			if ( formSubmit ) {
+				if ( 'undefined' !== typeof evt && 'undefined' !== typeof evt.data ) {
+					if ( 'undefined' !== typeof evt.data.preservePagarmeCheckoutSubmitValue && ! evt.data.preservePagarmeCheckoutSubmitValue ) {
+						formSubmit = false;
+					}
+				}
+				return true;
+			}
+
+			if ( ! $( '#payment_method_pagarme-credit-card' ).is( ':checked' ) ) {
+				return true;
+			}
+
+			if ( 0 < $( 'input[name=pagarme_checkout_token]' ).length ) {
+				return true;
+			}
+
+			if ( 1 === $( 'input#terms' ).size() && 0 === $( 'input#terms:checked' ).size() ) {
+				return true;
+			}
+
+			if ( $( '#createaccount' ).is( ':checked' ) && $( '#account_password' ).length && '' === $( '#account_password' ).val() ) {
+				return true;
+			}
+
+			// Check to see if we need to validate shipping address.
+			if ( $( '#ship-to-different-address-checkbox' ).is( ':checked' ) ) {
+				requiredInputs = $( '.woocommerce-billing-fields .validate-required, .woocommerce-shipping-fields .validate-required' );
+			} else {
+				requiredInputs = $( '.woocommerce-billing-fields .validate-required' );
+			}
+
+			if ( requiredInputs.size() ) {
+				var requiredError = false;
+
+				requiredInputs.each( function() {
+					if ( '' === $( this ).find( 'input.input-text, select' ).not( $( '#account_password, #account_username' ) ).val() ) {
+						requiredError = true;
+					}
+				});
+
+				if ( requiredError ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		/**
 		 * Check if object exists.
 		 *
@@ -78,10 +153,11 @@
 		}
 
 		/**
-		 * Process the credit card data when submit the checkout form.
+		 * Open Checkout modal.
 		 */
-		$( 'body' ).on( 'click', '#place_order', function() {
-			if ( ! $( '#payment_method_pagarme-credit-card' ).is( ':checked' ) ) {
+		function openCheckout() {
+			// Check if checkout is invalid and allow to be submitted and validated.
+			if ( isCheckoutInvalid() ) {
 				return true;
 			}
 
@@ -93,6 +169,8 @@
 			checkout = new PagarMeCheckout.Checkout({
 				encryption_key: wcPagarmeParams.encryptionKey,
 				success: function( data ) {
+					formSubmit = true;
+
 					// Remove any old token input.
 					$( 'input[name=pagarme_checkout_token]', form ).remove();
 
@@ -127,7 +205,7 @@
 			checkout.open( params );
 
 			return false;
-		});
+		}
 	});
 
 }( jQuery ));
