@@ -631,7 +631,9 @@ class WC_Pagarme_API {
 
 		switch ( $status ) {
 			case 'authorized' :
-				$order->update_status( 'on-hold', __( 'Pagar.me: The transaction was authorized.', 'woocommerce-pagarme' ) );
+				if ( ! in_array( $order->get_status(), array( 'processing', 'completed' ) ) ) {
+					$order->update_status( 'on-hold', __( 'Pagar.me: The transaction was authorized.', 'woocommerce-pagarme' ) );
+				}
 
 				break;
 			case 'processing' :
