@@ -3,7 +3,7 @@
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
 **Tested up to:** 4.4  
-**Stable tag:** 2.0.0  
+**Stable tag:** 2.0.1  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -123,6 +123,11 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Changelog ##
 
+### 2.0.1 - 2016/04/04 ###
+
+* Permitida a validação dos campos da finalização antes de abrir o Checkout Pagar.me.
+* Corrigida a mudança de status do Checkout Pagar.me.
+
 ### 2.0.0 - 2016/04/02 ###
 
 * Adicionado novo método para pagamento com cartões de crédito.
@@ -164,9 +169,11 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 2.0.0 - 2016/04/02 ###
+### 2.0.1 - 2016/04/02 ###
 
 * Adicionado novo método para pagamento com cartões de crédito.
 * Adicionado novo método para pagamentos com boleto bancário.
 * Adicionado suporte ao Checkout Pagar.me para pagamentos com cartão de crédito.
 * Corrigida a exibição do boleto na página "Minha conta", fazendo os boletos aparecer apenas quando o pedido esta com os status de pendente ou aguardando.
+* Permitida a validação dos campos da finalização antes de abrir o Checkout Pagar.me.
+* Corrigida a mudança de status do Checkout Pagar.me.

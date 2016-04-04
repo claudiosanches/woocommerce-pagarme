@@ -5,7 +5,7 @@
  * Description: Gateway de pagamento Pagar.me para WooCommerce.
  * Author: Pagar.me, Claudio Sanches
  * Author URI: https://pagar.me/
- * Version: 2.0.0
+ * Version: 2.0.1
  * License: GPLv2 or later
  * Text Domain: woocommerce-pagarme
  * Domain Path: /languages/
@@ -27,7 +27,7 @@ class WC_Pagarme {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.0.0';
+	const VERSION = '2.0.1';
 
 	/**
 	 * Instance of this class.
