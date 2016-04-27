@@ -13,7 +13,7 @@ Receba pagamentos por cartão de crédito e boleto bancário utilizando o Pagar.
 
 O [Pagar.me](https://pagar.me/) é a melhor forma de receber pagamentos online por cartão de crédito e boleto bancário, sendo possível o cliente fazer todo o pagamento sem sair da sua loja WooCommerce.
 
-Saiba mais como o Pagar.em funciona:
+Saiba mais como o Pagar.me funciona:
 
 [vimeo http://vimeo.com/74335951]
 
@@ -54,7 +54,7 @@ Você pode contribuir com código-fonte em nossa página no [GitHub](https://git
 
 Com o plugin instalado acesse o admin do WordPress e entre em "WooCommerce" > "Configurações" > "Finalizar compra" e configure as opção "Pagar.me - Boleto bancário" e "Pagar.me - Cartão de crédito".
 
-Habilite o a opção que você deseja, preencha as opções de **Chave de API** e **Chave de Criptografia** que você pode encontrar dentro da sua conta no Pagar.me em **API Keys**.
+Habilite a opção que você deseja, preencha as opções de **Chave de API** e **Chave de Criptografia** que você pode encontrar dentro da sua conta no Pagar.me em **API Keys**.
 
 Pronto, sua loja já pode receber pagamentos pelo Pagar.me.
 
