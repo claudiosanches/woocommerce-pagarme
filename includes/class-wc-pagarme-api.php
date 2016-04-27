@@ -335,7 +335,7 @@ class WC_Pagarme_API {
 		}
 
 		// Add filter for Third Party plugins.
-		return apply_filters( 'wc_pagarme_transaction_data', $data );
+		return apply_filters( 'wc_pagarme_transaction_data', $data , $order );
 	}
 
 	/**
