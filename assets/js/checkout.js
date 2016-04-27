@@ -62,20 +62,6 @@
 				requiredInputs = $( '.woocommerce-billing-fields .validate-required' );
 			}
 
-			if ( requiredInputs.size() ) {
-				var requiredError = false;
-
-				requiredInputs.each( function() {
-					if ( '' === $( this ).find( 'input.input-text, select' ).not( $( '#account_password, #account_username' ) ).val() ) {
-						requiredError = true;
-					}
-				});
-
-				if ( requiredError ) {
-					return true;
-				}
-			}
-
 			return false;
 		}
 
