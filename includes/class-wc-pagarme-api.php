@@ -91,9 +91,9 @@ class WC_Pagarme_API {
 	 *
 	 * @return string
 	 */
-	public function get_checkout_js_url()
+	public function get_checkout_js()
 	{
-		return $this->checkout_js_url;
+		return plugins_url().$this->checkout_js;
 	}
 
 	/**
