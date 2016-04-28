@@ -62,7 +62,41 @@
 				requiredInputs = $( '.woocommerce-billing-fields .validate-required' );
 			}
 
+			//console.log(requiredInputs);
+
+			if ( requiredInputs.size() ) {
+				var requiredError = false;
+
+				requiredInputs.each( function() {
+					var element = $( this ).find( 'input.input-text, select' ).not( $( '#account_password, #account_username' ) );
+
+					if ( '' === element.val() ) {
+						requiredError = validatePersontype();
+					}
+				});
+
+				if ( requiredError ) {
+					return true;
+				}
+			}
+
 			return false;
+		}
+
+		function validatePersontype()
+		{
+			if ($( '#billing_persontype' ).val() == 1) {
+				if (!$( '#billing_cpf' ).val()) {
+					return true;
+				}
+			}
+
+			if ($( '#billing_persontype' ).val() == 2) {
+
+				if (!$( '#billing_company' ).val() || !$( '#billing_cnpj' ).val()) {
+					return true;
+				}
+			}
 		}
 
 		/**
