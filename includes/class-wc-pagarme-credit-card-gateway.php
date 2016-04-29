@@ -218,7 +218,6 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 				$customer = array();
 
 				wp_enqueue_script( 'pagarme-checkout-library', $this->api->get_checkout_js_url(), array( 'jquery' ), null );
-				wp_enqueue_script( 'pagarme-checkout_open', $this->api->get_checkout_js(), array( 'jquery' ), null );
 				wp_enqueue_script( 'pagarme-checkout', plugins_url( 'assets/js/checkout' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery', 'jquery-blockui', 'pagarme-checkout-library' ), WC_Pagarme::VERSION, true );
 
 				if ( is_checkout_pay_page() ) {

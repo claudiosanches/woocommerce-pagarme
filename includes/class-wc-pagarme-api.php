@@ -44,13 +44,6 @@ class WC_Pagarme_API {
 	protected $checkout_js_url = 'https://assets.pagar.me/checkout/checkout.js';
 
 	/**
-	 * Checkout JS URL 
-	 * 
-	 * @var string
-	 */
-	protected $checkout_js = '/woocommerce-pagarme/assets/js/checkout.js';
-
-	/**
 	 * Constructor.
 	 *
 	 * @param WC_Payment_Gateway $gateway
@@ -84,16 +77,6 @@ class WC_Pagarme_API {
 	 */
 	public function get_checkout_js_url() {
 		return $this->checkout_js_url;
-	}
-
-	/**
-	 * Get Checkout JS URL.
-	 *
-	 * @return string
-	 */
-	public function get_checkout_js()
-	{
-		return plugins_url().$this->checkout_js;
 	}
 
 	/**
