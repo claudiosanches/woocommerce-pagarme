@@ -62,18 +62,10 @@
 				requiredInputs = $( '.woocommerce-billing-fields .validate-required' );
 			}
 
-			//console.log(requiredInputs);
-
 			if ( requiredInputs.size() ) {
 				var requiredError = false;
-				var element = $( this ).find( 'input.input-text, select' ).not( $( '#account_password, #account_username' ) );
-				
-				requiredInputs.each( function() {
 
-					if ( '' === element.val() ) {
-						requiredError = validatePersontype();
-					}
-				});
+				requiredError = validatePersontype();
 
 				if ( requiredError ) {
 					return true;
@@ -82,23 +74,23 @@
 
 			return false;
 		}
-		
+
 		/**
 		 * Validate persontype.
 		 *
 		 * @return {Bool}
 		 */
 		function validatePersontype() {
-			
-			if ( $( '#billing_persontype' ).val() === 1 ) {
+
+			if ( $( '#billing_persontype' ).val() == 1 ) {
 				if ( !$( '#billing_cpf' ).val() ) {
 					return true;
 				}
 			}
 
-			if ( $( '#billing_persontype' ).val() === 2 ) {
+			if ( $( '#billing_persontype' ).val() == 2 ) {
 
-				if ( ! $( '#billing_company' ).val() || ! $( '#billing_cnpj' ).val() ) {
+				if ( !$( '#billing_company' ).val() || !$( '#billing_cnpj' ).val() ) {
 					return true;
 				}
 			}
