@@ -65,7 +65,11 @@
 			if ( requiredInputs.size() ) {
 				var requiredError = false;
 
-				requiredError = validatePersontype();
+				requiredInputs.each( function() {
+					if ( '' === $( this ).find( 'input.input-text, select' ).not( $( '#account_password, #account_username' ) ).val() ) {
+						requiredError = true;
+					}
+				});
 
 				if ( requiredError ) {
 					return true;
@@ -73,27 +77,6 @@
 			}
 
 			return false;
-		}
-
-		/**
-		 * Validate persontype.
-		 *
-		 * @return {Bool}
-		 */
-		function validatePersontype() {
-
-			if ( $( '#billing_persontype' ).val() === '1' ) {
-				if ( !$( '#billing_cpf' ).val() ) {
-					return true;
-				}
-			}
-
-			if ( $( '#billing_persontype' ).val() === '2' ) {
-
-				if ( !$( '#billing_company' ).val() || !$( '#billing_cnpj' ).val() ) {
-					return true;
-				}
-			}
 		}
 
 		/**
