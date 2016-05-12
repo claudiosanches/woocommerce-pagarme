@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<input id="pagarme-card-cvc" class="input-text wc-credit-card-form-card-cvc" type="text" autocomplete="off" placeholder="<?php _e( 'CVC', 'woocommerce-pagarme' ); ?>" style="font-size: 1.5em; padding: 8px;" />
 	</p>
 	<div class="clear"></div>
-	<?php if ( 1 < $max_installment ) : ?>
+	<?php if ( apply_filters( 'wc_pagarme_allow_credit_card_installments', 1 < $max_installment ) ) : ?>
 		<p class="form-row form-row-wide">
 			<label for="pagarme-card-installments"><?php _e( 'Installments', 'woocommerce-pagarme' ); ?> <span class="required">*</span></label>
 			<select name="pagarme_installments" id="pagarme-installments" style="font-size: 1.5em; padding: 8px; width: 100%;">

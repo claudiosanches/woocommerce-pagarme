@@ -315,7 +315,7 @@ class WC_Pagarme_API {
 			}
 
 			// Validate the installments.
-			if ( isset( $posted['pagarme_installments'] ) ) {
+			if ( apply_filters( 'wc_pagarme_allow_credit_card_installments_validation', isset( $posted['pagarme_installments'] ), $order ) ) {
 				$_installment = $posted['pagarme_installments'];
 
 				// Get installments data.

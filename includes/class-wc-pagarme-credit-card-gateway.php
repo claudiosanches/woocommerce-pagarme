@@ -282,7 +282,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		} else {
 			echo '<div id="pagarme-checkout-params" ';
 			echo 'data-total="' . esc_attr( $cart_total * 100 ) . '" ';
-			echo 'data-max_installment="' . esc_attr( $this->api->get_max_installment( $cart_total ) ) . '"';
+			echo 'data-max_installment="' . esc_attr( apply_filters( 'wc_pagarme_checkout_credit_card_max_installments', $this->api->get_max_installment( $cart_total ) ) ) . '"';
 			echo '></div>';
 		}
 	}
