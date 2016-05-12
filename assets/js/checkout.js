@@ -19,6 +19,32 @@
 		} );
 
 		/**
+		 * Validate person type fields.
+		 * Used only when the person type select field is available.
+		 *
+		 * @return {Bool}
+		 */
+		function validatePersontype() {
+			var requiredError = false;
+
+			if ( '1' === $( '#billing_persontype' ).val() ) {
+				$( '#billing_cpf, #billing_rg' ).each( function() {
+					if ( '' === $( this ).val() ) {
+						requiredError = true;
+					}
+				});
+			} else if ( '2' === $( '#billing_persontype' ).val() ) {
+				$( '#billing_cnpj, #billing_company, #billing_ie' ).each( function() {
+					if ( '' === $( this ).val() ) {
+						requiredError = true;
+					}
+				});
+			}
+
+			return requiredError;
+		}
+
+		/**
 		 * Check if checkout is valid.
 		 *
 		 * @param {Object} evt
@@ -65,11 +91,24 @@
 			if ( requiredInputs.size() ) {
 				var requiredError = false;
 
-				requiredInputs.each( function() {
-					if ( '' === $( this ).find( 'input.input-text, select' ).not( $( '#account_password, #account_username' ) ).val() ) {
-						requiredError = true;
+				// Check if person type select field is available.
+				if ( 0 < $( '#billing_persontype' ).length ) {
+					requiredInputs.each( function() {
+						if ( '' === $( this ).find( 'input.input-text, select' ).not( $( '#account_password, #account_username, #billing_cpf, #billing_rg, #billing_cnpj, #billing_company, #billing_ie' ) ).val() ) {
+							requiredError = true;
+						}
+					});
+
+					if ( ! requiredError ) {
+						requiredError = validatePersontype();
 					}
-				});
+				} else {
+					requiredInputs.each( function() {
+						if ( '' === $( this ).find( 'input.input-text, select' ).not( $( '#account_password, #account_username' ) ).val() ) {
+							requiredError = true;
+						}
+					});
+				}
 
 				if ( requiredError ) {
 					return true;
