@@ -501,10 +501,15 @@ class WC_Pagarme_API {
 	 */
 	public function process_regular_payment( $order_id ) {
 		$order = wc_get_order( $order_id );
+
 		if ( isset( $this->gateway->checkout ) && 'yes' === $this->gateway->checkout ) {
-			$token       = isset( $_POST['pagarme_checkout_token'] ) ? sanitize_text_field( $_POST['pagarme_checkout_token'] ) : 'null';
-			$data        = $this->generate_checkout_data( $order );
-			$transaction = $this->do_transaction( $order, $data, $token );
+			if ( ! empty( $_POST['pagarme_checkout_token'] ) ) {
+				$token       = sanitize_text_field( $_POST['pagarme_checkout_token'] );
+				$data        = $this->generate_checkout_data( $order );
+				$transaction = $this->do_transaction( $order, $data, $token );
+			} else {
+				$transaction = array( 'errors' => array( array( 'message' => __( 'Missing credit card data, please review your data and try again or contact us for assistance.', 'woocommerce-pagarme' ) ) ) );
+			}
 		} else {
 			$data        = $this->generate_transaction_data( $order, $_POST );
 			$transaction = $this->do_transaction( $order, $data );
