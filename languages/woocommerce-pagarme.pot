@@ -2,10 +2,10 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Pagar.me 2.0.1\n"
+"Project-Id-Version: WooCommerce Pagar.me 2.0.2\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/woocommerce-pagarme\n"
-"POT-Creation-Date: 2016-04-04 17:24:55+00:00\n"
+"POT-Creation-Date: 2016-05-12 01:00:36+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -93,57 +93,63 @@ msgstr ""
 msgid "Anti Fraud Score"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:601
+#: includes/class-wc-pagarme-api.php:511
+msgid ""
+"Missing credit card data, please review your data and try again or contact "
+"us for assistance."
+msgstr ""
+
+#: includes/class-wc-pagarme-api.php:606
 msgid "Pagar.me Request Failure"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:635
+#: includes/class-wc-pagarme-api.php:640
 msgid "Pagar.me: The transaction was authorized."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:640
+#: includes/class-wc-pagarme-api.php:645
 msgid "Pagar.me: The transaction is being processed."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:645
+#: includes/class-wc-pagarme-api.php:650
 msgid "Pagar.me: Transaction paid."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:653
+#: includes/class-wc-pagarme-api.php:658
 msgid "Pagar.me: The banking ticket was issued but not paid yet."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:657
+#: includes/class-wc-pagarme-api.php:662
 msgid "Pagar.me: The transaction was rejected by the card company or by fraud."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:663
+#: includes/class-wc-pagarme-api.php:668
 msgid "The transaction for order %s was rejected by the card company or by fraud"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:664
+#: includes/class-wc-pagarme-api.php:669
 msgid "Transaction failed"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:665
+#: includes/class-wc-pagarme-api.php:670
 msgid ""
 "Order %s has been marked as failed, because the transaction was rejected by "
 "the card company or by fraud, for more details, see %s."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:670
+#: includes/class-wc-pagarme-api.php:675
 msgid "Pagar.me: The transaction was refunded/canceled."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:676
+#: includes/class-wc-pagarme-api.php:681
 msgid "The transaction for order %s refunded"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:677
+#: includes/class-wc-pagarme-api.php:682
 msgid "Transaction refunded"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:678
+#: includes/class-wc-pagarme-api.php:683
 msgid "Order %s has been marked as refunded by Pagar.me, for more details, see %s."
 msgstr ""
 

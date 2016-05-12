@@ -2,8 +2,8 @@
 **Contributors:** pagarme, claudiosanches  
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
-**Tested up to:** 4.4  
-**Stable tag:** 2.0.1  
+**Tested up to:** 4.5  
+**Stable tag:** 2.0.2  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -55,6 +55,8 @@ Você pode contribuir com código-fonte em nossa página no [GitHub](https://git
 Com o plugin instalado acesse o admin do WordPress e entre em "WooCommerce" > "Configurações" > "Finalizar compra" e configure as opção "Pagar.me - Boleto bancário" e "Pagar.me - Cartão de crédito".
 
 Habilite a opção que você deseja, preencha as opções de **Chave de API** e **Chave de Criptografia** que você pode encontrar dentro da sua conta no Pagar.me em **API Keys**.
+
+Também será necessário utilizar o plugin [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/) para poder enviar campos de CPF e CNPJ.
 
 Pronto, sua loja já pode receber pagamentos pelo Pagar.me.
 
@@ -123,6 +125,11 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Changelog ##
 
+### 2.0.2 - 2016/05/11 ###
+
+* Corrigida a validação de campos da finalização para o Checkout Pagar.me.
+* Melhorada das mensagens de erro para quando não abrir o Checkout Pagar.me.
+
 ### 2.0.1 - 2016/04/04 ###
 
 * Permitida a validação dos campos da finalização antes de abrir o Checkout Pagar.me.
@@ -169,11 +176,7 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 2.0.1 - 2016/04/02 ###
+### 2.0.2 ###
 
-* Adicionado novo método para pagamento com cartões de crédito.
-* Adicionado novo método para pagamentos com boleto bancário.
-* Adicionado suporte ao Checkout Pagar.me para pagamentos com cartão de crédito.
-* Corrigida a exibição do boleto na página "Minha conta", fazendo os boletos aparecer apenas quando o pedido esta com os status de pendente ou aguardando.
-* Permitida a validação dos campos da finalização antes de abrir o Checkout Pagar.me.
-* Corrigida a mudança de status do Checkout Pagar.me.
+* Corrigida a validação de campos da finalização para o Checkout Pagar.me.
+* Melhorada das mensagens de erro para quando não abrir o Checkout Pagar.me.
