@@ -533,6 +533,9 @@ class WC_Pagarme_API {
 			if ( ! empty( $data['installments'] ) ) {
 				update_post_meta( $order_id, __( 'Installments', 'woocommerce-pagarme' ), sanitize_text_field( $data['installments'] ) );
 			}
+			if ( ! empty( $data['amount'] ) ) {
+				update_post_meta( $order_id, __( 'Total paid', 'woocommerce-pagarme' ), number_format( intval( $data['amount'] ) / 100, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() ) );
+			}
 			if ( ! empty( $data['antifraud_score'] ) ) {
 				update_post_meta( $order_id, __( 'Anti Fraud Score', 'woocommerce-pagarme' ), sanitize_text_field( $data['antifraud_score'] ) );
 			}
