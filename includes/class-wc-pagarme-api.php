@@ -384,16 +384,63 @@ class WC_Pagarme_API {
 	}
 
 	/**
+	 * Get transaction data.
+	 *
+	 * @param  WC_Order $order Order data.
+	 * @param  string   $token Checkout token.
+	 *
+	 * @return array           Response data.
+	 */
+	public function get_transaction_data( $order, $token ) {
+		if ( 'yes' == $this->gateway->debug ) {
+			$this->gateway->log->add( $this->gateway->id, 'Getting transaction data for order ' . $order->get_order_number() . '...' );
+		}
+
+		$data = array(
+			'api_key' => $this->gateway->api_key,
+		);
+
+		$response = $this->do_request( 'transactions/' . $token, 'GET', $data );
+
+		if ( is_wp_error( $response ) ) {
+			if ( 'yes' == $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'WP_Error in getting transaction data: ' . $response->get_error_message() );
+			}
+
+			return array();
+		} else {
+			$transaction_data = json_decode( $response['body'], true );
+
+			if ( isset( $transaction_data['errors'] ) ) {
+				if ( 'yes' == $this->gateway->debug ) {
+					$this->gateway->log->add( $this->gateway->id, 'Failed to get transaction data: ' . print_r( $response, true ) );
+				}
+
+				return $transaction_data;
+			}
+
+			if ( 'yes' == $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'Transaction data obtained successfully!' );
+			}
+
+			return $transaction_data;
+		}
+	}
+
+	/**
 	 * Generate checkout data.
 	 *
 	 * @param  WC_Order $order Order data.
+	 * @param  string   $token Checkout token.
 	 *
 	 * @return array           Checkout data.
 	 */
-	public function generate_checkout_data( $order ) {
+	public function generate_checkout_data( $order, $token ) {
+		$transaction = $this->get_transaction_data( $order, $token );
+
 		$data = array(
 			'api_key' => $this->gateway->api_key,
-			'amount'  => $order->get_total() * 100,
+			'amount'  => isset( $transaction['amount'] ) ? $transaction['amount'] : 0,
 		);
 
 		return apply_filters( 'wc_pagarme_checkout_data', $data );
@@ -505,7 +552,7 @@ class WC_Pagarme_API {
 		if ( isset( $this->gateway->checkout ) && 'yes' === $this->gateway->checkout ) {
 			if ( ! empty( $_POST['pagarme_checkout_token'] ) ) {
 				$token       = sanitize_text_field( $_POST['pagarme_checkout_token'] );
-				$data        = $this->generate_checkout_data( $order );
+				$data        = $this->generate_checkout_data( $order, $token );
 				$transaction = $this->do_transaction( $order, $data, $token );
 			} else {
 				$transaction = array( 'errors' => array( array( 'message' => __( 'Missing credit card data, please review your data and try again or contact us for assistance.', 'woocommerce-pagarme' ) ) ) );
