@@ -3,7 +3,7 @@ Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
 Tested up to: 4.5
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ Saiba mais como o Pagar.me funciona:
 
 = Compatibilidade =
 
-Compatível com as versões 2.2.x, 2.3.x, 2.4.x e 2.5.x do WooCommerce.
+Compatível com desde a versão 2.2.x até 2.6.x do WooCommerce.
 
 Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/), desta forma é possível enviar documentos do cliente como "CPF" ou "CNPJ", além dos campos "número" e "bairro" do endereço. Caso você queira remover todos os campos adicionais de endereço para vender Digital Goods, é possível utilizar o plugin [WooCommerce Digital Goods Checkout](https://wordpress.org/plugins/wc-digital-goods-checkout/).
 
@@ -117,6 +117,11 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
+= 2.0.3 - 2016/06/02 =
+
+* Corrigido erro ao fazer uma transação com o Checkout Pagar.me onde é adicionada taxa de juros.
+* Adicionado campo informando o total pago pelo cliente incluindo juros quando aplicável.
+
 = 2.0.2 - 2016/05/11 =
 
 * Corrigida a validação de campos da finalização para o Checkout Pagar.me.
@@ -168,7 +173,7 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Upgrade Notice ==
 
-= 2.0.2 =
+= 2.0.3 =
 
-* Corrigida a validação de campos da finalização para o Checkout Pagar.me.
-* Melhorada das mensagens de erro para quando não abrir o Checkout Pagar.me.
+* Corrigido erro ao fazer uma transação com o Checkout Pagar.me onde é adicionada taxa de juros.
+* Adicionado campo informando o total pago pelo cliente incluindo juros quando aplicável.
