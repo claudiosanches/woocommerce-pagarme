@@ -3,7 +3,7 @@ Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
 Tested up to: 4.5
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
+= 2.0.4 - 2016/06/08 =
+
+* Melhorado o fluxo das transações feitas com o Checkout Pagar.me.
+
 = 2.0.3 - 2016/06/02 =
 
 * Corrigido erro ao fazer uma transação com o Checkout Pagar.me onde é adicionada taxa de juros.
@@ -173,7 +177,6 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Upgrade Notice ==
 
-= 2.0.3 =
+= 2.0.4 =
 
-* Corrigido erro ao fazer uma transação com o Checkout Pagar.me onde é adicionada taxa de juros.
-* Adicionado campo informando o total pago pelo cliente incluindo juros quando aplicável.
+* Melhorado o fluxo das transações feitas com o Checkout Pagar.me.
