@@ -3,7 +3,7 @@
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
 **Tested up to:** 4.5  
-**Stable tag:** 2.0.4  
+**Stable tag:** 2.0.5  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -125,6 +125,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Changelog ##
 
+### 2.0.5 - 2016/07/15 ###
+
+* Correções para previnir mensagens de erro ao receber notificações de pagamentos.
+
 ### 2.0.4 - 2016/06/08 ###
 
 * Melhorado o fluxo das transações feitas com o Checkout Pagar.me.
@@ -185,6 +189,6 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 2.0.4 ###
+### 2.0.5 ###
 
-* Melhorado o fluxo das transações feitas com o Checkout Pagar.me.
+* Correções para previnir mensagens de erro ao receber notificações de pagamentos.
