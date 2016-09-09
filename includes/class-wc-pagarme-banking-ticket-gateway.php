@@ -1,12 +1,17 @@
 <?php
+/**
+ * Pagar.me Banking Ticket gateway
+ *
+ * @package WooCommerce_Pagarme/Gateway
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Pagar.me Banking Ticket gateway.
+ * WC_Pagarme_Banking_Ticket_Gateway class.
  *
- * @package WooCommerce_Pagarme/Gateway
  * @extends WC_Payment_Gateway
  */
 class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
@@ -36,7 +41,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->debug          = $this->get_option( 'debug' );
 
 		// Active logs.
-		if ( 'yes' == $this->debug ) {
+		if ( 'yes' === $this->debug ) {
 			$this->log = new WC_Logger();
 		}
 
@@ -94,7 +99,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 			'integration' => array(
 				'title'       => __( 'Integration Settings', 'woocommerce-pagarme' ),
 				'type'        => 'title',
-				'description' => ''
+				'description' => '',
 			),
 			'api_key' => array(
 				'title'             => __( 'Pagar.me API Key', 'woocommerce-pagarme' ),
@@ -131,12 +136,10 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 
 	/**
 	 * Payment fields.
-	 *
-	 * @return string
 	 */
 	public function payment_fields() {
 		if ( $description = $this->get_description() ) {
-			echo wpautop( wptexturize( $description ) );
+			echo wp_kses_post( wpautop( wptexturize( $description ) ) );
 		}
 
 		wc_get_template(
@@ -161,15 +164,13 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Thank You page message.
 	 *
-	 * @param  int    $order_id Order ID.
-	 *
-	 * @return string
+	 * @param int $order_id Order ID.
 	 */
 	public function thankyou_page( $order_id ) {
 		$order = wc_get_order( $order_id );
 		$data  = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
 
-		if ( isset( $data['boleto_url'] ) && in_array( $order->get_status(), array( 'processing', 'on-hold' ) ) ) {
+		if ( isset( $data['boleto_url'] ) && in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) ) {
 			wc_get_template(
 				'banking-ticket/payment-instructions.php',
 				array(
@@ -191,7 +192,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 	 * @return string                Payment instructions.
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if ( $sent_to_admin || ! in_array( $order->get_status(), array( 'processing', 'on-hold' ) ) || $this->id !== $order->payment_method ) {
+		if ( $sent_to_admin || ! in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) || $this->id !== $order->payment_method ) {
 			return;
 		}
 

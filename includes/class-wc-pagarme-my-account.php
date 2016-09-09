@@ -1,17 +1,21 @@
 <?php
+/**
+ * Pagar.me My Account actions
+ *
+ * @package WooCommerce_Pagarme/Frontend
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Pagar.me my account frontend class.
- *
- * @package WooCommerce_Pagarme/Frontend
+ * WC_Pagarme_My_Account class.
  */
 class WC_Pagarme_My_Account {
 
 	/**
-	 * Initialize frontend actions.
+	 * Initialize my account actions.
 	 */
 	public function __construct() {
 		add_filter( 'woocommerce_my_account_my_orders_actions', array( $this, 'my_orders_banking_ticket_link' ), 10, 2 );
@@ -30,7 +34,7 @@ class WC_Pagarme_My_Account {
 			return $actions;
 		}
 
-		if ( ! in_array( $order->get_status(), array( 'pending', 'on-hold' ) ) ) {
+		if ( ! in_array( $order->get_status(), array( 'pending', 'on-hold' ), true ) ) {
 			return $actions;
 		}
 
