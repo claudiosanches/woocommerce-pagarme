@@ -2,8 +2,8 @@
 **Contributors:** pagarme, claudiosanches  
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
-**Tested up to:** 4.5  
-**Stable tag:** 2.0.5  
+**Tested up to:** 4.6  
+**Stable tag:** 2.0.6  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -111,19 +111,24 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 ## Screenshots ##
 
 ### 1. Exemplo de checkout com cartão de crédito e boleto bancário do Pagar.me no tema Storefront. ###
-![Exemplo de checkout com cartão de crédito e boleto bancário do Pagar.me no tema Storefront.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-1.png)
+![1. Exemplo de checkout com cartão de crédito e boleto bancário do Pagar.me no tema Storefront.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-1.png)
 
 ### 2. Exemplo do Checkout Pagar.me para cartão de crédito. ###
-![Exemplo do Checkout Pagar.me para cartão de crédito.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-2.png)
+![2. Exemplo do Checkout Pagar.me para cartão de crédito.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-2.png)
 
 ### 3. Configurações para boleto bancário. ###
-![Configurações para boleto bancário.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-3.png)
+![3. Configurações para boleto bancário.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-3.png)
 
 ### 4. Configurações para cartão de crédito. ###
-![Configurações para cartão de crédito.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-4.png)
+![4. Configurações para cartão de crédito.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-4.png)
 
 
 ## Changelog ##
+
+### 2.0.6 - 2016/09/09 ###
+
+* Corrigida a compatibilidade com o WordPress 4.6.
+* Corrigido o calculo das parcelas do cartão de crédito.
 
 ### 2.0.5 - 2016/07/15 ###
 
@@ -189,6 +194,7 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 2.0.5 ###
+### 2.0.6 ###
 
-* Correções para previnir mensagens de erro ao receber notificações de pagamentos.
+* Corrigida a compatibilidade com o WordPress 4.6.
+* Corrigido o calculo das parcelas do cartão de crédito.
