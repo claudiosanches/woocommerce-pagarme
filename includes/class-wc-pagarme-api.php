@@ -153,16 +153,17 @@ class WC_Pagarme_API {
 	 */
 	public function get_installments( $amount ) {
 		// Set the installment data.
-		$data = http_build_query( array(
+		$data = array(
 			'encryption_key'    => $this->gateway->encryption_key,
 			'amount'            => $amount * 100,
 			'interest_rate'     => $this->get_interest_rate(),
 			'max_installments'  => $this->gateway->max_installment,
 			'free_installments' => $this->gateway->free_installments
-		) );
+		);
+		$transient_id = 'pgi_' . md5( http_build_query( $data ) );
 
 		// Get saved installment data.
-		$_installments = get_transient( 'pgi_' . md5( $data ) );
+		$_installments = get_transient( $transient_id );
 
 		if ( false !== $_installments ) {
 			return $_installments;
@@ -190,7 +191,7 @@ class WC_Pagarme_API {
 					$this->gateway->log->add( $this->gateway->id, 'Installments generated successfully: ' . print_r( $_installments, true ) );
 				}
 
-				set_transient( 'pgi_' . md5( $data ), $installments, MINUTE_IN_SECONDS * 5 );
+				set_transient( $transient_id, $installments, MINUTE_IN_SECONDS * 5 );
 
 				return $installments;
 			}
@@ -496,7 +497,7 @@ class WC_Pagarme_API {
 			$endpoint .= '/' . $token . '/capture';
 		}
 
-		$response = $this->do_request( $endpoint, 'POST', http_build_query( $args ) );
+		$response = $this->do_request( $endpoint, 'POST', $args );
 
 		if ( is_wp_error( $response ) ) {
 			if ( 'yes' == $this->gateway->debug ) {
