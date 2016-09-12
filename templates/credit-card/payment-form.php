@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<select name="pagarme_installments" id="pagarme-installments" style="font-size: 1.5em; padding: 8px; width: 100%;">
 				<?php
 				foreach ( $installments as $number => $installment ) :
-					if ( $smallest_installment > $installment['installment_amount'] ) {
+					if ( 1 !== $number && $smallest_installment > $installment['installment_amount'] ) {
 						break;
 					}
 
