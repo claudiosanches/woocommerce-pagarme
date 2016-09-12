@@ -3,7 +3,7 @@ Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
 Tested up to: 4.6
-Stable tag: 2.0.6
+Stable tag: 2.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,11 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
+= 2.0.7 - 2016/09/12 =
+
+* Corrigido o valor da primeira parcela quando é menor do que o mínimo permitido.
+* Adicionado código para corrigir o valor da taxa de juros antes de usar no Checkout Pagar.me.
+
 = 2.0.6 - 2016/09/09 =
 
 * Corrigida a compatibilidade com o WordPress 4.6.
@@ -186,7 +191,7 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Upgrade Notice ==
 
-= 2.0.6 =
+= 2.0.7 =
 
-* Corrigida a compatibilidade com o WordPress 4.6.
-* Corrigido o calculo das parcelas do cartão de crédito.
+* Corrigido o valor da primeira parcela quando é menor do que o mínimo permitido.
+* Adicionado código para corrigir o valor da taxa de juros antes de usar no Checkout Pagar.me.
