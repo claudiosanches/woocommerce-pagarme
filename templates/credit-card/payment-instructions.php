@@ -14,5 +14,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div class="woocommerce-message">
-	<span><?php echo sprintf( __( 'Payment successfully made using %s credit card in %s.', 'woocommerce-pagarme' ), '<strong>' . $card_brand . '</strong>', '<strong>' . $installments . 'x</strong>' ); ?></span>
+	<span><?php printf( wp_kses( __( 'Payment successfully made using %1$s credit card in %2$s.', 'woocommerce-pagarme' ), array( 'strong' => array() ) ), '<strong>' . esc_html( $card_brand ) . '</strong>', '<strong>' . intval( $installments ) . 'x</strong>' ); ?></span>
 </div>

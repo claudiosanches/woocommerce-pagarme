@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-_e( 'Payment', 'woocommerce-pagarme' );
+esc_html_e( 'Payment', 'woocommerce-pagarme' );
 
 echo "\n\n";
 
-echo sprintf( __( 'Payment successfully made using %s credit card in %s.', 'woocommerce-pagarme' ), $card_brand, $installments . 'x' );
+printf( esc_html__( 'Payment successfully made using %1$s credit card in %2$s.', 'woocommerce-pagarme' ), esc_html( $card_brand ), intval( $installments ) . 'x' );
 
 echo "\n\n****************************************************\n\n";

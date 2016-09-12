@@ -810,9 +810,9 @@ class WC_Pagarme_API {
 				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
 
 				$this->send_email(
-					sprintf( __( 'The transaction for order %s was rejected by the card company or by fraud', 'woocommerce-pagarme' ), $order->get_order_number() ),
-					__( 'Transaction failed', 'woocommerce-pagarme' ),
-					sprintf( __( 'Order %1$s has been marked as failed, because the transaction was rejected by the card company or by fraud, for more details, see %2$s.', 'woocommerce-pagarme' ), $order->get_order_number(), $transaction_url )
+					sprintf( esc_html__( 'The transaction for order %s was rejected by the card company or by fraud', 'woocommerce-pagarme' ), $order->get_order_number() ),
+					esc_html__( 'Transaction failed', 'woocommerce-pagarme' ),
+					sprintf( esc_html__( 'Order %1$s has been marked as failed, because the transaction was rejected by the card company or by fraud, for more details, see %2$s.', 'woocommerce-pagarme' ), $order->get_order_number(), $transaction_url )
 				);
 
 				break;
@@ -823,9 +823,9 @@ class WC_Pagarme_API {
 				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
 
 				$this->send_email(
-					sprintf( __( 'The transaction for order %s refunded', 'woocommerce-pagarme' ), $order->get_order_number() ),
-					__( 'Transaction refunded', 'woocommerce-pagarme' ),
-					sprintf( __( 'Order %1$s has been marked as refunded by Pagar.me, for more details, see %2$s.', 'woocommerce-pagarme' ), $order->get_order_number(), $transaction_url )
+					sprintf( esc_html__( 'The transaction for order %s refunded', 'woocommerce-pagarme' ), $order->get_order_number() ),
+					esc_html__( 'Transaction refunded', 'woocommerce-pagarme' ),
+					sprintf( esc_html__( 'Order %1$s has been marked as refunded by Pagar.me, for more details, see %2$s.', 'woocommerce-pagarme' ), $order->get_order_number(), $transaction_url )
 				);
 
 				break;

@@ -43,9 +43,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 					$interest           = ( ( $cart_total * 100 ) < $installment['amount'] ) ? sprintf( __( '(total of %s)', 'woocommerce-pagarme' ), strip_tags( wc_price( $installment['amount'] / 100 ) ) ) : __( '(interest-free)', 'woocommerce-pagarme' );
 					$installment_amount = strip_tags( wc_price( $installment['installment_amount'] / 100 ) );
-					$installment_number = absint( $installment['installment'] );
 				?>
-				<option value="<?php echo esc_attr( $installment_number ); ?>"><?php printf( esc_html__( '%1$dx of %2$s %2$s', 'woocommerce-pagarme' ), $installment_number, $installment_amount, $interest ); ?></option>
+				<option value="<?php echo absint( $installment['installment'] ); ?>"><?php printf( esc_html__( '%1$dx of %2$s %3$s', 'woocommerce-pagarme' ), absint( $installment['installment'] ), esc_html( $installment_amount ), esc_html( $interest ) ); ?></option>
 				<?php endforeach; ?>
 			</select>
 		</p>

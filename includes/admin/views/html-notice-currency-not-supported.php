@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div class="error inline">
-	<p><strong><?php _e( 'Pagar.me Disabled', 'woocommerce-pagarme' ); ?></strong>: <?php printf( __( 'Currency %s is not supported. Works only with Brazilian Real.', 'woocommerce-pagarme' ), '<code>' . get_woocommerce_currency() . '</code>' ); ?>
+	<p><strong><?php esc_html_e( 'Pagar.me Disabled', 'woocommerce-pagarme' ); ?></strong>: <?php printf( wp_kses( __( 'Currency %s is not supported. Works only with Brazilian Real.', 'woocommerce-pagarme' ), array( 'code' => array() ) ), '<code>' . esc_html( get_woocommerce_currency() ) . '</code>' ); ?>
 	</p>
 </div>
 

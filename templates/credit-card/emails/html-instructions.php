@@ -12,6 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<h2><?php _e( 'Payment', 'woocommerce-pagarme' ); ?></h2>
+<h2><?php esc_html_e( 'Payment', 'woocommerce-pagarme' ); ?></h2>
 
-<p class="order_details"><?php echo sprintf( __( 'Payment successfully made using %s credit card in %s.', 'woocommerce-pagarme' ), '<strong>' . $card_brand . '</strong>', '<strong>' . $installments . 'x</strong>' ); ?></p>
+<p class="order_details"><?php printf( wp_kses( __( 'Payment successfully made using %1$s credit card in %2$s.', 'woocommerce-pagarme' ), array( 'strong' => array() ) ), '<strong>' . esc_html( $card_brand ) . '</strong>', '<strong>' . intval( $installments ) . 'x</strong>' ); ?></p>
