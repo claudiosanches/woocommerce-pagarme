@@ -234,7 +234,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 					'wcPagarmeParams',
 					array(
 						'encryptionKey'    => $this->encryption_key,
-						'interestRate'     => $this->interest_rate,
+						'interestRate'     => $this->api->get_interest_rate(),
 						'freeInstallments' => $this->free_installments,
 						'postbackUrl'      => WC()->api_request_url( get_class( $this ) ),
 						'customerFields'   => $customer,
