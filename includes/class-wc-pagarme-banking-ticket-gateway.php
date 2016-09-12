@@ -59,7 +59,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 	 * Admin page.
 	 */
 	public function admin_options() {
-		include 'admin/views/html-admin-page.php';
+		include dirname( __FILE__ ) . '/admin/views/html-admin-page.php';
 	}
 
 	/**
