@@ -249,6 +249,9 @@ class WC_Pagarme_API {
 				'name'  => trim( $order->billing_first_name . ' ' . $order->billing_last_name ),
 				'email' => $order->billing_email,
 			),
+			'metadata'     => array(
+				'order_number' => $order->get_order_number(),
+			),
 		);
 
 		// Phone.
