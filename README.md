@@ -3,7 +3,7 @@
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
 **Tested up to:** 4.6  
-**Stable tag:** 2.0.7  
+**Stable tag:** 2.0.8  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -125,6 +125,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Changelog ##
 
+### 2.0.8 - 2016/09/15 ###
+
+* Adicionado `order_number` (número do pedido) como meta dado das transações.
+
 ### 2.0.7 - 2016/09/12 ###
 
 * Corrigido o valor da primeira parcela quando é menor do que o mínimo permitido.
@@ -199,7 +203,6 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 2.0.7 ###
+### 2.0.8 ###
 
-* Corrigido o valor da primeira parcela quando é menor do que o mínimo permitido.
-* Adicionado código para corrigir o valor da taxa de juros antes de usar no Checkout Pagar.me.
+* Adicionado `order_number` (número do pedido) como meta dado das transações.
