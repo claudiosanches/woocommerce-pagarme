@@ -3,7 +3,7 @@
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
 **Tested up to:** 4.6  
-**Stable tag:** 2.0.8  
+**Stable tag:** 2.0.9  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -111,19 +111,23 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 ## Screenshots ##
 
 ### 1. Exemplo de checkout com cartão de crédito e boleto bancário do Pagar.me no tema Storefront. ###
-![1. Exemplo de checkout com cartão de crédito e boleto bancário do Pagar.me no tema Storefront.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-1.png)
+![Exemplo de checkout com cartão de crédito e boleto bancário do Pagar.me no tema Storefront.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-1.png)
 
 ### 2. Exemplo do Checkout Pagar.me para cartão de crédito. ###
-![2. Exemplo do Checkout Pagar.me para cartão de crédito.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-2.png)
+![Exemplo do Checkout Pagar.me para cartão de crédito.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-2.png)
 
 ### 3. Configurações para boleto bancário. ###
-![3. Configurações para boleto bancário.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-3.png)
+![Configurações para boleto bancário.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-3.png)
 
 ### 4. Configurações para cartão de crédito. ###
-![4. Configurações para cartão de crédito.](http://ps.w.org/woocommerce-pagar.me/assets/screenshot-4.png)
+![Configurações para cartão de crédito.](http://ps.w.org/woocommerce-pagarme/assets/screenshot-4.png)
 
 
 ## Changelog ##
+
+### 2.0.9 - 2016/09/27 ###
+
+* Corrigido vendas canceladas com o Checkout Pagar.me feitas quando a parcela mínima era menor do que o mínimo permitido.
 
 ### 2.0.8 - 2016/09/15 ###
 
@@ -203,6 +207,6 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 2.0.8 ###
+### 2.0.9 ###
 
-* Adicionado `order_number` (número do pedido) como meta dado das transações.
+* Corrigido vendas canceladas com o Checkout Pagar.me feitas quando a parcela mínima era menor do que o mínimo permitido.
