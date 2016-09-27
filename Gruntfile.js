@@ -122,6 +122,22 @@ module.exports = function( grunt ) {
 					'README.md': 'readme.txt'
 				}
 			}
+		},
+
+		// PHP Code Sniffer.
+		phpcs: {
+			options: {
+				bin: 'vendor/bin/phpcs',
+				showSniffCodes: true,
+				standard: './phpcs.ruleset.xml'
+			},
+			dist: {
+				src:  [
+					'**/*.php',         // Include all files
+					'!node_modules/**', // Exclude node_modules/
+					'!vendor/**'        // Exclude vendor/
+				]
+			}
 		}
 	});
 
@@ -133,6 +149,7 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( 'grunt-checktextdomain' );
 	grunt.loadNpmTasks( 'grunt-wp-i18n' );
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
+	grunt.loadNpmTasks( 'grunt-phpcs' );
 
 	// Register tasks.
 	grunt.registerTask( 'default', [

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards">
+	<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
+	<!-- See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/blob/develop/WordPress-Core/ruleset.xml -->
+
+	<!-- Set a description for this ruleset. -->
+	<description>A custom set of code standard rules to check for WordPress plugins.</description>
+
+	<!-- Include the WordPress ruleset, with exclusions. -->
+	<rule ref="WordPress">
+		<exclude name="Generic.PHP.NoSilencedErrors.Discouraged" />
+		<exclude name="WordPress.CSRF.NonceVerification.NoNonceVerification" />
+		<exclude name="WordPress.PHP.DiscouragedFunctions.Discouraged" />
+		<exclude name="WordPress.VIP.DirectDatabaseQuery.DirectQuery" />
+		<exclude name="WordPress.VIP.DirectDatabaseQuery.NoCaching" />
+		<exclude name="WordPress.VIP.RestrictedFunctions.error_log" />
+		<exclude name="WordPress.VIP.SuperGlobalInputUsage.AccessDetected" />
+	</rule>
+</ruleset>
