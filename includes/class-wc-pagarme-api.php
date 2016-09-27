@@ -460,7 +460,7 @@ class WC_Pagarme_API {
 		$installment = $installments[ $transaction['installments'] ];
 
 		// Test smallest installment amount.
-		if ( $this->get_smallest_installment() > $installment['installment_amount'] && intval( $transaction['installments'] ) !== 1 ) {
+		if ( 1 !== intval( $transaction['installments'] ) && $this->get_smallest_installment() > $installment['installment_amount'] ) {
 			if ( 'yes' === $this->gateway->debug ) {
 				$this->gateway->log->add( $this->gateway->id, 'Payment divided into a lower amount than permitted for order ' . $order->get_order_number() );
 			}
