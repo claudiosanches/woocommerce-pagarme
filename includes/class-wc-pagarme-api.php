@@ -478,8 +478,11 @@ class WC_Pagarme_API {
 		}
 
 		$data = array(
-			'api_key' => $this->gateway->api_key,
-			'amount'  => $transaction['amount'],
+			'api_key'  => $this->gateway->api_key,
+			'amount'   => $transaction['amount'],
+			'metadata' => array(
+				'order_number' => $order->get_order_number(),
+			),
 		);
 
 		return apply_filters( 'wc_pagarme_checkout_data', $data );
