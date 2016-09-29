@@ -3,7 +3,7 @@ Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
 Tested up to: 4.6
-Stable tag: 2.0.9
+Stable tag: 2.0.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
+= 2.0.10 - 2016/09/29 =
+
+* Adicionado `order_number` (número do pedido) como meta dado para transações com o Checkout Pagar.me.
+
 = 2.0.9 - 2016/09/27 =
 
 * Corrigido vendas canceladas com o Checkout Pagar.me feitas quando a parcela mínima era menor do que o mínimo permitido.
@@ -199,6 +203,6 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Upgrade Notice ==
 
-= 2.0.9 =
+= 2.0.10 =
 
-* Corrigido vendas canceladas com o Checkout Pagar.me feitas quando a parcela mínima era menor do que o mínimo permitido.
+* Adicionado `order_number` (número do pedido) como meta dado para transações com o Checkout Pagar.me.
