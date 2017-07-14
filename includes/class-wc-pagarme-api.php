@@ -765,7 +765,7 @@ class WC_Pagarme_API {
 		global $wpdb;
 
 		$posted   = wp_unslash( $posted );
-		$order_id = absint( $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wc_pagarme_transaction_id' AND meta_value = %d", $posted['id'] ) ) );
+		$order_id = absint( $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_transaction_id' AND meta_value = %d AND post_id in (SELECT post_id from $wpdb->postmeta WHERE meta_key = '_payment_method' AND meta_value IN ('pagarme-credit-card', 'pagarme-banking-ticket'))", $posted['id'] ) ) );
 		$order    = wc_get_order( $order_id );
 		$status   = sanitize_text_field( $posted['current_status'] );
 
