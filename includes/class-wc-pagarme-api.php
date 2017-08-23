@@ -771,10 +771,18 @@ class WC_Pagarme_API {
 		$order_id = absint( $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wc_pagarme_transaction_id' AND meta_value = %d", $posted['id'] ) ) );
 		$order    = wc_get_order( $order_id );
 		$status   = sanitize_text_field( $posted['current_status'] );
+		$boleto_url = sanitize_text_field($posted['transaction']['boleto_url']);
 
 		if ( $order && $order->id === $order_id ) {
 			$this->process_order_status( $order, $status );
 		}
+
+		if ( !isset ($order->boleto_url) && $order->payment_method == 'pagarme-banking-ticket'){
+			$post_data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+			$post_data['boleto_url'] = $boleto_url;
+			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $post_data );
+		}
+
 	}
 
 	/**
