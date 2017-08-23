@@ -119,6 +119,12 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 					'required' => 'required',
 				),
 			),
+			'async' => array(
+				'title'             => __( 'Async', 'woocommerce-pagarme' ),
+				'type'              => 'checkbox',
+				'description'       => sprintf( __( 'If enabled the boleto url will appear in the order page, if disabled it will appear in checkout page', 'woocommerce-pagarme' ) ),
+				'default'           => 'no',
+			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
 				'type'        => 'title',
@@ -201,14 +207,26 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		if ( isset( $data['boleto_url'] ) ) {
 			$email_type = $plain_text ? 'plain' : 'html';
 
-			wc_get_template(
-				'banking-ticket/emails/' . $email_type . '-instructions.php',
-				array(
-					'url' => $data['boleto_url'],
-				),
-				'woocommerce/pagarme/',
-				WC_Pagarme::get_templates_path()
-			);
+			if( 'no' === $this->gateway->async){
+				wc_get_template(
+					'banking-ticket/payment-instructions.php',
+					array(
+						'url' => $data['boleto_url'],
+					),
+					'woocommerce/pagarme/',
+					WC_Pagarme::get_templates_path()
+				);
+			}
+			else{
+				wc_get_template(
+					'banking-ticket/async-instructions.php',
+					array(
+						'order' => $order->get_view_order_url(),
+					),
+					'woocommerce/pagarme/',
+					WC_Pagarme::get_templates_path()
+				);
+			}
 		}
 	}
 
