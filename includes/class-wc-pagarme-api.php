@@ -340,7 +340,9 @@ class WC_Pagarme_API {
 			}
 		} elseif ( 'pagarme-banking-ticket' === $this->gateway->id ) {
 			$data['payment_method'] = 'boleto';
-			$data['async'] = 'false';
+			if ('no' === $this->gateway->async){
+				$data['async'] = 'false';
+			}
 		}
 
 		// Add filter for Third Party plugins.
