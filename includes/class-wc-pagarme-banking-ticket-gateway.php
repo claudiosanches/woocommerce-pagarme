@@ -39,6 +39,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->api_key        = $this->get_option( 'api_key' );
 		$this->encryption_key = $this->get_option( 'encryption_key' );
 		$this->debug          = $this->get_option( 'debug' );
+		$this->async          = $this->get_option( 'async' );
 
 		// Active logs.
 		if ( 'yes' === $this->debug ) {
