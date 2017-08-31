@@ -178,14 +178,29 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$data  = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
 
 		if ( isset( $data['boleto_url'] ) && in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) ) {
-			wc_get_template(
-				'banking-ticket/payment-instructions.php',
-				array(
-					'url' => $data['boleto_url'],
-				),
-				'woocommerce/pagarme/',
-				WC_Pagarme::get_templates_path()
-			);
+
+			if( 'no' === $this->async){
+				fwrite($teste, 'payment-instructions');
+				wc_get_template(
+					'banking-ticket/payment-instructions.php',
+					array(
+						'url' => $data['boleto_url'],
+					),
+					'woocommerce/pagarme/',
+					WC_Pagarme::get_templates_path()
+				);
+			}
+			else{
+				fwrite($teste, 'async-instructions');
+				wc_get_template(
+					'banking-ticket/async-instructions.php',
+					array(
+						'order' => $order->get_view_order_url(),
+					),
+					'woocommerce/pagarme/',
+					WC_Pagarme::get_templates_path()
+				);
+			}
 		}
 	}
 
@@ -208,26 +223,14 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		if ( isset( $data['boleto_url'] ) ) {
 			$email_type = $plain_text ? 'plain' : 'html';
 
-			if( 'no' === $this->gateway->async){
-				wc_get_template(
-					'banking-ticket/payment-instructions.php',
-					array(
-						'url' => $data['boleto_url'],
-					),
-					'woocommerce/pagarme/',
-					WC_Pagarme::get_templates_path()
-				);
-			}
-			else{
-				wc_get_template(
-					'banking-ticket/async-instructions.php',
-					array(
-						'order' => $order->get_view_order_url(),
-					),
-					'woocommerce/pagarme/',
-					WC_Pagarme::get_templates_path()
-				);
-			}
+			wc_get_template(
+				'banking-ticket/emails/' . $email_type . '-instructions.php',
+				array(
+					'url' => $data['boleto_url'],
+				),
+				'woocommerce/pagarme/',
+				WC_Pagarme::get_templates_path()
+			);
 		}
 	}
 
