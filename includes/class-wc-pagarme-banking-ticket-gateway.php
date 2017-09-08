@@ -39,6 +39,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->api_key        = $this->get_option( 'api_key' );
 		$this->encryption_key = $this->get_option( 'encryption_key' );
 		$this->debug          = $this->get_option( 'debug' );
+		$this->async          = $this->get_option( 'async' );
 
 		// Active logs.
 		if ( 'yes' === $this->debug ) {
@@ -119,6 +120,12 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 					'required' => 'required',
 				),
 			),
+			'async' => array(
+				'title'             => __( 'Async', 'woocommerce-pagarme' ),
+				'type'              => 'checkbox',
+				'description'       => sprintf( __( 'If enabled the boleto url will appear in the order page, if disabled it will appear in checkout page', 'woocommerce-pagarme' ) ),
+				'default'           => 'no',
+			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
 				'type'        => 'title',
@@ -171,14 +178,29 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$data  = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
 
 		if ( isset( $data['boleto_url'] ) && in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) ) {
-			wc_get_template(
-				'banking-ticket/payment-instructions.php',
-				array(
-					'url' => $data['boleto_url'],
-				),
-				'woocommerce/pagarme/',
-				WC_Pagarme::get_templates_path()
-			);
+
+			if( 'no' === $this->async){
+				fwrite($teste, 'payment-instructions');
+				wc_get_template(
+					'banking-ticket/payment-instructions.php',
+					array(
+						'url' => $data['boleto_url'],
+					),
+					'woocommerce/pagarme/',
+					WC_Pagarme::get_templates_path()
+				);
+			}
+			else{
+				fwrite($teste, 'async-instructions');
+				wc_get_template(
+					'banking-ticket/async-instructions.php',
+					array(
+						'order' => $order->get_view_order_url(),
+					),
+					'woocommerce/pagarme/',
+					WC_Pagarme::get_templates_path()
+				);
+			}
 		}
 	}
 
