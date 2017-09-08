@@ -340,6 +340,7 @@ class WC_Pagarme_API {
 			}
 		} elseif ( 'pagarme-banking-ticket' === $this->gateway->id ) {
 			$data['payment_method'] = 'boleto';
+			$data['async']          = 'yes' === $this->gateway->async;
 		}
 
 		// Add filter for Third Party plugins.
@@ -771,6 +772,13 @@ class WC_Pagarme_API {
 
 		if ( $order && $order->id === $order_id ) {
 			$this->process_order_status( $order, $status );
+		}
+
+		// Async transactions will only send the boleto_url on IPN.
+		if ( ! empty( $posted['transaction']['boleto_url'] ) && 'pagarme-banking-ticket' === $order->payment_method ) {
+			$post_data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+			$post_data['boleto_url'] = sanitize_text_field( $posted['transaction']['boleto_url'] );
+			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $post_data );
 		}
 	}
 

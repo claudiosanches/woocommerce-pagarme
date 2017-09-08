@@ -39,6 +39,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->api_key        = $this->get_option( 'api_key' );
 		$this->encryption_key = $this->get_option( 'encryption_key' );
 		$this->debug          = $this->get_option( 'debug' );
+		$this->async          = $this->get_option( 'async' );
 
 		// Active logs.
 		if ( 'yes' === $this->debug ) {
@@ -119,6 +120,12 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 					'required' => 'required',
 				),
 			),
+			'async' => array(
+				'title'       => __( 'Async', 'woocommerce-pagarme' ),
+				'type'        => 'checkbox',
+				'description' => sprintf( __( 'If enabled the banking ticket url will appear in the order page, if disabled it will appear after the checkout process.', 'woocommerce-pagarme' ) ),
+				'default'     => 'no',
+			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
 				'type'        => 'title',
@@ -171,8 +178,10 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$data  = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
 
 		if ( isset( $data['boleto_url'] ) && in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) ) {
+			$template = 'no' === $this->async ? 'payment' : 'async';
+
 			wc_get_template(
-				'banking-ticket/payment-instructions.php',
+				'banking-ticket/' . $template . '-instructions.php',
 				array(
 					'url' => $data['boleto_url'],
 				),
