@@ -121,10 +121,10 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 				),
 			),
 			'async' => array(
-				'title'             => __( 'Async', 'woocommerce-pagarme' ),
-				'type'              => 'checkbox',
-				'description'       => sprintf( __( 'If enabled the boleto url will appear in the order page, if disabled it will appear in checkout page', 'woocommerce-pagarme' ) ),
-				'default'           => 'no',
+				'title'       => __( 'Async', 'woocommerce-pagarme' ),
+				'type'        => 'checkbox',
+				'description' => sprintf( __( 'If enabled the banking ticket url will appear in the order page, if disabled it will appear after the checkout process.', 'woocommerce-pagarme' ) ),
+				'default'     => 'no',
 			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
@@ -178,29 +178,16 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$data  = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
 
 		if ( isset( $data['boleto_url'] ) && in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) ) {
+			$template = 'no' === $this->async ? 'payment' : 'async';
 
-			if( 'no' === $this->async){
-				fwrite($teste, 'payment-instructions');
-				wc_get_template(
-					'banking-ticket/payment-instructions.php',
-					array(
-						'url' => $data['boleto_url'],
-					),
-					'woocommerce/pagarme/',
-					WC_Pagarme::get_templates_path()
-				);
-			}
-			else{
-				fwrite($teste, 'async-instructions');
-				wc_get_template(
-					'banking-ticket/async-instructions.php',
-					array(
-						'order' => $order->get_view_order_url(),
-					),
-					'woocommerce/pagarme/',
-					WC_Pagarme::get_templates_path()
-				);
-			}
+			wc_get_template(
+				'banking-ticket/' . $template . '-instructions.php',
+				array(
+					'url' => $data['boleto_url'],
+				),
+				'woocommerce/pagarme/',
+				WC_Pagarme::get_templates_path()
+			);
 		}
 	}
 
