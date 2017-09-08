@@ -2,8 +2,8 @@
 **Contributors:** pagarme, claudiosanches  
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
-**Tested up to:** 4.6  
-**Stable tag:** 2.0.10  
+**Tested up to:** 4.8  
+**Stable tag:** 2.0.11  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -19,7 +19,7 @@ Saiba mais como o Pagar.me funciona:
 
 ### Compatibilidade ###
 
-Compatível com desde a versão 2.2.x até 2.6.x do WooCommerce.
+Compatível com desde a versão 2.2.x do WooCommerce.
 
 Este plugin funciona integrado com o [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/), desta forma é possível enviar documentos do cliente como "CPF" ou "CNPJ", além dos campos "número" e "bairro" do endereço. Caso você queira remover todos os campos adicionais de endereço para vender Digital Goods, é possível utilizar o plugin [WooCommerce Digital Goods Checkout](https://wordpress.org/plugins/wc-digital-goods-checkout/).
 
@@ -125,6 +125,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Changelog ##
 
+### 2.0.11 - 2017/09/08 ###
+
+* Adicionada opção para suportar boletos asíncronos.
+
 ### 2.0.10 - 2016/09/29 ###
 
 * Adicionado `order_number` (número do pedido) como meta dado para transações com o Checkout Pagar.me.
@@ -211,6 +215,6 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 2.0.10 ###
+### 2.0.11 ###
 
-* Adicionado `order_number` (número do pedido) como meta dado para transações com o Checkout Pagar.me.
+* Adicionada opção para suportar boletos asíncronos.
