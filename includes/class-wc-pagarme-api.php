@@ -290,7 +290,7 @@ class WC_Pagarme_API {
 				}
 
 				if ( ( '1' === $wcbcf_settings['person_type'] && '2' === $order->get_meta('_billing_persontype') ) || '3' === $wcbcf_settings['person_type'] ) {
-					$data['customer']['name']            = $order->get_meta('_billing_company');
+					$data['customer']['name']            = $order->get_billing_company();
 					$data['customer']['document_number'] = $this->only_numbers( $order->get_meta('_billing_cnpj') );
 				}
 			}
