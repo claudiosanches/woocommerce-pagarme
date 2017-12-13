@@ -273,11 +273,11 @@ class WC_Pagarme_API {
 			);
 
 			// Non-WooCommerce default address fields.
-			if ( ! empty( $order->get_billing_number() ) ) {
-				$data['customer']['address']['street_number'] = $order->get_billing_number();
+			if ( ! empty( $order->get_meta('_billing_number') ) ) {
+				$data['customer']['address']['street_number'] = $order->get_meta('_billing_number');
 			}
-			if ( ! empty( $order->get_billing_neighborhood() ) ) {
-				$data['customer']['address']['neighborhood'] = $order->get_billing_neighborhood();
+			if ( ! empty( $order->get_meta('_billing_neighborhood') ) ) {
+				$data['customer']['address']['neighborhood'] = $order->get_meta('_billing_neighborhood');
 			}
 		}
 
@@ -285,33 +285,33 @@ class WC_Pagarme_API {
 		if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
 			$wcbcf_settings = get_option( 'wcbcf_settings' );
 			if ( '0' !== $wcbcf_settings['person_type'] ) {
-				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->get_billing_persontype() ) || '2' === $wcbcf_settings['person_type'] ) {
-					$data['customer']['document_number'] = $this->only_numbers( $order->get_billing_cpf() );
+				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->get_meta('_billing_persontype') ) || '2' === $wcbcf_settings['person_type'] ) {
+					$data['customer']['document_number'] = $this->only_numbers( $order->get_meta('_billing_cpf') );
 				}
 
-				if ( ( '1' === $wcbcf_settings['person_type'] && '2' === $order->get_billing_persontype() ) || '3' === $wcbcf_settings['person_type'] ) {
-					$data['customer']['name']            = $order->get_billing_company();
-					$data['customer']['document_number'] = $this->only_numbers( $order->get_billing_cnpj() );
+				if ( ( '1' === $wcbcf_settings['person_type'] && '2' === $order->get_meta('_billing_persontype') ) || '3' === $wcbcf_settings['person_type'] ) {
+					$data['customer']['name']            = $order->get_meta('_billing_company');
+					$data['customer']['document_number'] = $this->only_numbers( $order->get_meta('_billing_cnpj') );
 				}
 			}
 		} else {
-			if ( ! empty( $order->get_billing_cpf() ) ) {
-				$data['customer']['document_number'] = $this->only_numbers( $order->get_billing_cpf() );
+			if ( ! empty( $order->get_meta('_billing_cpf') ) ) {
+				$data['customer']['document_number'] = $this->only_numbers( $order->get_meta('_billing_cpf') );
 			}
-			if ( ! empty( $order->get_billing_cnpj() ) ) {
-				$data['customer']['name']            = $order->get_billing_company();
-				$data['customer']['document_number'] = $this->only_numbers( $order->get_billing_cnpj() );
+			if ( ! empty( $order->get_meta('_billing_cnpj') ) ) {
+				$data['customer']['name']            = $order->get_meta('_billing_cnpj');
+				$data['customer']['document_number'] = $this->only_numbers( $order->get_meta('_billing_cnpj') );
 			}
 		}
 
 		// Set the customer gender.
-		if ( ! empty( $order->get_billing_sex() ) ) {
-			$data['customer']['sex'] = strtoupper( substr( $order->get_billing_sex(), 0, 1 ) );
+		if ( ! empty( $order->get_meta('_billing_sex') ) ) {
+			$data['customer']['sex'] = strtoupper( substr( $order->get_meta('_billing_sex'), 0, 1 ) );
 		}
 
 		// Set the customer birthdate.
-		if ( ! empty( $order->get_billing_birthdate() ) ) {
-			$birthdate = explode( '/', $order->get_billing_birthdate() );
+		if ( ! empty( $order->get_meta('_billing_birthdate') ) ) {
+			$birthdate = explode( '/', $order->get_meta('_billing_birthdate') );
 
 			$data['customer']['born_at'] = $birthdate[1] . '-' . $birthdate[0] . '-' . $birthdate[2];
 		}
