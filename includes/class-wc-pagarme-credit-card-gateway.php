@@ -39,7 +39,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		$this->api_key              = $this->get_option( 'api_key' );
 		$this->encryption_key       = $this->get_option( 'encryption_key' );
 		$this->checkout             = $this->get_option( 'checkout' );
-		$this->token								= $this->get_option( 'token' );
+		$this->register_refused_order = $this->get_option( 'register_refused_order' );
 		$this->max_installment      = $this->get_option( 'max_installment' );
 		$this->smallest_installment = $this->get_option( 'smallest_installment' );
 		$this->interest_rate        = $this->get_option( 'interest_rate', '0' );
@@ -134,13 +134,13 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'description' => __( "When enabled opens a Pagar.me modal window to receive the customer's credit card information.", 'woocommerce-pagarme' ),
 			),
-			'token' => array(
-				'title' => __( 'Create Token Pagar.me', 'woocommerce-pagarme'),
-				'type'  => 'checkbox',
-				'label' => __( 'Enable Token Transaction', 'woocommerce-pagarme'),
+			'register_refused_order' => array(
+				'title' => __( 'Refused Transactions Order', 'woocommerce-pagarme'),
+				'type' => 'checkbox',
+				'label' => __( 'Create order for refused transactions', 'woocommerce-pagarme'),
 				'default' => 'no',
 				'desc_tip' => true,
-				'description' => __('When checkout is enabled, create transaction using token instead of card_hash')
+				'description' => __( 'Creates order for refused transactions when Pagar.me Checkout is enabled'),
 			),
 			'installments' => array(
 				'title'       => __( 'Installments', 'woocommerce-pagarme' ),
@@ -249,7 +249,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 						'customerFields'   => $customer,
 						'checkoutPayPage'  => ! empty( $customer ),
 						'uiColor'          => apply_filters( 'wc_pagarme_checkout_ui_color', '#1a6ee1' ),
-						'token'						 => $this->token === "yes"? "true" : "false"
+						'register_refused_order'		 => $this->register_refused_order,
 					)
 				);
 			} else {
