@@ -675,7 +675,7 @@ class WC_Pagarme_API {
 			);
 		} else {
 			// Save transaction data.
-			update_post_meta( $order->id, '_wc_pagarme_transaction_id', intval( $transaction['id'] ) );
+			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_id', intval( $transaction['id'] ) );
 			$payment_data = array_map(
 				'sanitize_text_field',
 				array(
@@ -686,9 +686,9 @@ class WC_Pagarme_API {
 					'boleto_url'      => $transaction['boleto_url'],
 				)
 			);
-			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $payment_data );
-			update_post_meta( $order->id, '_transaction_id', intval( $transaction['id'] ) );
-			$this->save_order_meta_fields( $order->id, $transaction );
+			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', $payment_data );
+			update_post_meta( $order->get_id(), '_transaction_id', intval( $transaction['id'] ) );
+			$this->save_order_meta_fields( $order->get_id(), $transaction );
 
 			// Change the order status.
 			$this->process_order_status( $order, $transaction['status'] );
@@ -770,15 +770,15 @@ class WC_Pagarme_API {
 		$order    = wc_get_order( $order_id );
 		$status   = sanitize_text_field( $posted['current_status'] );
 
-		if ( $order && $order->id === $order_id ) {
+		if ( $order && $order->get_id() === $order_id ) {
 			$this->process_order_status( $order, $status );
 		}
 
 		// Async transactions will only send the boleto_url on IPN.
 		if ( ! empty( $posted['transaction']['boleto_url'] ) && 'pagarme-banking-ticket' === $order->payment_method ) {
-			$post_data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+			$post_data = get_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', true );
 			$post_data['boleto_url'] = sanitize_text_field( $posted['transaction']['boleto_url'] );
-			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $post_data );
+			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', $post_data );
 		}
 	}
 
@@ -820,7 +820,7 @@ class WC_Pagarme_API {
 			case 'refused' :
 				$order->update_status( 'failed', __( 'Pagar.me: The transaction was rejected by the card company or by fraud.', 'woocommerce-pagarme' ) );
 
-				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_id  = get_post_meta( $order->get_id(), '_wc_pagarme_transaction_id', true );
 				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
 
 				$this->send_email(
@@ -833,7 +833,7 @@ class WC_Pagarme_API {
 			case 'refunded' :
 				$order->update_status( 'refunded', __( 'Pagar.me: The transaction was refunded/canceled.', 'woocommerce-pagarme' ) );
 
-				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_id  = get_post_meta( $order->get_id(), '_wc_pagarme_transaction_id', true );
 				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
 
 				$this->send_email(

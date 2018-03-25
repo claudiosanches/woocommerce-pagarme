@@ -38,7 +38,7 @@ class WC_Pagarme_My_Account {
 			return $actions;
 		}
 
-		$data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+		$data = get_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', true );
 		if ( ! empty( $data['boleto_url'] ) ) {
 			$actions[] = array(
 				'url'  => $data['boleto_url'],
