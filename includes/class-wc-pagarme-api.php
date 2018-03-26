@@ -503,9 +503,13 @@ class WC_Pagarme_API {
 			$this->gateway->log->add( $this->gateway->id, 'Doing a transaction for order ' . $order->get_order_number() . '...' );
 		}
 
-		$endpoint = 'transactions';
-		if ( ! empty( $token ) ) {
-			$endpoint .= '/' . $token . '/capture';
+		if ( class_exists( 'WC_Subscriptions_Order' ) && wcs_order_contains_subscription( $order ) ) {
+			$endpoint = 'subscriptions';
+		} else {
+			$endpoint = 'transactions';
+			if ( ! empty( $token ) ) {
+				$endpoint .= '/' . $token . '/capture';
+			}
 		}
 
 		$response = $this->do_request( $endpoint, 'POST', $args );
