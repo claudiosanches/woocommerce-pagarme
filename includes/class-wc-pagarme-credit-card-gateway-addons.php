@@ -9,7 +9,7 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 	public function __construct() {
 		parent::__construct();
 
-		add_filter( 'wc_pagarme_transaction_data' , 'pagarme_subscription_transaction_data' );
+		add_filter( 'wc_pagarme_transaction_data' , array( $this, 'pagarme_subscription_transaction_data' ), 10, 2 );
 	}
 
 	public function process_payment( $order_id ) {
