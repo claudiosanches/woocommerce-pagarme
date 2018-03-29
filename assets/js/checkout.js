@@ -232,7 +232,7 @@
 				paymentMethods:   'credit_card',
 				customerData:     false,
 				amount:           inline_data.data( 'total' ),
-				createToken:      true,
+				createToken:      wcPagarmeParams.createToken,
 				interestRate:     wcPagarmeParams.interestRate,
 				maxInstallments:  inline_data.data( 'max_installment' ),
 				freeInstallments: wcPagarmeParams.freeInstallments,

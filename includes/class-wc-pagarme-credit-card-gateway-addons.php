@@ -9,6 +9,12 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 	public function __construct() {
 		parent::__construct();
 
+		if ( is_checkout() ) {
+			if ( WC_Subscriptions_Cart::cart_contains_subscription() ) {
+				add_filter( 'wc_pagarme_checkout', '__return_false' );
+			}
+		}
+
 		add_filter( 'wc_pagarme_transaction_data' , array( $this, 'pagarme_subscription_transaction_data' ), 10, 2 );
 	}
 
@@ -29,7 +35,7 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 	 * @return array            Transaction data.
 	 */
 	public function pagarme_subscription_transaction_data( $data, $order ) {
-		return $data['plan_id'] = get_post_meta( $order, '_pagarme_plan_id', true );
+		return $data['plan_id'] = get_post_meta( $order->get_id(), '_pagarme_plan_id', true );
 	}
 
 	/**
