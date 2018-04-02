@@ -1,11 +1,24 @@
 <?php
+/**
+ * Pagar.me Credit Card Addons for Subscriptions
+ *
+ * @package WooCommerce_Pagarme/Gateway
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * WC_Pagarme_Credit_Card_Gateway_Addons class.
+ *
+ * @extends WC_Pagarme_Credit_Card_Gateway
+ */
 class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gateway {
 
+	/**
+	 * Init gateway addon actions.
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -19,6 +32,13 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 		add_action( 'woocommerce_subscription_cancelled_' . $this->id, array( $this, 'pagarme_cancelled_subscription' ) );
 	}
 
+	/**
+	 * Process the subscription payment.
+	 *
+	 * @param int $order_id Order ID.
+	 *
+	 * @return array Redirect data.
+	 */
 	public function process_payment( $order_id ) {
 		if ( wcs_order_contains_subscription( $order_id ) ) {
 			return $this->process_subscription( $order_id );
@@ -54,7 +74,6 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 		$data        = $this->api->generate_transaction_data( $order, $_POST );
 		$transaction = $this->api->do_transaction( $order, $data );
 
-
 		if ( isset( $transaction['errors'] ) ) {
 			foreach ( $transaction['errors'] as $error ) {
 				wc_add_notice( $error['message'], 'error' );
@@ -79,8 +98,7 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 
 			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', $payment_data );
 			update_post_meta( $order->get_id(), '_wc_pagarme_subscription_id', intval( $transaction['id'] ) );
-			//$this->api->save_order_meta_fields( $order->get_id(), $transaction );
-
+			
 			// Change the order status.
 			$this->api->process_order_status( $order, $transaction['status'] );
 

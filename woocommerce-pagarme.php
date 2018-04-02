@@ -152,7 +152,7 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		 */
 		public function save_plan_id( $post_id ) {
 			if ( ! empty( $_POST['_pagarme_plan_id'] ) ) {
-				update_post_meta( $post_id, '_pagarme_plan_id', sanitize_text_field( $_POST['_pagarme_plan_id'] ) );
+				update_post_meta( $post_id, '_pagarme_plan_id', sanitize_text_field( wp_unslash( $_POST['_pagarme_plan_id'] ) ) );
 			}
 		}
 

@@ -53,7 +53,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		// Set the API.
 		$this->api = new WC_Pagarme_API( $this );
 
-		// Add support to Subscriptions
+		// Add support for Subscriptions.
 		$this->supports = array(
 			'subscriptions',
 			'products',
@@ -247,7 +247,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 						'postbackUrl'      => WC()->api_request_url( get_class( $this ) ),
 						'customerFields'   => $customer,
 						'checkoutPayPage'  => ! empty( $customer ),
-						'createToken'      => json_encode( apply_filters( 'wc_pagarme_checkout', true ) ),
+						'createToken'      => wp_json_encode( apply_filters( 'wc_pagarme_checkout', true ) ),
 						'uiColor'          => apply_filters( 'wc_pagarme_checkout_ui_color', '#1a6ee1' ),
 					)
 				);
