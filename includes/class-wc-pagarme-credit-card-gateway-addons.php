@@ -16,6 +16,7 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 		}
 
 		add_filter( 'wc_pagarme_transaction_data' , array( $this, 'pagarme_subscription_transaction_data' ), 10, 2 );
+		add_action( 'woocommerce_subscription_cancelled_' . $this->id, array( $this, 'pagarme_cancelled_subscription' ) );
 	}
 
 	public function process_payment( $order_id ) {
@@ -35,7 +36,10 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 	 * @return array            Transaction data.
 	 */
 	public function pagarme_subscription_transaction_data( $data, $order ) {
-		return $data['plan_id'] = get_post_meta( $order->get_id(), '_pagarme_plan_id', true );
+		$order_items       = $order->get_items();
+		$order_item_id     = array_shift( $order_items )->get_product_id();
+		$data['plan_id']   = get_post_meta( $order_item_id, '_pagarme_plan_id', true );
+		return $data;
 	}
 
 	/**
@@ -46,33 +50,10 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 	 * @return array Redirect data.
 	 */
 	public function process_subscription( $order_id ) {
-		$order = wc_get_order( $order_id );
+		$order       = wc_get_order( $order_id );
+		$data        = $this->api->generate_transaction_data( $order, $_POST );
+		$transaction = $this->api->do_transaction( $order, $data );
 
-		// TODO: Checar se é possivel fazer o capture de uma subscription
-		if ( isset( $this->gateway->checkout ) && 'yes' === $this->gateway->checkout ) {
-			if ( ! empty( $_POST['pagarme_checkout_token'] ) ) {
-				$token = sanitize_text_field( wp_unslash( $_POST['pagarme_checkout_token'] ) );
-				$data  = $this->api->generate_checkout_data( $order, $token );
-
-				// Cancel the payment is irregular.
-				if ( isset( $data['error'] ) ) {
-					$this->api->cancel_transaction( $order, $token );
-					$order->update_status( 'failed', $data['error'] );
-
-					return array(
-						'result'   => 'success',
-						'redirect' => $this->gateway->get_return_url( $order ),
-					);
-				}
-
-				$transaction = $this->api->do_transaction( $order, $data, $token );
-			} else {
-				$transaction = array( 'errors' => array( array( 'message' => __( 'Missing credit card data, please review your data and try again or contact us for assistance.', 'woocommerce-pagarme' ) ) ) );
-			}
-		} else {
-			$data        = $this->api->generate_transaction_data( $order, $_POST );
-			$transaction = $this->api->do_transaction( $order, $data );
-		}
 
 		if ( isset( $transaction['errors'] ) ) {
 			foreach ( $transaction['errors'] as $error ) {
@@ -82,23 +63,23 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 			return array(
 				'result' => 'fail',
 			);
-		// TODO se nao teve erro até aqui, deu tudo certo, apenas salva as informacoes da transacao
 		} else {
 			// Save transaction data.
-			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_id', intval( $transaction['id'] ) );
+			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_id', intval( $transaction['current_transaction']['id'] ) );
+
 			$payment_data = array_map(
 				'sanitize_text_field',
 				array(
 					'payment_method'  => $transaction['payment_method'],
-					'installments'    => $transaction['installments'],
-					'card_brand'      => $this->api->get_card_brand_name( $transaction['card_brand'] ),
-					'antifraud_score' => $transaction['antifraud_score'],
-					'boleto_url'      => $transaction['boleto_url'],
+					'installments'    => $transaction['current_transaction']['installments'],
+					'card_brand'      => $this->api->get_card_brand_name( $transaction['current_transaction']['card_brand'] ),
+					'antifraud_score' => $transaction['current_transaction']['antifraud_score'],
 				)
 			);
+
 			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', $payment_data );
-			update_post_meta( $order->get_id(), '_transaction_id', intval( $transaction['id'] ) );
-			$this->api->save_order_meta_fields( $order->get_id(), $transaction );
+			update_post_meta( $order->get_id(), '_wc_pagarme_subscription_id', intval( $transaction['id'] ) );
+			//$this->api->save_order_meta_fields( $order->get_id(), $transaction );
 
 			// Change the order status.
 			$this->api->process_order_status( $order, $transaction['status'] );
@@ -109,8 +90,17 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 			// Redirect to thanks page.
 			return array(
 				'result'   => 'success',
-				'redirect' => $this->gateway->get_return_url( $order ),
 			);
 		}
+	}
+
+	/**
+	 * Cancels the subscription when user chooses to do so.
+	 *
+	 * @param WC_Subscription $subscription Subscription object.
+	 */
+	public function pagarme_cancelled_subscription( $subscription ) {
+		$endpoint = 'subscriptions/' . get_post_meta( $subscription->get_parent_id(), '_wc_pagarme_subscription_id', true ) . '/cancel';
+		$this->api->do_request( $endpoint, 'POST', array( 'api_key' => $this->api_key ) );
 	}
 }

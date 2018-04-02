@@ -131,7 +131,7 @@ class WC_Pagarme_API {
 	 *
 	 * @return array            Request response.
 	 */
-	protected function do_request( $endpoint, $method = 'POST', $data = array(), $headers = array() ) {
+	public function do_request( $endpoint, $method = 'POST', $data = array(), $headers = array() ) {
 		$params = array(
 			'method'  => $method,
 			'timeout' => 60,
@@ -590,7 +590,7 @@ class WC_Pagarme_API {
 	 * @param string $brand Card brand.
 	 * @return string
 	 */
-	protected function get_card_brand_name( $brand ) {
+	public function get_card_brand_name( $brand ) {
 		$names = array(
 			'visa'       => __( 'Visa', 'woocommerce-pagarme' ),
 			'mastercard' => __( 'MasterCard', 'woocommerce-pagarme' ),

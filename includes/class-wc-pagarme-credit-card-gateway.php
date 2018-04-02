@@ -54,7 +54,12 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		$this->api = new WC_Pagarme_API( $this );
 
 		// Add support to Subscriptions
-		$this->supports = array( 'subscriptions', 'products' );
+		$this->supports = array(
+			'subscriptions',
+			'products',
+			'subscription_cancellation',
+			'gateway_scheduled_payments',
+		);
 
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
