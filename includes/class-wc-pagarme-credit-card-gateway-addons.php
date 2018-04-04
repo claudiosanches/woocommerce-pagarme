@@ -28,7 +28,7 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 			}
 		}
 
-		add_filter( 'wc_pagarme_transaction_data' , array( $this, 'pagarme_subscription_transaction_data' ), 10, 2 );
+		add_filter( 'wc_pagarme_transaction_data', array( $this, 'pagarme_subscription_transaction_data' ), 10, 2 );
 		add_action( 'woocommerce_subscription_cancelled_' . $this->id, array( $this, 'pagarme_cancelled_subscription' ) );
 	}
 
@@ -56,9 +56,9 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 	 * @return array            Transaction data.
 	 */
 	public function pagarme_subscription_transaction_data( $data, $order ) {
-		$order_items       = $order->get_items();
-		$order_item_id     = array_shift( $order_items )->get_product_id();
-		$data['plan_id']   = get_post_meta( $order_item_id, '_pagarme_plan_id', true );
+		$order_items     = $order->get_items();
+		$order_item_id   = array_shift( $order_items )->get_product_id();
+		$data['plan_id'] = get_post_meta( $order_item_id, '_pagarme_plan_id', true );
 		return $data;
 	}
 
@@ -98,7 +98,7 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 
 			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', $payment_data );
 			update_post_meta( $order->get_id(), '_wc_pagarme_subscription_id', intval( $transaction['id'] ) );
-			
+
 			// Change the order status.
 			$this->api->process_order_status( $order, $transaction['status'] );
 
@@ -107,7 +107,7 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 
 			// Redirect to thanks page.
 			return array(
-				'result'   => 'success',
+				'result' => 'success',
 			);
 		}
 	}

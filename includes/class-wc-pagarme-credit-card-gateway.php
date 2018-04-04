@@ -335,18 +335,18 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Add content to the WC emails.
 	 *
-	 * @param  object $order         Order object.
-	 * @param  bool   $sent_to_admin Send to admin.
-	 * @param  bool   $plain_text    Plain text or HTML.
+	 * @param  WC_Order $order         Order object.
+	 * @param  bool     $sent_to_admin Send to admin.
+	 * @param  bool     $plain_text    Plain text or HTML.
 	 *
 	 * @return string                Payment instructions.
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if ( $sent_to_admin || ! in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) || $this->id !== $order->payment_method ) {
+		if ( $sent_to_admin || ! in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) || $this->id !== $order->get_payment_method() ) {
 			return;
 		}
 
-		$data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+		$data = get_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', true );
 
 		if ( isset( $data['installments'] ) ) {
 			$email_type = $plain_text ? 'plain' : 'html';

@@ -30,7 +30,7 @@ class WC_Pagarme_My_Account {
 	 * @return array
 	 */
 	public function my_orders_banking_ticket_link( $actions, $order ) {
-		if ( 'pagarme-banking-ticket' !== $order->payment_method ) {
+		if ( 'pagarme-banking-ticket' !== $order->get_payment_method() ) {
 			return $actions;
 		}
 

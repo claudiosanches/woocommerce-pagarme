@@ -71,7 +71,7 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		public static function get_instance() {
 			// If the single instance hasn't been set, set it now.
 			if ( null === self::$instance ) {
-				self::$instance = new self;
+				self::$instance = new self();
 			}
 
 			return self::$instance;
@@ -133,12 +133,12 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 
 			woocommerce_wp_text_input(
 				array(
-					'id'            => '_pagarme_plan_id',
-					'label'         => __( 'Pagar.me plan_id', 'woocommerce-pagarme' ),
-					'placeholder'   => '',
-					'desc_tip'      => 'true',
-					'description'   => __( "Enter Pagar.me's plan id associated with this subscription.", 'woocommerce-pagarme' ),
-					'type'          => 'number',
+					'id'          => '_pagarme_plan_id',
+					'label'       => __( 'Pagar.me plan_id', 'woocommerce-pagarme' ),
+					'placeholder' => '',
+					'desc_tip'    => 'true',
+					'description' => __( "Enter Pagar.me's plan id associated with this subscription.", 'woocommerce-pagarme' ),
+					'type'        => 'number',
 				)
 			);
 
