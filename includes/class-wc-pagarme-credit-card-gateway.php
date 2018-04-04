@@ -53,6 +53,14 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		// Set the API.
 		$this->api = new WC_Pagarme_API( $this );
 
+		// Add support for Subscriptions.
+		$this->supports = array(
+			'subscriptions',
+			'products',
+			'subscription_cancellation',
+			'gateway_scheduled_payments',
+		);
+
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'checkout_scripts' ) );
@@ -239,6 +247,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 						'postbackUrl'      => WC()->api_request_url( get_class( $this ) ),
 						'customerFields'   => $customer,
 						'checkoutPayPage'  => ! empty( $customer ),
+						'createToken'      => wp_json_encode( apply_filters( 'wc_pagarme_checkout', true ) ),
 						'uiColor'          => apply_filters( 'wc_pagarme_checkout_ui_color', '#1a6ee1' ),
 					)
 				);
@@ -326,18 +335,18 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Add content to the WC emails.
 	 *
-	 * @param  object $order         Order object.
-	 * @param  bool   $sent_to_admin Send to admin.
-	 * @param  bool   $plain_text    Plain text or HTML.
+	 * @param  WC_Order $order         Order object.
+	 * @param  bool     $sent_to_admin Send to admin.
+	 * @param  bool     $plain_text    Plain text or HTML.
 	 *
 	 * @return string                Payment instructions.
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if ( $sent_to_admin || ! in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) || $this->id !== $order->payment_method ) {
+		if ( $sent_to_admin || ! in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) || $this->id !== $order->get_payment_method() ) {
 			return;
 		}
 
-		$data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+		$data = get_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', true );
 
 		if ( isset( $data['installments'] ) ) {
 			$email_type = $plain_text ? 'plain' : 'html';

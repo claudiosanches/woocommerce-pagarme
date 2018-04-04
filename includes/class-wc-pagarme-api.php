@@ -131,7 +131,7 @@ class WC_Pagarme_API {
 	 *
 	 * @return array            Request response.
 	 */
-	protected function do_request( $endpoint, $method = 'POST', $data = array(), $headers = array() ) {
+	public function do_request( $endpoint, $method = 'POST', $data = array(), $headers = array() ) {
 		$params = array(
 			'method'  => $method,
 			'timeout' => 60,
@@ -246,8 +246,8 @@ class WC_Pagarme_API {
 			'amount'       => $order->get_total() * 100,
 			'postback_url' => WC()->api_request_url( get_class( $this->gateway ) ),
 			'customer'     => array(
-				'name'  => trim( $order->billing_first_name . ' ' . $order->billing_last_name ),
-				'email' => $order->billing_email,
+				'name'  => trim( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() ),
+				'email' => $order->get_billing_email(),
 			),
 			'metadata'     => array(
 				'order_number' => $order->get_order_number(),
@@ -255,8 +255,8 @@ class WC_Pagarme_API {
 		);
 
 		// Phone.
-		if ( ! empty( $order->billing_phone ) ) {
-			$phone = $this->only_numbers( $order->billing_phone );
+		if ( ! empty( $order->get_billing_phone() ) ) {
+			$phone = $this->only_numbers( $order->get_billing_phone() );
 
 			$data['customer']['phone'] = array(
 				'ddd'    => substr( $phone, 0, 2 ),
@@ -265,19 +265,19 @@ class WC_Pagarme_API {
 		}
 
 		// Address.
-		if ( ! empty( $order->billing_address_1 ) ) {
+		if ( ! empty( $order->get_billing_address_1() ) ) {
 			$data['customer']['address'] = array(
-				'street'        => $order->billing_address_1,
-				'complementary' => $order->billing_address_2,
-				'zipcode'       => $this->only_numbers( $order->billing_postcode ),
+				'street'        => $order->get_billing_address_1(),
+				'complementary' => $order->get_billing_address_2(),
+				'zipcode'       => $this->only_numbers( $order->get_billing_postcode() ),
 			);
 
 			// Non-WooCommerce default address fields.
-			if ( ! empty( $order->billing_number ) ) {
-				$data['customer']['address']['street_number'] = $order->billing_number;
+			if ( ! empty( $order->get_meta( '_billing_number' ) ) ) {
+				$data['customer']['address']['street_number'] = $order->get_meta( '_billing_number' );
 			}
-			if ( ! empty( $order->billing_neighborhood ) ) {
-				$data['customer']['address']['neighborhood'] = $order->billing_neighborhood;
+			if ( ! empty( $order->get_meta( '_billing_neighborhood' ) ) ) {
+				$data['customer']['address']['neighborhood'] = $order->get_meta( '_billing_neighborhood' );
 			}
 		}
 
@@ -285,33 +285,33 @@ class WC_Pagarme_API {
 		if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
 			$wcbcf_settings = get_option( 'wcbcf_settings' );
 			if ( '0' !== $wcbcf_settings['person_type'] ) {
-				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->billing_persontype ) || '2' === $wcbcf_settings['person_type'] ) {
-					$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
+				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->get_meta( '_billing_persontype' ) ) || '2' === $wcbcf_settings['person_type'] ) {
+					$data['customer']['document_number'] = $this->only_numbers( $order->get_meta( '_billing_cpf' ) );
 				}
 
-				if ( ( '1' === $wcbcf_settings['person_type'] && '2' === $order->billing_persontype ) || '3' === $wcbcf_settings['person_type'] ) {
-					$data['customer']['name']            = $order->billing_company;
-					$data['customer']['document_number'] = $this->only_numbers( $order->billing_cnpj );
+				if ( ( '1' === $wcbcf_settings['person_type'] && '2' === $order->get_meta( '_billing_persontype' ) ) || '3' === $wcbcf_settings['person_type'] ) {
+					$data['customer']['name']            = $order->get_billing_company();
+					$data['customer']['document_number'] = $this->only_numbers( $order->get_meta( '_billing_cnpj' ) );
 				}
 			}
 		} else {
-			if ( ! empty( $order->billing_cpf ) ) {
-				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
+			if ( ! empty( $order->get_meta( '_billing_cpf' ) ) ) {
+				$data['customer']['document_number'] = $this->only_numbers( $order->get_meta( '_billing_cpf' ) );
 			}
-			if ( ! empty( $order->billing_cnpj ) ) {
-				$data['customer']['name']            = $order->billing_company;
-				$data['customer']['document_number'] = $this->only_numbers( $order->billing_cnpj );
+			if ( ! empty( $order->get_meta( '_billing_cnpj' ) ) ) {
+				$data['customer']['name']            = $order->get_billing_company();
+				$data['customer']['document_number'] = $this->only_numbers( $order->get_meta( '_billing_cnpj' ) );
 			}
 		}
 
 		// Set the customer gender.
-		if ( ! empty( $order->billing_sex ) ) {
-			$data['customer']['sex'] = strtoupper( substr( $order->billing_sex, 0, 1 ) );
+		if ( ! empty( $order->get_meta( '_billing_sex' ) ) ) {
+			$data['customer']['sex'] = strtoupper( substr( $order->get_meta( '_billing_sex' ), 0, 1 ) );
 		}
 
 		// Set the customer birthdate.
-		if ( ! empty( $order->billing_birthdate ) ) {
-			$birthdate = explode( '/', $order->billing_birthdate );
+		if ( ! empty( $order->get_meta( '_billing_birthdate' ) ) ) {
+			$birthdate = explode( '/', $order->get_meta( '_billing_birthdate' ) );
 
 			$data['customer']['born_at'] = $birthdate[1] . '-' . $birthdate[0] . '-' . $birthdate[2];
 		}
@@ -344,7 +344,7 @@ class WC_Pagarme_API {
 		}
 
 		// Add filter for Third Party plugins.
-		return apply_filters( 'wc_pagarme_transaction_data', $data , $order );
+		return apply_filters( 'wc_pagarme_transaction_data', $data, $order );
 	}
 
 	/**
@@ -364,6 +364,7 @@ class WC_Pagarme_API {
 		}
 
 		$_customer = $data['customer'];
+
 		$customer['customerName']  = $_customer['name'];
 		$customer['customerEmail'] = $_customer['email'];
 
@@ -503,9 +504,13 @@ class WC_Pagarme_API {
 			$this->gateway->log->add( $this->gateway->id, 'Doing a transaction for order ' . $order->get_order_number() . '...' );
 		}
 
-		$endpoint = 'transactions';
-		if ( ! empty( $token ) ) {
-			$endpoint .= '/' . $token . '/capture';
+		if ( class_exists( 'WC_Subscriptions_Order' ) && wcs_order_contains_subscription( $order ) ) {
+			$endpoint = 'subscriptions';
+		} else {
+			$endpoint = 'transactions';
+			if ( ! empty( $token ) ) {
+				$endpoint .= '/' . $token . '/capture';
+			}
 		}
 
 		$response = $this->do_request( $endpoint, 'POST', $args );
@@ -586,7 +591,7 @@ class WC_Pagarme_API {
 	 * @param string $brand Card brand.
 	 * @return string
 	 */
-	protected function get_card_brand_name( $brand ) {
+	public function get_card_brand_name( $brand ) {
 		$names = array(
 			'visa'       => __( 'Visa', 'woocommerce-pagarme' ),
 			'mastercard' => __( 'MasterCard', 'woocommerce-pagarme' ),
@@ -675,7 +680,7 @@ class WC_Pagarme_API {
 			);
 		} else {
 			// Save transaction data.
-			update_post_meta( $order->id, '_wc_pagarme_transaction_id', intval( $transaction['id'] ) );
+			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_id', intval( $transaction['id'] ) );
 			$payment_data = array_map(
 				'sanitize_text_field',
 				array(
@@ -686,9 +691,9 @@ class WC_Pagarme_API {
 					'boleto_url'      => $transaction['boleto_url'],
 				)
 			);
-			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $payment_data );
-			update_post_meta( $order->id, '_transaction_id', intval( $transaction['id'] ) );
-			$this->save_order_meta_fields( $order->id, $transaction );
+			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', $payment_data );
+			update_post_meta( $order->get_id(), '_transaction_id', intval( $transaction['id'] ) );
+			$this->save_order_meta_fields( $order->get_id(), $transaction );
 
 			// Change the order status.
 			$this->process_order_status( $order, $transaction['status'] );
@@ -712,7 +717,7 @@ class WC_Pagarme_API {
 	 * @return bool
 	 */
 	public function check_fingerprint( $ipn_response ) {
-		if ( isset( $ipn_response['id'] ) && isset( $ipn_response['current_status'] ) && isset( $ipn_response['fingerprint'] ) ) {
+		if ( isset( $ipn_response['id'], $ipn_response['current_status'], $ipn_response['fingerprint'] ) ) {
 			$fingerprint = sha1( $ipn_response['id'] . '#' . $this->gateway->api_key );
 
 			if ( $fingerprint === $ipn_response['fingerprint'] ) {
@@ -770,15 +775,15 @@ class WC_Pagarme_API {
 		$order    = wc_get_order( $order_id );
 		$status   = sanitize_text_field( $posted['current_status'] );
 
-		if ( $order && $order->id === $order_id ) {
+		if ( $order && $order->get_id() === $order_id ) {
 			$this->process_order_status( $order, $status );
 		}
 
 		// Async transactions will only send the boleto_url on IPN.
-		if ( ! empty( $posted['transaction']['boleto_url'] ) && 'pagarme-banking-ticket' === $order->payment_method ) {
-			$post_data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+		if ( ! empty( $posted['transaction']['boleto_url'] ) && 'pagarme-banking-ticket' === $order->get_payment_method() ) {
+			$post_data = get_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', true );
 			$post_data['boleto_url'] = sanitize_text_field( $posted['transaction']['boleto_url'] );
-			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $post_data );
+			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', $post_data );
 		}
 	}
 
@@ -794,17 +799,17 @@ class WC_Pagarme_API {
 		}
 
 		switch ( $status ) {
-			case 'authorized' :
+			case 'authorized':
 				if ( ! in_array( $order->get_status(), array( 'processing', 'completed' ), true ) ) {
 					$order->update_status( 'on-hold', __( 'Pagar.me: The transaction was authorized.', 'woocommerce-pagarme' ) );
 				}
 
 				break;
-			case 'processing' :
+			case 'processing':
 				$order->update_status( 'on-hold', __( 'Pagar.me: The transaction is being processed.', 'woocommerce-pagarme' ) );
 
 				break;
-			case 'paid' :
+			case 'paid':
 				if ( ! in_array( $order->get_status(), array( 'processing', 'completed' ), true ) ) {
 					$order->add_order_note( __( 'Pagar.me: Transaction paid.', 'woocommerce-pagarme' ) );
 				}
@@ -813,14 +818,14 @@ class WC_Pagarme_API {
 				$order->payment_complete();
 
 				break;
-			case 'waiting_payment' :
+			case 'waiting_payment':
 				$order->update_status( 'on-hold', __( 'Pagar.me: The banking ticket was issued but not paid yet.', 'woocommerce-pagarme' ) );
 
 				break;
-			case 'refused' :
+			case 'refused':
 				$order->update_status( 'failed', __( 'Pagar.me: The transaction was rejected by the card company or by fraud.', 'woocommerce-pagarme' ) );
 
-				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_id  = get_post_meta( $order->get_id(), '_wc_pagarme_transaction_id', true );
 				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
 
 				$this->send_email(
@@ -830,10 +835,10 @@ class WC_Pagarme_API {
 				);
 
 				break;
-			case 'refunded' :
+			case 'refunded':
 				$order->update_status( 'refunded', __( 'Pagar.me: The transaction was refunded/canceled.', 'woocommerce-pagarme' ) );
 
-				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_id  = get_post_meta( $order->get_id(), '_wc_pagarme_transaction_id', true );
 				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
 
 				$this->send_email(
@@ -843,8 +848,7 @@ class WC_Pagarme_API {
 				);
 
 				break;
-
-			default :
+			default:
 				break;
 		}
 	}

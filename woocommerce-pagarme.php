@@ -45,13 +45,19 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 			// Load plugin text domain.
 			add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
-			// Checks with WooCommerce is installed.
+			// Checks if WooCommerce is installed.
 			if ( class_exists( 'WC_Payment_Gateway' ) ) {
 				$this->upgrade();
 				$this->includes();
 
 				add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
 				add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
+
+				// Adds Pagar.me plan_id field in subscription product if Subscriptions is installed.
+				if ( class_exists( 'WC_Subscriptions_Order' ) ) {
+					add_action( 'woocommerce_subscriptions_product_options_pricing', array( $this, 'add_plan_id_field' ) );
+					add_action( 'woocommerce_process_product_meta', array( $this, 'save_plan_id' ) );
+				}
 			} else {
 				add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
 			}
@@ -65,7 +71,7 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		public static function get_instance() {
 			// If the single instance hasn't been set, set it now.
 			if ( null === self::$instance ) {
-				self::$instance = new self;
+				self::$instance = new self();
 			}
 
 			return self::$instance;
@@ -79,6 +85,10 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 			include_once dirname( __FILE__ ) . '/includes/class-wc-pagarme-my-account.php';
 			include_once dirname( __FILE__ ) . '/includes/class-wc-pagarme-banking-ticket-gateway.php';
 			include_once dirname( __FILE__ ) . '/includes/class-wc-pagarme-credit-card-gateway.php';
+
+			if ( class_exists( 'WC_Subscriptions_Order' ) ) {
+				include_once dirname( __FILE__ ) . '/includes/class-wc-pagarme-credit-card-gateway-addons.php';
+			}
 		}
 
 		/**
@@ -108,7 +118,42 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 			$methods[] = 'WC_Pagarme_Banking_Ticket_Gateway';
 			$methods[] = 'WC_Pagarme_Credit_Card_Gateway';
 
+			if ( class_exists( 'WC_Subscriptions_Order' ) ) {
+				$methods[] = 'WC_Pagarme_Credit_Card_Gateway_Addons';
+			}
+
 			return $methods;
+		}
+
+		/**
+		 * Adds a "plan id" to Subscription product Advanced tab.
+		 */
+		public function add_plan_id_field() {
+			echo '<div class="options_group limit_subscription show_if_subscription">';
+
+			woocommerce_wp_text_input(
+				array(
+					'id'          => '_pagarme_plan_id',
+					'label'       => __( 'Pagar.me plan_id', 'woocommerce-pagarme' ),
+					'placeholder' => '',
+					'desc_tip'    => 'true',
+					'description' => __( "Enter Pagar.me's plan id associated with this subscription.", 'woocommerce-pagarme' ),
+					'type'        => 'number',
+				)
+			);
+
+			echo '</div>';
+		}
+
+		/**
+		 * Saves the plan_id meta field.
+		 *
+		 * @param int $post_id ID of post to update meta.
+		 */
+		public function save_plan_id( $post_id ) {
+			if ( ! empty( $_POST['_pagarme_plan_id'] ) ) {
+				update_post_meta( $post_id, '_pagarme_plan_id', sanitize_text_field( wp_unslash( $_POST['_pagarme_plan_id'] ) ) );
+			}
 		}
 
 		/**
