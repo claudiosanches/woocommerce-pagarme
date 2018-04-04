@@ -29,22 +29,8 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 		}
 
 		add_filter( 'wc_pagarme_transaction_data', array( $this, 'pagarme_subscription_transaction_data' ), 10, 2 );
+		add_filter( 'woocommerce_get_transaction_url', array( $this, 'pagarme_transaction_url' ), 10, 2 );
 		add_action( 'woocommerce_subscription_cancelled_' . $this->id, array( $this, 'pagarme_cancelled_subscription' ) );
-	}
-
-	/**
-	 * Process the subscription payment.
-	 *
-	 * @param int $order_id Order ID.
-	 *
-	 * @return array Redirect data.
-	 */
-	public function process_payment( $order_id ) {
-		if ( wcs_order_contains_subscription( $order_id ) ) {
-			return $this->process_subscription( $order_id );
-		} else {
-			return parent::process_payment( $order_id );
-		}
 	}
 
 	/**
@@ -60,6 +46,37 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 		$order_item_id   = array_shift( $order_items )->get_product_id();
 		$data['plan_id'] = get_post_meta( $order_item_id, '_pagarme_plan_id', true );
 		return $data;
+	}
+
+	/**
+	 * Change transaction url if it's a subscription.
+	 *
+	 * @param  string   $return_url Transaction url.
+	 * @param  WC_Order $order      The order object.
+	 *
+	 * @return string transaction URL, or empty string.
+	 */
+	public function pagarme_transaction_url( $return_url, $order ) {
+		if ( wcs_order_contains_subscription( $order ) ) {
+			return 'https://dashboard.pagar.me/#/subscriptions/' . $order->get_transaction_id();
+		}
+
+		return $return_url;
+	}
+
+	/**
+	 * Process the subscription payment.
+	 *
+	 * @param int $order_id Order ID.
+	 *
+	 * @return array Redirect data.
+	 */
+	public function process_payment( $order_id ) {
+		if ( wcs_order_contains_subscription( $order_id ) ) {
+			return $this->process_subscription( $order_id );
+		} else {
+			return parent::process_payment( $order_id );
+		}
 	}
 
 	/**
@@ -98,6 +115,7 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 
 			update_post_meta( $order->get_id(), '_wc_pagarme_transaction_data', $payment_data );
 			update_post_meta( $order->get_id(), '_wc_pagarme_subscription_id', intval( $transaction['id'] ) );
+			update_post_meta( $order->get_id(), '_transaction_id', intval( $transaction['id'] ) );
 
 			// Change the order status.
 			$this->api->process_order_status( $order, $transaction['status'] );
