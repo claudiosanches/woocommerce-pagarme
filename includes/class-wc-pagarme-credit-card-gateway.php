@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @extends WC_Payment_Gateway
  */
-class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
+class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway_CC {
 
 	/**
 	 * Constructor for the gateway.
@@ -57,8 +57,8 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		$this->supports = array(
 			'subscriptions',
 			'products',
-			'subscription_cancellation',
-			'gateway_scheduled_payments',
+			'tokenization',
+			'add_payment_method',
 		);
 
 		// Actions.

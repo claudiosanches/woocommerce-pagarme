@@ -21,47 +21,6 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 	 */
 	public function __construct() {
 		parent::__construct();
-
-		if ( is_checkout() ) {
-			if ( WC_Subscriptions_Cart::cart_contains_subscription() ) {
-				add_filter( 'wc_pagarme_checkout', '__return_false' );
-			}
-		}
-
-		add_filter( 'wc_pagarme_transaction_data', array( $this, 'pagarme_subscription_transaction_data' ), 10, 2 );
-		add_filter( 'woocommerce_get_transaction_url', array( $this, 'pagarme_transaction_url' ), 10, 2 );
-		add_action( 'woocommerce_subscription_cancelled_' . $this->id, array( $this, 'pagarme_cancelled_subscription' ) );
-	}
-
-	/**
-	 * Adds the plan id to the transaction data.
-	 *
-	 * @param  array    $data  Transaction data.
-	 * @param  WC_Order $order Order data.
-	 *
-	 * @return array            Transaction data.
-	 */
-	public function pagarme_subscription_transaction_data( $data, $order ) {
-		$order_items     = $order->get_items();
-		$order_item_id   = array_shift( $order_items )->get_product_id();
-		$data['plan_id'] = get_post_meta( $order_item_id, '_pagarme_plan_id', true );
-		return $data;
-	}
-
-	/**
-	 * Change transaction url if it's a subscription.
-	 *
-	 * @param  string   $return_url Transaction url.
-	 * @param  WC_Order $order      The order object.
-	 *
-	 * @return string transaction URL, or empty string.
-	 */
-	public function pagarme_transaction_url( $return_url, $order ) {
-		if ( wcs_order_contains_subscription( $order ) ) {
-			return 'https://dashboard.pagar.me/#/subscriptions/' . $order->get_transaction_id();
-		}
-
-		return $return_url;
 	}
 
 	/**
@@ -130,13 +89,44 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 		}
 	}
 
-	/**
-	 * Cancels the subscription when user chooses to do so.
-	 *
-	 * @param WC_Subscription $subscription Subscription object.
-	 */
-	public function pagarme_cancelled_subscription( $subscription ) {
-		$endpoint = 'subscriptions/' . get_post_meta( $subscription->get_parent_id(), '_wc_pagarme_subscription_id', true ) . '/cancel';
-		$this->api->do_request( $endpoint, 'POST', array( 'api_key' => $this->api_key ) );
+	public function add_payment_method() {
+		$response = $this->api->do_request( 'transactions/card_hash_key','GET', array( 'encryption_key' => $this->encryption_key ) );
+
+		if ( is_wp_error( $response ) ) {
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'WP_Error in generating card token: ' . $response->get_error_message() );
+			}
+
+			return array();
+		} else {
+			$data = json_decode( $response['body'], true );
+
+			$encode_data = array(
+				'card_number'          => '',
+				'card_holder_name'     => '',
+				'card_expiration_date' => '',
+				'card_cvv'             => '',
+			);
+
+			$query_string = http_build_query( $encode_data, null, '&', PHP_QUERY_RFC3986 );
+
+			$encoded = '';
+			if ( openssl_public_encrypt( $query_string, $encrypted, $data['public_key'] ) ) {
+				$encoded = base64_encode( $encrypted );
+			}
+
+			$token_string = $data['id'] . '_' . $encoded;
+
+			$token = new WC_Payment_Token_CC();
+
+			$token->set_token( $token_string );
+			$token->set_gateway_id( $this->id );
+			$token->set_card_type( 'visa' );
+			$token->set_last4( '1234' );
+			$token->set_expiry_month( '12' );
+			$token->set_expiry_year( '2018' );
+			$token->set_user_id( get_current_user_id() );
+			$token->save();
+		}
 	}
 }
