@@ -91,7 +91,6 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 
 	public function add_payment_method() {
 		$response = $this->api->do_request( 'transactions/card_hash_key','GET', array( 'encryption_key' => $this->encryption_key ) );
-
 		if ( is_wp_error( $response ) ) {
 			if ( 'yes' === $this->gateway->debug ) {
 				$this->gateway->log->add( $this->gateway->id, 'WP_Error in generating card token: ' . $response->get_error_message() );
@@ -102,10 +101,10 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 			$data = json_decode( $response['body'], true );
 
 			$encode_data = array(
-				'card_number'          => '',
-				'card_holder_name'     => '',
-				'card_expiration_date' => '',
-				'card_cvv'             => '',
+				'card_number'          => wc_clean( $_POST['pagarme-card-number'] ),
+				'card_holder_name'     => wc_clean( $_POST['pagarme-card-holder-name'] ),
+				'card_expiration_date' => substr( wc_clean( $_POST['pagarme-card-expiry'] ), 0, 2 ) . substr( wc_clean( $_POST['pagarme-card-expiry'] ), -2 ),
+				'card_cvv'             => wc_clean( $_POST['pagarme-card-cvc'] ),
 			);
 
 			$query_string = http_build_query( $encode_data, null, '&', PHP_QUERY_RFC3986 );
@@ -122,9 +121,9 @@ class WC_Pagarme_Credit_Card_Gateway_Addons extends WC_Pagarme_Credit_Card_Gatew
 			$token->set_token( $token_string );
 			$token->set_gateway_id( $this->id );
 			$token->set_card_type( 'visa' );
-			$token->set_last4( '1234' );
-			$token->set_expiry_month( '12' );
-			$token->set_expiry_year( '2018' );
+			$token->set_last4( substr( $_POST['pagarme-card-number'], -4 ) );
+			$token->set_expiry_month( substr( $_POST['pagarme-card-expiry'], 0, 2 ) );
+			$token->set_expiry_year( substr( $_POST['pagarme-card-expiry'], -4 ) );
 			$token->set_user_id( get_current_user_id() );
 			$token->save();
 		}

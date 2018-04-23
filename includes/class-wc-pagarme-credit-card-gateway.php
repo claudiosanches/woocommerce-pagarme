@@ -264,6 +264,10 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway_CC {
 					)
 				);
 			}
+		} else {
+			if ( is_add_payment_method_page() ) {
+				wp_enqueue_script( 'wc-credit-card-form' );
+			}
 		}
 	}
 
