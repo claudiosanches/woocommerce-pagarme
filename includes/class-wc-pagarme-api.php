@@ -132,9 +132,11 @@ class WC_Pagarme_API {
 	 * @return array            Request response.
 	 */
 	protected function do_request( $endpoint, $method = 'POST', $data = array(), $headers = array() ) {
+		global $wp_version;
 		$params = array(
-			'method'  => $method,
-			'timeout' => 60,
+			'method'     => $method,
+			'timeout'    => 60,
+			'user-agent' => 'WordPress/' . $wp_version .' Woocommerce/' . WC()->version . ' WCPagarme/ '  . WC_Pagarme::VERSION,
 		);
 
 		if ( ! empty( $data ) ) {
@@ -508,7 +510,11 @@ class WC_Pagarme_API {
 			$endpoint .= '/' . $token . '/capture';
 		}
 
-		$response = $this->do_request( $endpoint, 'POST', $args );
+		$headers = array(
+			'X-PagarMe-Version'        => '2017-08-28',
+		);
+
+		$response = $this->do_request( $endpoint, 'POST', $args, $headers );
 
 		if ( is_wp_error( $response ) ) {
 			if ( 'yes' === $this->gateway->debug ) {
