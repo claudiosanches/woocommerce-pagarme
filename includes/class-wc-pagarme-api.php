@@ -270,8 +270,12 @@ class WC_Pagarme_API {
 			$data['customer']['phone_numbers'] = $phone_numbers;
 		}
 
-		$data['billing'] = $this->get_billing_information($order);
+		$data['billing'] = $this->get_billing_information( $order );
 		$data['billing']['name'] = $data['customer']['name'];
+
+		if ( false === $order->has_downloadable_item() ) {
+			$data['shipping'] = $this->get_shipping_information( $order );
+		}
 
 		$documents = array();
 		// Set the document number.
@@ -441,6 +445,42 @@ class WC_Pagarme_API {
 		}
 	}
 
+		/**
+	 * Get customer shipping information.
+	 *
+	 * @return array
+	 */
+	public function get_shipping_information( $order ) {
+		$data = array();
+		if ( ! empty( $order->shipping_address_1 ) ) {
+			$data['address'] = array(
+				'street'        => $order->shipping_address_1,
+				'complementary' => $order->shipping_address_2,
+				'zipcode'       => $this->only_numbers( $order->shipping_postcode ),
+			);
+
+			if ( ! empty( $order->shipping_number ) ) {
+				$data['address']['street_number'] = $order->shipping_number;
+			}
+			if ( ! empty( $order->shipping_neighborhood ) ) {
+				$data['address']['neighborhood'] = $order->shipping_neighborhood;
+			}
+			if( ! empty( $order->shipping_city)) {
+				$data['address']['city'] = strtolower($order->shipping_city);
+			}
+			if( ! empty( $order->shipping_state)) {
+				$data['address']['state'] = strtolower($order->shipping_state);
+			}
+			if( ! empty( $order->shipping_country)) {
+				$data['address']['country'] = strtolower($order->shipping_country);
+			}
+
+			$data['fee'] = $this->only_numbers( $order->shipping_total );
+			$data['name'] = trim( $order->shipping_first_name . ' ' . $order->shipping_last_name );
+
+			return $data;
+		}
+	}
 	/**
 	 * Get transaction data.
 	 *
