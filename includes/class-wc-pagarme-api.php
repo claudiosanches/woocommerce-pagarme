@@ -270,34 +270,8 @@ class WC_Pagarme_API {
 			$data['customer']['phone_numbers'] = $phone_numbers;
 		}
 
-		// Billing Address.
-		if ( ! empty( $order->billing_address_1 ) ) {
-			$data['billing']['address'] = array(
-				'street'        => $order->billing_address_1,
-				'complementary' => $order->billing_address_2,
-				'zipcode'       => $this->only_numbers( $order->billing_postcode ),
-			);
-
-			// Non-WooCommerce default address fields.
-			if ( ! empty( $order->billing_number ) ) {
-				$data['billing']['address']['street_number'] = $order->billing_number;
-			}
-			if ( ! empty( $order->billing_neighborhood ) ) {
-				$data['billing']['address']['neighborhood'] = $order->billing_neighborhood;
-			}
-			if( ! empty( $order->billing_city)) {
-				$data['billing']['address']['city'] = strtolower($order->billing_city);
-			}
-			if( ! empty( $order->billing_state)) {
-				$data['billing']['address']['state'] = strtolower($order->billing_state);
-			}
-			if( ! empty( $order->billing_country)) {
-				$data['billing']['address']['country'] = strtolower($order->billing_country);
-			}
-
-
-			$data['billing']['name'] = $data['customer']['name'];
-		}
+		$data['billing'] = $this->get_billing_information($order);
+		$data['billing']['name'] = $data['customer']['name'];
 
 		$documents = array();
 		// Set the document number.
@@ -430,6 +404,41 @@ class WC_Pagarme_API {
 		}
 
 		return $customer;
+	}
+
+	/**
+	 * Get customer billing information.
+	 *
+	 * @return array
+	 */
+	public function get_billing_information( $order ) {
+		$data = array();
+		if ( ! empty( $order->billing_address_1 ) ) {
+			$data['address'] = array(
+				'street'        => $order->billing_address_1,
+				'complementary' => $order->billing_address_2,
+				'zipcode'       => $this->only_numbers( $order->billing_postcode ),
+			);
+
+			// Non-WooCommerce default address fields.
+			if ( ! empty( $order->billing_number ) ) {
+				$data['address']['street_number'] = $order->billing_number;
+			}
+			if ( ! empty( $order->billing_neighborhood ) ) {
+				$data['address']['neighborhood'] = $order->billing_neighborhood;
+			}
+			if( ! empty( $order->billing_city)) {
+				$data['address']['city'] = strtolower($order->billing_city);
+			}
+			if( ! empty( $order->billing_state)) {
+				$data['address']['state'] = strtolower($order->billing_state);
+			}
+			if( ! empty( $order->billing_country)) {
+				$data['address']['country'] = strtolower($order->billing_country);
+			}
+
+			return $data;
+		}
 	}
 
 	/**
