@@ -277,6 +277,8 @@ class WC_Pagarme_API {
 			$data['shipping'] = $this->get_shipping_information( $order );
 		}
 
+		$data['items'] = $this->get_items_information( $order );
+
 		$documents = array();
 		// Set the document number.
 		if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
@@ -445,8 +447,8 @@ class WC_Pagarme_API {
 		}
 	}
 
-		/**
-	 * Get customer shipping information.
+	/**
+	 * Get shipping information.
 	 *
 	 * @return array
 	 */
@@ -481,6 +483,38 @@ class WC_Pagarme_API {
 			return $data;
 		}
 	}
+
+	/**
+	 * Get items information.
+	 *
+	 * @return array
+	 */
+	public function get_items_information( $order ) {
+		$data = array();
+		$items = $order->get_items();
+		$this->gateway->log->add( $this->gateway->id, 'Downloadable items: ' . print_r( $downloadable_items ) );
+
+		foreach( $items as $item ) {
+			$actual_item = array();
+			$actual_item['id'] = $item->get_product_id();
+			$actual_item['title'] = $item->get_name();
+			$actual_item['unit_price'] = $item->get_total();
+			$actual_item['quantity'] = $item->get_quantity();
+
+			$product = $item->get_product();
+
+			$actual_item['tangible'] = "true";
+			if( true === $product->get_virtual() ) {
+				$actual_item['tangible'] = "false";
+			}
+
+			array_push($data, $actual_item);
+		}
+
+		return $data;
+	}
+
+
 	/**
 	 * Get transaction data.
 	 *
