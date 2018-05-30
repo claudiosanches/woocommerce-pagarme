@@ -159,7 +159,7 @@ class WC_Pagarme_API {
 	 */
 	public function get_installments( $amount ) {
 		// Set the installment data.
-		$data = array(
+		$data         = array(
 			'encryption_key'    => $this->gateway->encryption_key,
 			'amount'            => $amount * 100,
 			'interest_rate'     => $this->get_interest_rate(),
@@ -249,9 +249,9 @@ class WC_Pagarme_API {
 			'postback_url' => WC()->api_request_url( get_class( $this->gateway ) ),
 			'customer'     => array(
 				'external_id' => $order->get_customer_id(),
-				'name'  	  => trim( $order->billing_first_name . ' ' . $order->billing_last_name ),
-				'email' 	  => $order->billing_email,
-				'country'	  => strtolower($order->billing_country)
+				'name'        => trim( $order->billing_first_name . ' ' . $order->billing_last_name ),
+				'email'       => $order->billing_email,
+				'country'     => strtolower( $order->billing_country ),
 			),
 			'metadata'     => array(
 				'order_number' => $order->get_order_number(),
@@ -261,16 +261,16 @@ class WC_Pagarme_API {
 		// Phone.
 		if ( ! empty( $order->billing_phone ) ) {
 			$phone_numbers = array();
-			$phone = $this->only_numbers( $order->billing_phone );
+			$phone         = $this->only_numbers( $order->billing_phone );
 
 			array_push( $phone_numbers,
-				"+55" . $phone
+				'+55' . $phone
 			);
 
 			$data['customer']['phone_numbers'] = $phone_numbers;
 		}
 
-		$data['billing'] = $this->get_billing_information( $order );
+		$data['billing']         = $this->get_billing_information( $order );
 		$data['billing']['name'] = $data['customer']['name'];
 
 		if ( false === $order->has_downloadable_item() ) {
@@ -286,20 +286,20 @@ class WC_Pagarme_API {
 			if ( '0' !== $wcbcf_settings['person_type'] ) {
 				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->billing_persontype ) || '2' === $wcbcf_settings['person_type'] ) {
 					array_push($documents,
-						array (
-							'type' => 'cpf',
-							'number' => $this->only_numbers( $order->billing_cpf )
+						array(
+							'type'   => 'cpf',
+							'number' => $this->only_numbers( $order->billing_cpf ),
 						)
 					);
 					$data['customer']['type'] = 'individual';
 				}
 
 				if ( ( '1' === $wcbcf_settings['person_type'] && '2' === $order->billing_persontype ) || '3' === $wcbcf_settings['person_type'] ) {
-					$data['customer']['name']            = $order->billing_company;
+					$data['customer']['name'] = $order->billing_company;
 					array_push($documents,
-						array (
-							'type' => 'cnpj',
-							'number' => $this->only_numbers( $order->billing_cnpj )
+						array(
+							'type'   => 'cnpj',
+							'number' => $this->only_numbers( $order->billing_cnpj ),
 						)
 					);
 					$data['customer']['type'] = 'corporation';
@@ -308,19 +308,19 @@ class WC_Pagarme_API {
 		} else {
 			if ( ! empty( $order->billing_cpf ) ) {
 				array_push($documents,
-					array (
-						'type' => 'cpf',
-						'number' => $this->only_numbers( $order->billing_cpf )
+					array(
+						'type'   => 'cpf',
+						'number' => $this->only_numbers( $order->billing_cpf ),
 					)
 				);
 				$data['customer']['type'] = 'individual';
 			}
 			if ( ! empty( $order->billing_cnpj ) ) {
-				$data['customer']['name']            = $order->billing_company;
+				$data['customer']['name'] = $order->billing_company;
 				array_push($documents,
-					array (
-						'type' => 'cnpj',
-						'number' => $this->only_numbers( $order->billing_cnpj )
+					array(
+						'type'   => 'cnpj',
+						'number' => $this->only_numbers( $order->billing_cnpj ),
 					)
 				);
 				$data['customer']['type'] = 'corporation';
@@ -364,7 +364,7 @@ class WC_Pagarme_API {
 		}
 
 		// Add filter for Third Party plugins.
-		return apply_filters( 'wc_pagarme_transaction_data', $data , $order );
+		return apply_filters( 'wc_pagarme_transaction_data', $data, $order );
 	}
 
 	/**
@@ -383,7 +383,7 @@ class WC_Pagarme_API {
 			return $customer;
 		}
 
-		$_customer = $data['customer'];
+		$_customer                 = $data['customer'];
 		$customer['customerName']  = $_customer['name'];
 		$customer['customerEmail'] = $_customer['email'];
 
@@ -412,9 +412,10 @@ class WC_Pagarme_API {
 		return $customer;
 	}
 
-	/**
+	/** $order
 	 * Get customer billing information.
 	 *
+	 * @param WC_Order $order  Order data.
 	 * @return array
 	 */
 	public function get_billing_information( $order ) {
@@ -433,14 +434,14 @@ class WC_Pagarme_API {
 			if ( ! empty( $order->billing_neighborhood ) ) {
 				$data['address']['neighborhood'] = $order->billing_neighborhood;
 			}
-			if( ! empty( $order->billing_city)) {
-				$data['address']['city'] = strtolower($order->billing_city);
+			if ( ! empty( $order->billing_city ) ) {
+				$data['address']['city'] = strtolower( $order->billing_city );
 			}
-			if( ! empty( $order->billing_state)) {
-				$data['address']['state'] = strtolower($order->billing_state);
+			if ( ! empty( $order->billing_state ) ) {
+				$data['address']['state'] = strtolower( $order->billing_state );
 			}
-			if( ! empty( $order->billing_country)) {
-				$data['address']['country'] = strtolower($order->billing_country);
+			if ( ! empty( $order->billing_country ) ) {
+				$data['address']['country'] = strtolower( $order->billing_country );
 			}
 
 			return $data;
@@ -450,6 +451,7 @@ class WC_Pagarme_API {
 	/**
 	 * Get shipping information.
 	 *
+	 * @param WC_Order $order  Order data.
 	 * @return array
 	 */
 	public function get_shipping_information( $order ) {
@@ -467,17 +469,17 @@ class WC_Pagarme_API {
 			if ( ! empty( $order->shipping_neighborhood ) ) {
 				$data['address']['neighborhood'] = $order->shipping_neighborhood;
 			}
-			if( ! empty( $order->shipping_city)) {
-				$data['address']['city'] = strtolower($order->shipping_city);
+			if ( ! empty( $order->shipping_city ) ) {
+				$data['address']['city'] = strtolower( $order->shipping_city );
 			}
-			if( ! empty( $order->shipping_state)) {
-				$data['address']['state'] = strtolower($order->shipping_state);
+			if ( ! empty( $order->shipping_state ) ) {
+				$data['address']['state'] = strtolower( $order->shipping_state );
 			}
-			if( ! empty( $order->shipping_country)) {
-				$data['address']['country'] = strtolower($order->shipping_country);
+			if ( ! empty( $order->shipping_country ) ) {
+				$data['address']['country'] = strtolower( $order->shipping_country );
 			}
 
-			$data['fee'] = $this->only_numbers( $order->shipping_total );
+			$data['fee']  = $this->only_numbers( $order->shipping_total );
 			$data['name'] = trim( $order->shipping_first_name . ' ' . $order->shipping_last_name );
 
 			return $data;
@@ -487,28 +489,28 @@ class WC_Pagarme_API {
 	/**
 	 * Get items information.
 	 *
+	 * @param WC_Order $order  Order data.
 	 * @return array
 	 */
 	public function get_items_information( $order ) {
-		$data = array();
+		$data  = array();
 		$items = $order->get_items();
-		$this->gateway->log->add( $this->gateway->id, 'Downloadable items: ' . print_r( $downloadable_items ) );
 
-		foreach( $items as $item ) {
-			$actual_item = array();
-			$actual_item['id'] = $item->get_product_id();
-			$actual_item['title'] = $item->get_name();
+		foreach ( $items as $item ) {
+			$actual_item               = array();
+			$actual_item['id']         = $item->get_product_id();
+			$actual_item['title']      = $item->get_name();
 			$actual_item['unit_price'] = $item->get_total();
-			$actual_item['quantity'] = $item->get_quantity();
+			$actual_item['quantity']   = $item->get_quantity();
 
 			$product = $item->get_product();
 
-			$actual_item['tangible'] = "true";
-			if( true === $product->get_virtual() ) {
-				$actual_item['tangible'] = "false";
+			$actual_item['tangible'] = 'true';
+			if ( true === $product->get_virtual() ) {
+				$actual_item['tangible'] = 'false';
 			}
 
-			array_push($data, $actual_item);
+			array_push( $data, $actual_item );
 		}
 
 		return $data;
@@ -903,7 +905,7 @@ class WC_Pagarme_API {
 
 		// Async transactions will only send the boleto_url on IPN.
 		if ( ! empty( $posted['transaction']['boleto_url'] ) && 'pagarme-banking-ticket' === $order->payment_method ) {
-			$post_data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+			$post_data               = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
 			$post_data['boleto_url'] = sanitize_text_field( $posted['transaction']['boleto_url'] );
 			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $post_data );
 		}
@@ -921,17 +923,17 @@ class WC_Pagarme_API {
 		}
 
 		switch ( $status ) {
-			case 'authorized' :
+			case 'authorized':
 				if ( ! in_array( $order->get_status(), array( 'processing', 'completed' ), true ) ) {
 					$order->update_status( 'on-hold', __( 'Pagar.me: The transaction was authorized.', 'woocommerce-pagarme' ) );
 				}
 
 				break;
-			case 'processing' :
+			case 'processing':
 				$order->update_status( 'on-hold', __( 'Pagar.me: The transaction is being processed.', 'woocommerce-pagarme' ) );
 
 				break;
-			case 'paid' :
+			case 'paid':
 				if ( ! in_array( $order->get_status(), array( 'processing', 'completed' ), true ) ) {
 					$order->add_order_note( __( 'Pagar.me: Transaction paid.', 'woocommerce-pagarme' ) );
 				}
@@ -940,11 +942,11 @@ class WC_Pagarme_API {
 				$order->payment_complete();
 
 				break;
-			case 'waiting_payment' :
+			case 'waiting_payment':
 				$order->update_status( 'on-hold', __( 'Pagar.me: The banking ticket was issued but not paid yet.', 'woocommerce-pagarme' ) );
 
 				break;
-			case 'refused' :
+			case 'refused':
 				$order->update_status( 'failed', __( 'Pagar.me: The transaction was rejected by the card company or by fraud.', 'woocommerce-pagarme' ) );
 
 				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
@@ -957,7 +959,7 @@ class WC_Pagarme_API {
 				);
 
 				break;
-			case 'refunded' :
+			case 'refunded':
 				$order->update_status( 'refunded', __( 'Pagar.me: The transaction was refunded/canceled.', 'woocommerce-pagarme' ) );
 
 				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
@@ -971,7 +973,7 @@ class WC_Pagarme_API {
 
 				break;
 
-			default :
+			default:
 				break;
 		}
 	}
