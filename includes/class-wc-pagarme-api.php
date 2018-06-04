@@ -45,7 +45,7 @@ class WC_Pagarme_API {
 	 *
 	 * @var string
 	 */
-	protected $checkout_js_url = 'https://assets.pagar.me/checkout/checkout.js';
+	protected $checkout_js_url = 'https://assets.pagar.me/checkout/1.1.0/checkout.js';
 
 	/**
 	 * Constructor.
@@ -234,6 +234,123 @@ class WC_Pagarme_API {
 	}
 
 	/**
+	 * Generate the customer data.
+	 *
+	 * @param  WC_Order $order  Order data.
+	 *
+	 * @return array            customer data.
+	 */
+	public function get_customer_information( $order ) {
+		$customer               = array(
+			'external_id'   => $order->get_customer_id(),
+			'name'          => $this->get_document_type( $order ) === 'cpf' ? trim( $order->billing_first_name . ' ' . $order->billing_last_name ) : $order->billing_company,
+			'email'         => $order->billing_email,
+			'country'       => strtolower( $order->billing_country ),
+			'phone_numbers' => $this->get_phone_information( $order ),
+			'type'          => $this->get_document_type( $order ) === 'cpf' ? 'individual' : 'corporation',
+			'documents'     => $this->get_document_information( $order ),
+		);
+
+		if ( $additional_information['name'] ) {
+			$customer['name'] = $additional_information['name'];
+		}
+
+		return $customer;
+	}
+
+	/**
+	 * Generate the phone data.
+	 *
+	 * @param  WC_Order $order  Order data.
+	 *
+	 * @return array            phone data.
+	 */
+	public function get_phone_information( $order ) {
+		$phone_numbers = array();
+		if ( ! empty( $order->billing_phone ) ) {
+			$phone = $this->only_numbers( $order->billing_phone );
+
+			array_push( $phone_numbers,
+				'+55' . $phone
+			);
+		}
+
+		if ( ! empty( $order->billing_cellphone ) ) {
+			$cellphone = $this->only_numbers( $order->billing_cellphone );
+
+			array_push( $phone_numbers,
+				'+55' . $cellphone
+			);
+		}
+
+		return $phone_numbers;
+	}
+
+	/**
+	 * Generate the document data.
+	 *
+	 * @param  WC_Order $order  Order data.
+	 *
+	 * @return array            documents data.
+	 */
+	public function get_document_information( $order ) {
+		$documents     = array();
+		$document_type = $this->get_document_type( $order );
+		if ( 'cpf' === $document_type && ! empty( $order->billing_cpf ) ) {
+			array_push($documents,
+				array(
+					'type'   => $document_type,
+					'number' => $this->only_numbers( $order->billing_cpf ),
+				)
+			);
+		}
+
+		if ( 'cnpj' === $document_type && ! empty( $order->billing_cnpj ) ) {
+			array_push($documents,
+				array(
+					'type'   => $document_type,
+					'number' => $this->only_numbers( $order->billing_cnpj ),
+				)
+			);
+		}
+
+		return $documents;
+	}
+
+	/**
+	 * Generate the document type data.
+	 *
+	 * @param  WC_Order $order  Order data.
+	 *
+	 * @return string            document type data.
+	 */
+	public function get_document_type( $order ) {
+		$type = '';
+
+		if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
+			$wcbcf_settings = get_option( 'wcbcf_settings' );
+			if ( '0' !== $wcbcf_settings['person_type'] ) {
+				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->billing_persontype ) || '2' === $wcbcf_settings['person_type'] ) {
+					$type = 'cpf';
+				}
+
+				if ( ( '1' === $wcbcf_settings['person_type'] && '2' === $order->billing_persontype ) || '3' === $wcbcf_settings['person_type'] ) {
+					$type = 'cnpj';
+				}
+			}
+		} else {
+			if ( ! empty( $order->billing_cpf ) ) {
+				$type = 'cpf';
+			}
+			if ( ! empty( $order->billing_cnpj ) ) {
+				$type = 'cnpj';
+			}
+		}
+
+		return $type;
+	}
+
+	/**
 	 * Generate the transaction data.
 	 *
 	 * @param  WC_Order $order  Order data.
@@ -247,87 +364,23 @@ class WC_Pagarme_API {
 			'api_key'      => $this->gateway->api_key,
 			'amount'       => $order->get_total() * 100,
 			'postback_url' => WC()->api_request_url( get_class( $this->gateway ) ),
-			'customer'     => array(
-				'external_id' => $order->get_customer_id(),
-				'name'        => trim( $order->billing_first_name . ' ' . $order->billing_last_name ),
-				'email'       => $order->billing_email,
-				'country'     => strtolower( $order->billing_country ),
-			),
+			'customer'     => $this->get_customer_information( $order ),
 			'metadata'     => array(
 				'order_number' => $order->get_order_number(),
 			),
 		);
 
-		// Phone.
-		if ( ! empty( $order->billing_phone ) ) {
-			$phone_numbers = array();
-			$phone         = $this->only_numbers( $order->billing_phone );
-
-			array_push( $phone_numbers,
-				'+55' . $phone
-			);
-
-			$data['customer']['phone_numbers'] = $phone_numbers;
+		$billing = $this->get_billing_information( $order );
+		if ( ! empty( $billing ) ) {
+			$data['billing']         = $billing;
+			$data['billing']['name'] = $data['customer']['name'];
 		}
-
-		$data['billing']         = $this->get_billing_information( $order );
-		$data['billing']['name'] = $data['customer']['name'];
 
 		if ( false === $order->has_downloadable_item() ) {
 			$data['shipping'] = $this->get_shipping_information( $order );
 		}
 
 		$data['items'] = $this->get_items_information( $order );
-
-		$documents = array();
-		// Set the document number.
-		if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
-			$wcbcf_settings = get_option( 'wcbcf_settings' );
-			if ( '0' !== $wcbcf_settings['person_type'] ) {
-				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->billing_persontype ) || '2' === $wcbcf_settings['person_type'] ) {
-					array_push($documents,
-						array(
-							'type'   => 'cpf',
-							'number' => $this->only_numbers( $order->billing_cpf ),
-						)
-					);
-					$data['customer']['type'] = 'individual';
-				}
-
-				if ( ( '1' === $wcbcf_settings['person_type'] && '2' === $order->billing_persontype ) || '3' === $wcbcf_settings['person_type'] ) {
-					$data['customer']['name'] = $order->billing_company;
-					array_push($documents,
-						array(
-							'type'   => 'cnpj',
-							'number' => $this->only_numbers( $order->billing_cnpj ),
-						)
-					);
-					$data['customer']['type'] = 'corporation';
-				}
-			}
-		} else {
-			if ( ! empty( $order->billing_cpf ) ) {
-				array_push($documents,
-					array(
-						'type'   => 'cpf',
-						'number' => $this->only_numbers( $order->billing_cpf ),
-					)
-				);
-				$data['customer']['type'] = 'individual';
-			}
-			if ( ! empty( $order->billing_cnpj ) ) {
-				$data['customer']['name'] = $order->billing_company;
-				array_push($documents,
-					array(
-						'type'   => 'cnpj',
-						'number' => $this->only_numbers( $order->billing_cnpj ),
-					)
-				);
-				$data['customer']['type'] = 'corporation';
-			}
-		}
-
-		$data['customer']['documents'] = $documents;
 
 		// Set the customer birthdate.
 		if ( ! empty( $order->billing_birthdate ) ) {
