@@ -241,7 +241,7 @@ class WC_Pagarme_API {
 	 * @return array            customer data.
 	 */
 	public function get_customer_information( $order ) {
-		$customer               = array(
+		$customer = array(
 			'external_id'   => $order->get_customer_id(),
 			'name'          => $this->get_document_type( $order ) === 'cpf' ? trim( $order->billing_first_name . ' ' . $order->billing_last_name ) : $order->billing_company,
 			'email'         => $order->billing_email,
@@ -303,9 +303,7 @@ class WC_Pagarme_API {
 					'number' => $this->only_numbers( $order->billing_cpf ),
 				)
 			);
-		}
-
-		if ( 'cnpj' === $document_type && ! empty( $order->billing_cnpj ) ) {
+		} elseif ( 'cnpj' === $document_type && ! empty( $order->billing_cnpj ) ) {
 			array_push($documents,
 				array(
 					'type'   => $document_type,
@@ -382,7 +380,6 @@ class WC_Pagarme_API {
 
 		$data['items'] = $this->get_items_information( $order );
 
-		// Set the customer birthdate.
 		if ( ! empty( $order->billing_birthdate ) ) {
 			$birthdate = explode( '/', $order->billing_birthdate );
 
@@ -421,51 +418,20 @@ class WC_Pagarme_API {
 	}
 
 	/**
-	 * Get customer data from checkout pay page.
+	 * Get transaction data from checkout pay page.
 	 *
 	 * @return array
 	 */
-	public function get_customer_data_from_checkout_pay_page() {
+	public function get_transaction_data_from_checkout_pay_page() {
 		global $wp;
 
-		$order    = wc_get_order( (int) $wp->query_vars['order-pay'] );
-		$data     = $this->generate_transaction_data( $order, array() );
-		$customer = array();
+		$order = wc_get_order( (int) $wp->query_vars['order-pay'] );
+		$data  = $this->generate_transaction_data( $order, array() );
 
-		if ( empty( $data['customer'] ) ) {
-			return $customer;
-		}
-
-		$_customer                 = $data['customer'];
-		$customer['customerName']  = $_customer['name'];
-		$customer['customerEmail'] = $_customer['email'];
-
-		if ( isset( $_customer['document_number'] ) ) {
-			$customer['customerDocumentNumber'] = $_customer['document_number'];
-		}
-
-		if ( isset( $_customer['address'] ) ) {
-			$customer['customerAddressStreet']        = $_customer['address']['street'];
-			$customer['customerAddressComplementary'] = $_customer['address']['complementary'];
-			$customer['customerAddressZipcode']       = $_customer['address']['zipcode'];
-
-			if ( isset( $_customer['address']['street_number'] ) ) {
-				$customer['customerAddressStreetNumber'] = $_customer['address']['street_number'];
-			}
-			if ( isset( $_customer['address']['neighborhood'] ) ) {
-				$customer['customerAddressNeighborhood'] = $_customer['address']['neighborhood'];
-			}
-		}
-
-		if ( isset( $_customer['phone'] ) ) {
-			$customer['customerPhoneDdd']    = $_customer['phone']['ddd'];
-			$customer['customerPhoneNumber'] = $_customer['phone']['number'];
-		}
-
-		return $customer;
+		return $data;
 	}
 
-	/** $order
+	/**
 	 * Get customer billing information.
 	 *
 	 * @param WC_Order $order  Order data.
@@ -480,7 +446,6 @@ class WC_Pagarme_API {
 				'zipcode'       => $this->only_numbers( $order->billing_postcode ),
 			);
 
-			// Non-WooCommerce default address fields.
 			if ( ! empty( $order->billing_number ) ) {
 				$data['address']['street_number'] = $order->billing_number;
 			}
@@ -568,7 +533,6 @@ class WC_Pagarme_API {
 
 		return $data;
 	}
-
 
 	/**
 	 * Get transaction data.

@@ -139,56 +139,147 @@
 		}
 
 		/**
-		 * Get customer fields from checkout form.
+		 * Get transaction data
 		 *
 		 * @param {Object} form [description]
 		 * @return {Object}
 		 */
-		function getCustomerFields( form ) {
-			var phone,
-				data = {};
+		function getTransactionData( form ) {
+			var data = {};
 
-			data.customerName  = $.trim( $( '#billing_first_name', form ).val() + ' ' + $( '#billing_last_name', form ).val() );
-			data.customerEmail = $( '#billing_email', form ).val();
-
-			// Address fields.
-			if ( isset( $( '#billing_address_1' ) ) ) {
-				data.customerAddressStreet        = $( '#billing_address_1' ).val();
-				data.customerAddressComplementary = $( '#billing_address_2' ).val();
-				data.customerAddressZipcode       = getNumbers( $( '#billing_postcode' ).val() );
-
-				if ( isset( $( '#billing_number' ) ) ) {
-					data.customerAddressStreetNumber = $( '#billing_number' ).val();
-				}
-
-				if ( isset( $( '#billing_neighborhood' ) ) ) {
-					data.customerAddressNeighborhood = $( '#billing_neighborhood' ).val();
-				}
+			data.customer = {
+				external_id: $( '#billing_email', form ).val(),
+				name: $.trim( $( '#billing_first_name', form ).val() + ' ' + $( '#billing_last_name', form ).val() ),
+				email: $( '#billing_email', form ).val(),
+				type: getDocumentType() === 'cpf' ? 'individual' : 'corporation',
+				documents: getDocuments(),
+				phone_numbers: getPhoneNumbers(),
+				country: $( '#billing_country' ).val().toLowerCase(),
 			}
 
-			// Phone fields.
-			if ( isset( $( '#billing_phone' ) ) ) {
-				phone = getNumbers( $( '#billing_phone' ).val() );
-
-				data.customerPhoneDdd    = phone.substr( 0, 2 );
-				data.customerPhoneNumber = phone.substr( 2 );
+			if ( getBillingData() ) {
+				data.billing = getBillingData();
 			}
 
-			if ( isset( $( '#billing_persontype' ) ) ) {
-				if ( '1' === $( '#billing_persontype' ).val() ) {
-					data.customerDocumentNumber = getNumbers( $( '#billing_cpf' ).val() );
-				} else {
-					data.customerName           = $( '#billing_company' ).val();
-					data.customerDocumentNumber = getNumbers( $( '#billing_cnpj' ).val() );
-				}
-			} else if ( isset( $( '#billing_cpf' ) ) ) {
-				data.customerDocumentNumber = getNumbers( $( '#billing_cpf' ).val() );
-			} else if ( isset( $( '#billing_cnpj' ) ) ) {
-				data.customerName           = $( '#billing_company' ).val();
-				data.customerDocumentNumber = getNumbers( $( '#billing_cnpj' ).val() );
+			if ( getShippingData() ) {
+				data.shipping = getShippingData();
 			}
 
 			return data;
+		}
+
+		/**
+		 * Get phone numbers from checkout form.
+		 *
+		 * @return {Array}
+		 */
+		function getPhoneNumbers() {
+			var phone_numbers = [];
+			if ( isset( $( '#billing_phone' ) ) ) {
+				var phone = '+55' + getNumbers( $( '#billing_phone' ).val() );
+				phone_numbers.push(phone);
+			}
+
+			if ( isset( $( '#billing_cellphone' ) ) ) {
+				var cellphone = '+55' + getNumbers( $( '#billing_cellphone' ).val() );
+				phone_numbers.push(cellphone);
+			}
+			return phone_numbers;
+		}
+
+		/**
+		 * Get document type.
+		 *
+		 * @return {String}
+		 */
+		function getDocumentType() {
+			if ( isset ( $( '#billing_persontype' ) ) ) {
+				if ( '1' === $( '#billing_persontype' ).val() ) {
+					return 'cpf';
+				} else {
+					return 'cnpj';
+				}
+			}
+
+			if ( $( '#billing_cpf' ) ) {
+				return 'cpf';
+			}
+			if ( $( '#billing_cnpj' ) ) {
+				return 'cnpj';
+			}
+		}
+
+		/**
+		 * Get documents data.
+		 *
+		 * @return {Array}
+		 */
+		function getDocuments() {
+			var document = {};
+			var type = getDocumentType();
+			var field = '#billing_cpf';
+			document.type = type; 
+			if ( 'cnpj' === type ) {
+				field = '#billing_cnpj'
+			}
+			document.number = getNumbers( $( field ).val() );
+
+			return [document];
+		}
+
+		/**
+		 * Get billing data from checkout form.
+		 *
+		 * @return {Object}
+		 */
+		function getBillingData() {
+			if ( isset( $( '#billing_address_1' ) ) ) {
+				var billing = {};
+				billing.address = {
+					street: $( '#billing_address_1' ).val(),
+					street_number: $( '#billing_number' ).val(),
+					neighborhood: $( '#billing_neighborhood' ).val(),
+					city: $( '#billing_city' ).val(),
+					state: $( '#billing_state').val(),
+					zipcode: getNumbers( $( '#billing_postcode' ).val() ),
+					country: $( '#billing_country' ).val().toLowerCase()
+				}
+
+				billing.name = $.trim( $( '#billing_first_name' ).val() + ' ' + $( '#billing_last_name' ).val() );
+
+				return billing;
+			}
+			return false;
+		}
+
+		/**
+		 * Get shipping data from checkout form.
+		 *
+		 * @return {Object}
+		 */
+		function getShippingData() {
+			if ( isset( $( '#shipping_address_1' ) ) ) {
+				var shipping = {};
+				shipping.address = {
+					street: $( '#shipping_address_1' ).val(),
+					street_number: $( '#shipping_number' ).val(),
+					neighborhood: $( '#shipping_neighborhood' ).val(),
+					city: $( '#shipping_city' ).val(),
+					state: $( '#shipping_state').val(),
+					zipcode: getNumbers( $( '#shipping_postcode' ).val() ),
+					country: $( '#shipping_country' ).val().toLowerCase()
+				}
+
+				if( isset( $( '#shipping_address_2' ) ) ) {
+					shipping.address.complementary = $( '#shipping_address_2' ).val();
+				}
+
+				shipping.name = $.trim( $( '#shipping_first_name' ).val() + ' ' + $( '#shipping_last_name' ).val() );
+
+				return shipping;
+			}
+
+			return false;
 		}
 
 		/**
@@ -200,7 +291,7 @@
 				return true;
 			}
 
-			var checkout, customer, params,
+			var checkout, transaction, params,
 				form        = $( 'form.checkout, form#order_review' ),
 				inline_data = $( '#pagarme-checkout-params', form );
 
@@ -222,9 +313,9 @@
 			});
 
 			if ( wcPagarmeParams.checkoutPayPage ) {
-				customer = wcPagarmeParams.customerFields;
+				transaction = wcPagarmeParams.transactionFields;
 			} else {
-				customer = getCustomerFields( form );
+				transaction = getTransactionData( form );
 			}
 
 			// Set params.
@@ -237,9 +328,16 @@
 				maxInstallments:  inline_data.data( 'max_installment' ),
 				freeInstallments: wcPagarmeParams.freeInstallments,
 				postbackUrl:      wcPagarmeParams.postbackUrl,
-				uiColor:          wcPagarmeParams.uiColor
-			}, customer );
+				uiColor:          wcPagarmeParams.uiColor,
+			}, transaction );
 
+			if( params.shipping && ! params.shipping.fee) {
+				params.shipping.fee = inline_data.data( 'fee' );
+			}
+
+			if ( ! params.items ) {
+				params.items = inline_data.data( 'items' );
+			}
 			// Open modal.
 			checkout.open( params );
 

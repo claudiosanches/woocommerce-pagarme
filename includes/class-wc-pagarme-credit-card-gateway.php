@@ -220,26 +220,25 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			if ( 'yes' === $this->checkout ) {
-				$customer = array();
+				$transaction = array();
 
 				wp_enqueue_script( 'pagarme-checkout-library', $this->api->get_checkout_js_url(), array( 'jquery' ), null );
 				wp_enqueue_script( 'pagarme-checkout', plugins_url( 'assets/js/checkout' . $suffix . '.js', plugin_dir_path( __FILE__ ) ), array( 'jquery', 'jquery-blockui', 'pagarme-checkout-library' ), WC_Pagarme::VERSION, true );
 
 				if ( is_checkout_pay_page() ) {
-					$customer = $this->api->get_customer_data_from_checkout_pay_page();
+					$transaction = $this->api->get_transaction_data_from_checkout_pay_page();
 				}
-
 				wp_localize_script(
 					'pagarme-checkout',
 					'wcPagarmeParams',
 					array(
-						'encryptionKey'    => $this->encryption_key,
-						'interestRate'     => $this->api->get_interest_rate(),
-						'freeInstallments' => $this->free_installments,
-						'postbackUrl'      => WC()->api_request_url( get_class( $this ) ),
-						'customerFields'   => $customer,
-						'checkoutPayPage'  => ! empty( $customer ),
-						'uiColor'          => apply_filters( 'wc_pagarme_checkout_ui_color', '#1a6ee1' ),
+						'encryptionKey'     => $this->encryption_key,
+						'interestRate'      => $this->api->get_interest_rate(),
+						'freeInstallments'  => $this->free_installments,
+						'postbackUrl'       => WC()->api_request_url( get_class( $this ) ),
+						'transactionFields' => $transaction,
+						'checkoutPayPage'   => ! empty( $transaction ),
+						'uiColor'           => apply_filters( 'wc_pagarme_checkout_ui_color', '#1a6ee1' ),
 					)
 				);
 			} else {
@@ -259,6 +258,29 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Get cart items.
+	 *
+	 * @param WC_Cart $cart Order ID.
+	 *
+	 * @return array items.
+	 */
+	public function get_cart_items( $cart ) {
+		$items      = array();
+		$cart_items = $cart->get_cart_contents();
+		foreach ( $cart_items as $cart_item => $item ) {
+			$product = new WC_Product( $item['product_id'] );
+			array_push( $items, array(
+				'id'         => $item['product_id'],
+				'title'      => $product->get_name(),
+				'unit_price' => $item['line_total'] / $item['quantity'],
+				'quantity'   => $item['quantity'],
+				'tangible'   => $product->get_virtual() ? 'false' : 'true',
+			));
+		}
+		return $items;
+	}
+
+	/**
 	 * Payment fields.
 	 */
 	public function payment_fields() {
@@ -266,7 +288,10 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 			echo wp_kses_post( wpautop( wptexturize( $description ) ) );
 		}
 
-		$cart_total = $this->get_order_total();
+		$cart_total     = $this->get_order_total();
+		$cart           = WC()->cart;
+		$shipping_total = $cart->get_shipping_total();
+		$items          = $this->get_cart_items( $cart );
 
 		if ( 'no' === $this->checkout ) {
 			$installments = $this->api->get_installments( $cart_total );
@@ -285,7 +310,9 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		} else {
 			echo '<div id="pagarme-checkout-params" ';
 			echo 'data-total="' . esc_attr( $cart_total * 100 ) . '" ';
+			echo 'data-fee="' . esc_attr( $shipping_total * 100 ) . '" ';
 			echo 'data-max_installment="' . esc_attr( apply_filters( 'wc_pagarme_checkout_credit_card_max_installments', $this->api->get_max_installment( $cart_total ) ) ) . '"';
+			echo 'data-items="' . esc_attr( wp_json_encode( $items ) ) . '" ';
 			echo '></div>';
 		}
 	}
