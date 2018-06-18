@@ -210,11 +210,18 @@
 				success: function( data ) {
 					formSubmit = true;
 
-					// Remove any old token input.
-					$( 'input[name=pagarme_checkout_token]', form ).remove();
+					if ( wcPagarmeParams.createToken === 'true' ) {
+                        // Remove any old token input.
+                        $( 'input[name=pagarme_checkout_token]', form ).remove();
 
-					// Add the token input.
-					form.append( $( '<input name="pagarme_checkout_token" type="hidden" />' ).val( data.token ) );
+                        // Add the token input.
+                        form.append( $( '<input name="pagarme_checkout_token" type="hidden" />' ).val( data.token ) );
+                    } else {
+                        $( 'input[name=pagarme_card_hash]', form ).remove();
+
+                        // Add the token input.
+                        form.append( $( '<input name="pagarme_card_hash" type="hidden" />' ).val( data.card_hash ) );
+					}
 
 					// Submit the form.
 					form.submit();
@@ -232,7 +239,7 @@
 				paymentMethods:   'credit_card',
 				customerData:     false,
 				amount:           inline_data.data( 'total' ),
-				createToken:      true,
+				createToken:      wcPagarmeParams.createToken,
 				interestRate:     wcPagarmeParams.interestRate,
 				maxInstallments:  inline_data.data( 'max_installment' ),
 				freeInstallments: wcPagarmeParams.freeInstallments,

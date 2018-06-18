@@ -45,7 +45,7 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 			// Load plugin text domain.
 			add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
-			// Checks with WooCommerce is installed.
+			// Checks if WooCommerce is installed.
 			if ( class_exists( 'WC_Payment_Gateway' ) ) {
 				$this->upgrade();
 				$this->includes();
@@ -65,7 +65,7 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		public static function get_instance() {
 			// If the single instance hasn't been set, set it now.
 			if ( null === self::$instance ) {
-				self::$instance = new self;
+				self::$instance = new self();
 			}
 
 			return self::$instance;
@@ -79,6 +79,10 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 			include_once dirname( __FILE__ ) . '/includes/class-wc-pagarme-my-account.php';
 			include_once dirname( __FILE__ ) . '/includes/class-wc-pagarme-banking-ticket-gateway.php';
 			include_once dirname( __FILE__ ) . '/includes/class-wc-pagarme-credit-card-gateway.php';
+
+			if ( class_exists( 'WC_Subscriptions_Order' ) ) {
+				include_once dirname( __FILE__ ) . '/includes/class-wc-pagarme-credit-card-gateway-addons.php';
+			}
 		}
 
 		/**
@@ -107,6 +111,10 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		public function add_gateway( $methods ) {
 			$methods[] = 'WC_Pagarme_Banking_Ticket_Gateway';
 			$methods[] = 'WC_Pagarme_Credit_Card_Gateway';
+
+			if ( class_exists( 'WC_Subscriptions_Order' ) ) {
+				$methods[] = 'WC_Pagarme_Credit_Card_Gateway_Addons';
+			}
 
 			return $methods;
 		}
