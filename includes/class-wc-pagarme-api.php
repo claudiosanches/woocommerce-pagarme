@@ -800,6 +800,14 @@ class WC_Pagarme_API {
 				}
 
 				break;
+			case 'pending_review':
+				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
+
+				/* translators: %s transaction details url */
+				$order->update_status( 'on-hold', __( 'Pagar.me: You should manually analyze this transaction to continue payment flow, access %s to do it!', 'woocommerce-pagarme'  ), $transaction_url  );
+
+				break;
 			case 'processing' :
 				$order->update_status( 'on-hold', __( 'Pagar.me: The transaction is being processed.', 'woocommerce-pagarme' ) );
 
