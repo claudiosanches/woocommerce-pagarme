@@ -73,7 +73,7 @@
 				return true;
 			}
 
-			if ( 1 === $( 'input#terms' ).size() && 0 === $( 'input#terms:checked' ).size() ) {
+			if ( 1 === $( 'input#terms' ).length && 0 === $( 'input#terms:checked' ).length ) {
 				return true;
 			}
 
@@ -88,7 +88,7 @@
 				requiredInputs = $( '.woocommerce-billing-fields .validate-required' );
 			}
 
-			if ( requiredInputs.size() ) {
+			if ( requiredInputs.length ) {
 				var requiredError = false;
 
 				// Check if person type select field is available.
