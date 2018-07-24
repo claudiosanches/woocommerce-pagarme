@@ -154,6 +154,7 @@
 			// Address fields.
 			if ( isset( $( '#billing_address_1' ) ) ) {
 				data.customerAddressStreet        = $( '#billing_address_1' ).val();
+				data.customerAddressCity          = $( '#billing_city' ).val();
 				data.customerAddressComplementary = $( '#billing_address_2' ).val();
 				data.customerAddressZipcode       = getNumbers( $( '#billing_postcode' ).val() );
 
