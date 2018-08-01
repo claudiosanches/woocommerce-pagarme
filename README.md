@@ -2,8 +2,8 @@
 **Contributors:** pagarme, claudiosanches  
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
-**Tested up to:** 4.8  
-**Stable tag:** 2.0.11  
+**Tested up to:** 4.9  
+**Stable tag:** 2.0.12  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -125,6 +125,11 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Changelog ##
 
+### 2.0.12 - 2018/07/31 ###
+
+* Adicionado cidade e estado nos dados enviados para o Checkout Pagar.me.
+* Adicionado suporte para "pending_review", melhorando a integração com boleto bancário.
+
 ### 2.0.11 - 2017/09/08 ###
 
 * Adicionada opção para suportar boletos asíncronos.
@@ -215,6 +220,7 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 ## Upgrade Notice ##
 
-### 2.0.11 ###
+### 2.0.12 ###
 
-* Adicionada opção para suportar boletos asíncronos.
+* Adicionado cidade e estado nos dados enviados para o Checkout Pagar.me.
+* Adicionado suporte para "pending_review" melhorando a integração com boleto bancário.

@@ -129,7 +129,7 @@ module.exports = function( grunt ) {
 			options: {
 				bin: 'vendor/bin/phpcs',
 				showSniffCodes: true,
-				standard: './phpcs.ruleset.xml'
+				standard: './phpcs.xml'
 			},
 			dist: {
 				src:  [
