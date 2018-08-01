@@ -1,22 +1,27 @@
 {
-  "name": "claudiosmweb/woocommerce-pagarme",
+  "name": "claudiosanches/woocommerce-pagarme",
   "description": "Gateway de pagamento Pagar.me para WooCommerce.",
-  "homepage": "https://github.com/claudiosmweb/woocommerce-pagarme",
+  "homepage": "https://github.com/claudiosanches/woocommerce-pagarme",
   "type": "wordpress-plugin",
   "license": "GPL-2.0+",
   "require": {
     "composer/installers": "~1.0"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "*",
-    "wp-coding-standards/wpcs": "*"
+    "claudiosanches/wp-git-hooks": "*"
   },
-  "scripts": {
-    "post-install-cmd": [
-      "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs"
-    ],
-    "post-update-cmd": [
-      "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs"
-    ]
-  }
+	"scripts": {
+		"pre-update-cmd": [
+			"ClaudioSanches\\WpGitHooks\\Hooks::preHooks"
+		],
+		"pre-install-cmd": [
+			"ClaudioSanches\\WpGitHooks\\Hooks::preHooks"
+		],
+		"post-install-cmd": [
+			"ClaudioSanches\\WpGitHooks\\Hooks::postHooks"
+		],
+		"post-update-cmd": [
+			"ClaudioSanches\\WpGitHooks\\Hooks::postHooks"
+		]
+	}
 }
