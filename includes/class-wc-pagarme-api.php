@@ -22,7 +22,7 @@ class WC_Pagarme_API {
 	/**
 	 * Gateway class.
 	 *
-	 * @var WC_Pagarme_Gateway
+	 * @var WC_Payment_Gateway
 	 */
 	protected $gateway;
 
