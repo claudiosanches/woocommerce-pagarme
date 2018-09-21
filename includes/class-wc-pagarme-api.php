@@ -674,8 +674,8 @@ class WC_Pagarme_API {
 				'result' => 'fail',
 			);
 		} else {
+
 			// Save transaction data.
-			update_post_meta( $order->id, '_wc_pagarme_transaction_id', intval( $transaction['id'] ) );
 			$payment_data = array_map(
 				'sanitize_text_field',
 				array(
@@ -686,12 +686,41 @@ class WC_Pagarme_API {
 					'boleto_url'      => $transaction['boleto_url'],
 				)
 			);
-			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $payment_data );
-			update_post_meta( $order->id, '_transaction_id', intval( $transaction['id'] ) );
-			$this->save_order_meta_fields( $order->id, $transaction );
 
-			// Change the order status.
-			$this->process_order_status( $order, $transaction['status'] );
+			//save meta data
+			$meta_data = array(
+				__( 'Banking Ticket URL', 'woocommerce-pagarme' ) => sanitize_text_field( $transaction['boleto_url'] ),
+				__( 'Credit Card', 'woocommerce-pagarme' )        => $this->get_card_brand_name( sanitize_text_field( $transaction['card_brand'] ) ),
+				__( 'Installments', 'woocommerce-pagarme' )       => sanitize_text_field( $transaction['installments'] ),
+				__( 'Total paid', 'woocommerce-pagarme' )         => number_format( intval( $transaction['amount'] ) / 100, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() ),
+				__( 'Anti Fraud Score', 'woocommerce-pagarme' )   => sanitize_text_field( $transaction['antifraud_score'] ),
+				'_wc_pagarme_transaction_data'                    => $payment_data,
+				'_wc_pagarme_transaction_id'                      => intval( $transaction['id'] ),
+				'_transaction_id'                                 => intval( $transaction['id'] ),
+			);
+
+			// WooCommerce 3.0 or later.
+			if ( method_exists( $order, 'update_meta_data' ) ) {
+				foreach ( $meta_data as $key => $value ) {
+					if ( ! empty( $value ) ) {
+						$order->update_meta_data( $key, $value );
+					}
+				}
+
+				// Change the order status after all meta is added to order object
+				$this->process_order_status( $order, $transaction['status'] );
+			} else {
+
+				// Change the order status before updating metas directly into db
+				$this->process_order_status( $order, $transaction['status'] );
+
+				foreach ( $meta_data as $key => $value ) {
+					if ( ! empty( $value ) ) {
+						update_post_meta( $order_id, $key, $value );
+					}
+				}
+			}
+
 
 			// Empty the cart.
 			WC()->cart->empty_cart();
@@ -718,6 +747,10 @@ class WC_Pagarme_API {
 			if ( $fingerprint === $ipn_response['fingerprint'] ) {
 				return true;
 			}
+
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, "IPN fingerprint failed {$fingerprint} !== {$ipn_response['fingerprint']} " );
+			}
 		}
 
 		return false;
@@ -743,10 +776,17 @@ class WC_Pagarme_API {
 
 		$ipn_response = ! empty( $_POST ) ? $_POST : false;
 
-		if ( $ipn_response && $this->check_fingerprint( $ipn_response ) ) {
-			header( 'HTTP/1.1 200 OK' );
+		if ( 'yes' === $this->gateway->debug ) {
+			$this->gateway->log->add( $this->gateway->id, 'IPN received: ' . print_r( $ipn_response, true ) );
+		}
 
-			$this->process_successful_ipn( $ipn_response );
+		if ( $ipn_response && $this->check_fingerprint( $ipn_response ) ) {
+
+			if( $this->process_successful_ipn( $ipn_response ) ){
+				header( 'HTTP/1.1 200 OK' );
+			}else{
+				header( 'HTTP/1.1 406 Not Acceptable' );
+			}
 
 			// Deprecated action since 2.0.0.
 			do_action( 'wc_pagarme_valid_ipn_request', $ipn_response );
@@ -772,6 +812,11 @@ class WC_Pagarme_API {
 
 		if ( $order && $order->id === $order_id ) {
 			$this->process_order_status( $order, $status );
+		}else{
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, "IPN: Order not found. TransactionID: {$posted['id']}, OrderID: {$order_id}, Status: {$status} " );
+			}
+			return false;
 		}
 
 		// Async transactions will only send the boleto_url on IPN.
@@ -780,6 +825,8 @@ class WC_Pagarme_API {
 			$post_data['boleto_url'] = sanitize_text_field( $posted['transaction']['boleto_url'] );
 			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $post_data );
 		}
+
+		return true;
 	}
 
 	/**
