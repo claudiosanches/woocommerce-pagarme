@@ -747,6 +747,10 @@ class WC_Pagarme_API {
 			if ( $fingerprint === $ipn_response['fingerprint'] ) {
 				return true;
 			}
+
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, "IPN fingerprint failed {$fingerprint} !== {$ipn_response['fingerprint']} " );
+			}
 		}
 
 		return false;
@@ -772,10 +776,17 @@ class WC_Pagarme_API {
 
 		$ipn_response = ! empty( $_POST ) ? $_POST : false;
 
-		if ( $ipn_response && $this->check_fingerprint( $ipn_response ) ) {
-			header( 'HTTP/1.1 200 OK' );
+		if ( 'yes' === $this->gateway->debug ) {
+			$this->gateway->log->add( $this->gateway->id, 'IPN received: ' . print_r( $ipn_response, true ) );
+		}
 
-			$this->process_successful_ipn( $ipn_response );
+		if ( $ipn_response && $this->check_fingerprint( $ipn_response ) ) {
+
+			if( $this->process_successful_ipn( $ipn_response ) ){
+				header( 'HTTP/1.1 200 OK' );
+			}else{
+				header( 'HTTP/1.1 406 Not Acceptable' );
+			}
 
 			// Deprecated action since 2.0.0.
 			do_action( 'wc_pagarme_valid_ipn_request', $ipn_response );
@@ -801,6 +812,11 @@ class WC_Pagarme_API {
 
 		if ( $order && $order->id === $order_id ) {
 			$this->process_order_status( $order, $status );
+		}else{
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, "IPN: Order not found. TransactionID: {$posted['id']}, OrderID: {$order_id}, Status: {$status} " );
+			}
+			return false;
 		}
 
 		// Async transactions will only send the boleto_url on IPN.
@@ -809,6 +825,8 @@ class WC_Pagarme_API {
 			$post_data['boleto_url'] = sanitize_text_field( $posted['transaction']['boleto_url'] );
 			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $post_data );
 		}
+
+		return true;
 	}
 
 	/**
