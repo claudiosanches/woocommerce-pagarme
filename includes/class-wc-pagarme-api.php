@@ -602,33 +602,6 @@ class WC_Pagarme_API {
 		return isset( $names[ $brand ] ) ? $names[ $brand ] : $brand;
 	}
 
-	/**
-	 * Save order meta fields.
-	 * Save fields as meta data to display on order's admin screen.
-	 *
-	 * @param int   $id Order ID.
-	 * @param array $data Order data.
-	 */
-	protected function save_order_meta_fields( $id, $data ) {
-		if ( 'boleto' === $data['payment_method'] ) {
-			if ( ! empty( $data['boleto_url'] ) ) {
-				update_post_meta( $id, __( 'Banking Ticket URL', 'woocommerce-pagarme' ), sanitize_text_field( $data['boleto_url'] ) );
-			}
-		} else {
-			if ( ! empty( $data['card_brand'] ) ) {
-				update_post_meta( $id, __( 'Credit Card', 'woocommerce-pagarme' ), $this->get_card_brand_name( sanitize_text_field( $data['card_brand'] ) ) );
-			}
-			if ( ! empty( $data['installments'] ) ) {
-				update_post_meta( $id, __( 'Installments', 'woocommerce-pagarme' ), sanitize_text_field( $data['installments'] ) );
-			}
-			if ( ! empty( $data['amount'] ) ) {
-				update_post_meta( $id, __( 'Total paid', 'woocommerce-pagarme' ), number_format( intval( $data['amount'] ) / 100, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() ) );
-			}
-			if ( ! empty( $data['antifraud_score'] ) ) {
-				update_post_meta( $id, __( 'Anti Fraud Score', 'woocommerce-pagarme' ), sanitize_text_field( $data['antifraud_score'] ) );
-			}
-		}
-	}
 
 	/**
 	 * Process regular payment.
@@ -674,8 +647,8 @@ class WC_Pagarme_API {
 				'result' => 'fail',
 			);
 		} else {
+
 			// Save transaction data.
-			update_post_meta( $order->id, '_wc_pagarme_transaction_id', intval( $transaction['id'] ) );
 			$payment_data = array_map(
 				'sanitize_text_field',
 				array(
@@ -686,12 +659,35 @@ class WC_Pagarme_API {
 					'boleto_url'      => $transaction['boleto_url'],
 				)
 			);
-			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $payment_data );
-			update_post_meta( $order->id, '_transaction_id', intval( $transaction['id'] ) );
-			$this->save_order_meta_fields( $order->id, $transaction );
 
-			// Change the order status.
+			//save meta data
+			$meta_data = array(
+				__( 'Banking Ticket URL', 'woocommerce-pagarme' ) => sanitize_text_field( $transaction['boleto_url'] ),
+				__( 'Credit Card', 'woocommerce-pagarme' )        => $this->get_card_brand_name( sanitize_text_field( $transaction['card_brand'] ) ),
+				__( 'Installments', 'woocommerce-pagarme' )       => sanitize_text_field( $transaction['installments'] ),
+				__( 'Total paid', 'woocommerce-pagarme' )         => number_format( intval( $transaction['amount'] ) / 100, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() ),
+				__( 'Anti Fraud Score', 'woocommerce-pagarme' )   => sanitize_text_field( $transaction['antifraud_score'] ),
+				'_wc_pagarme_transaction_data'                    => $payment_data,
+				'_wc_pagarme_transaction_id'                      => intval( $transaction['id'] ),
+				'_transaction_id'                                 => intval( $transaction['id'] ),
+			);
+
+
+			// WooCommerce 3.0 or later.
+			$update_meta_data_exists = method_exists( $order, 'update_meta_data' );
+
+			foreach ( $meta_data as $key => $value ) {
+				if ( $update_meta_data_exists ) {
+					$order->update_meta_data( $key, $value );
+				} else {
+					update_post_meta( $order_id, $key, $value );
+				}
+
+			}
+
+
 			$this->process_order_status( $order, $transaction['status'] );
+
 
 			// Empty the cart.
 			WC()->cart->empty_cart();
