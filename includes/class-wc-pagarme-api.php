@@ -606,10 +606,10 @@ class WC_Pagarme_API {
 	 * Save order meta fields.
 	 * Save fields as meta data to display on order's admin screen.
 	 *
-	 * @param WC_Order   $order Order object.
+	 * @param int   $id Order ID.
 	 * @param array $data Order data.
 	 */
-	protected function save_order_meta_fields( $order, $data ) {
+	protected function save_order_meta_fields( $id, $data ) {
 
 		// Save transaction data.
 		$payment_data = array_map(
@@ -635,8 +635,7 @@ class WC_Pagarme_API {
 			'_transaction_id'                                 => intval( $data['id'] ),
 		);
 
-
-		$order_id = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
+		$order = wc_get_order( $id );
 
 		// WooCommerce 3.0 or later.
 		$update_meta_data_exists = method_exists( $order, 'update_meta_data' );
@@ -645,7 +644,7 @@ class WC_Pagarme_API {
 			if ( $update_meta_data_exists ) {
 				$order->update_meta_data( $key, $value );
 			} else {
-				update_post_meta( $order_id, $key, $value );
+				update_post_meta( $id, $key, $value );
 			}
 		}
 
@@ -697,7 +696,7 @@ class WC_Pagarme_API {
 			);
 		} else {
 
-			$this->save_order_meta_fields( $order, $transaction );
+			$this->save_order_meta_fields( $order_id, $transaction );
 
 			$this->process_order_status( $order, $transaction['status'] );
 
