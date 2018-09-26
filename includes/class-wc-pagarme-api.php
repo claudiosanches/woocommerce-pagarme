@@ -602,6 +602,55 @@ class WC_Pagarme_API {
 		return isset( $names[ $brand ] ) ? $names[ $brand ] : $brand;
 	}
 
+	/**
+	 * Save order meta fields.
+	 * Save fields as meta data to display on order's admin screen.
+	 *
+	 * @param WC_Order   $order Order object.
+	 * @param array $data Order data.
+	 */
+	protected function save_order_meta_fields( $order, $data ) {
+
+		// Save transaction data.
+		$payment_data = array_map(
+			'sanitize_text_field',
+			array(
+				'payment_method'  => $data['payment_method'],
+				'installments'    => $data['installments'],
+				'card_brand'      => $this->get_card_brand_name( $data['card_brand'] ),
+				'antifraud_score' => $data['antifraud_score'],
+				'boleto_url'      => $data['boleto_url'],
+			)
+		);
+
+		//save meta data
+		$meta_data = array(
+			__( 'Banking Ticket URL', 'woocommerce-pagarme' ) => sanitize_text_field( $data['boleto_url'] ),
+			__( 'Credit Card', 'woocommerce-pagarme' )        => $this->get_card_brand_name( sanitize_text_field( $data['card_brand'] ) ),
+			__( 'Installments', 'woocommerce-pagarme' )       => sanitize_text_field( $data['installments'] ),
+			__( 'Total paid', 'woocommerce-pagarme' )         => number_format( intval( $data['amount'] ) / 100, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() ),
+			__( 'Anti Fraud Score', 'woocommerce-pagarme' )   => sanitize_text_field( $data['antifraud_score'] ),
+			'_wc_pagarme_transaction_data'                    => $payment_data,
+			'_wc_pagarme_transaction_id'                      => intval( $data['id'] ),
+			'_transaction_id'                                 => intval( $data['id'] ),
+		);
+
+
+		$order_id = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
+
+		// WooCommerce 3.0 or later.
+		$update_meta_data_exists = method_exists( $order, 'update_meta_data' );
+
+		foreach ( $meta_data as $key => $value ) {
+			if ( $update_meta_data_exists ) {
+				$order->update_meta_data( $key, $value );
+			} else {
+				update_post_meta( $order_id, $key, $value );
+			}
+		}
+
+	}
+
 
 	/**
 	 * Process regular payment.
@@ -648,43 +697,7 @@ class WC_Pagarme_API {
 			);
 		} else {
 
-			// Save transaction data.
-			$payment_data = array_map(
-				'sanitize_text_field',
-				array(
-					'payment_method'  => $transaction['payment_method'],
-					'installments'    => $transaction['installments'],
-					'card_brand'      => $this->get_card_brand_name( $transaction['card_brand'] ),
-					'antifraud_score' => $transaction['antifraud_score'],
-					'boleto_url'      => $transaction['boleto_url'],
-				)
-			);
-
-			//save meta data
-			$meta_data = array(
-				__( 'Banking Ticket URL', 'woocommerce-pagarme' ) => sanitize_text_field( $transaction['boleto_url'] ),
-				__( 'Credit Card', 'woocommerce-pagarme' )        => $this->get_card_brand_name( sanitize_text_field( $transaction['card_brand'] ) ),
-				__( 'Installments', 'woocommerce-pagarme' )       => sanitize_text_field( $transaction['installments'] ),
-				__( 'Total paid', 'woocommerce-pagarme' )         => number_format( intval( $transaction['amount'] ) / 100, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() ),
-				__( 'Anti Fraud Score', 'woocommerce-pagarme' )   => sanitize_text_field( $transaction['antifraud_score'] ),
-				'_wc_pagarme_transaction_data'                    => $payment_data,
-				'_wc_pagarme_transaction_id'                      => intval( $transaction['id'] ),
-				'_transaction_id'                                 => intval( $transaction['id'] ),
-			);
-
-
-			// WooCommerce 3.0 or later.
-			$update_meta_data_exists = method_exists( $order, 'update_meta_data' );
-
-			foreach ( $meta_data as $key => $value ) {
-				if ( $update_meta_data_exists ) {
-					$order->update_meta_data( $key, $value );
-				} else {
-					update_post_meta( $order_id, $key, $value );
-				}
-
-			}
-
+			$this->save_order_meta_fields( $order, $transaction );
 
 			$this->process_order_status( $order, $transaction['status'] );
 
