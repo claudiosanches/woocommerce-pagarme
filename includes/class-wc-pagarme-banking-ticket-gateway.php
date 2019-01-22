@@ -40,7 +40,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->encryption_key = $this->get_option( 'encryption_key' );
 		$this->debug          = $this->get_option( 'debug' );
 		$this->async          = $this->get_option( 'async' );
-		$this->issue_date     = $this->get_option( 'issue_date' );
+		$this->issue_date     = $this->get_option( 'expiration_date' );
 		$this->cancel         = $this->get_option( 'cancel' );
 
 		// Active logs.
@@ -133,10 +133,10 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 				'type'        => 'title',
 				'description' => '',
 			),
-			'issue_date' => array(
-				'title'             => __( 'Definir a data de emissão do boleto', 'woocommerce-pagarme' ),
+			'expiration_date' => array(
+				'title'             => __( 'Definir a data de expiração do boleto', 'woocommerce-pagarme' ),
 				'type'              => 'text',
-				'description'       => sprintf( __( 'O número colocado neste campo será somado a data atual, assim seu boleto terá a data de emissão mudada para essa soma', 'woocommerce-pagarme' ) . '</a>' ),
+				'description'       => sprintf( __( 'O número colocado neste campo será somado a data atual, assim seu boleto terá a data de expiração mudada para essa soma', 'woocommerce-pagarme' ) . '</a>' ),
 				'default'           => '0',
 				'custom_attributes' => array(
 					'required' => 'required',
