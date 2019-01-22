@@ -126,6 +126,26 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 				'description' => sprintf( __( 'If enabled the banking ticket url will appear in the order page, if disabled it will appear after the checkout process.', 'woocommerce-pagarme' ) ),
 				'default'     => 'no',
 			),
+			'ticket_configs' => array(
+				'title'       => __( 'Configurações do Boleto', 'woocommerce-pagarme' ),
+				'type'        => 'title',
+				'description' => '',
+			),
+			'issue_date' => array(
+				'title'             => __( 'Definir a data de emissão do boleto', 'woocommerce-pagarme' ),
+				'type'              => 'text',
+				'description'       => sprintf( __( 'O número colocado neste campo será somado a data atual, assim seu boleto terá a data de emissão mudada para essa soma', 'woocommerce-pagarme' ) . '</a>' ),
+				'default'           => '0',
+				'custom_attributes' => array(
+					'required' => 'required',
+				),
+			),
+			'cancel' => array(
+				'title'       => __( 'Cancelar pedido', 'woocommerce-pagarme' ),
+				'type'        => 'checkbox',
+				'description' => sprintf( __( 'Cancelar pedido após prazo de vencimento do boleto.', 'woocommerce-pagarme' ) ),
+				'default'     => 'yes',
+			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
 				'type'        => 'title',
