@@ -240,10 +240,6 @@ class WC_Pagarme_API {
 	 * @return array            Transaction data.
 	 */
 	public function generate_transaction_data( $order, $posted ) {
-		// Set expiration date
-		$num_days = (int)$this->gateway->boleto_expiration_date;
-		$expiration_date = $this->set_expiration_date($num_days);
-
 		// Set the request data.
 		$data = array(
 			'api_key'      => $this->gateway->api_key,
@@ -289,7 +285,8 @@ class WC_Pagarme_API {
 		if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
 			$wcbcf_settings = get_option( 'wcbcf_settings' );
 			if ( '0' !== $wcbcf_settings['person_type'] ) {
-				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->billing_persontype ) || '2' === $wcbcf_settings['person_type'] ) {
+				if ( ( '1' == $wcbcf_settings['person_type'] && '1' == $order->billing_persontype ) || '2' === $wcbcf_settings['person_type'] ) {
+					PC::debug( '1' == $wcbcf_settings['person_type'] && '1' == $order->billing_persontype );
 					$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
 				}
 
@@ -343,6 +340,10 @@ class WC_Pagarme_API {
 				}
 			}
 		} elseif ( 'pagarme-banking-ticket' === $this->gateway->id ) {
+			// Set expiration date
+			$num_days = (int)$this->gateway->boleto_expiration_date;
+			$expiration_date = $this->set_expiration_date($num_days);
+
 			$data['payment_method']         = 'boleto';
 			$data['async']                  = 'yes' === $this->gateway->async;
 			$data['boleto_expiration_date'] = $expiration_date;

@@ -41,7 +41,6 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->debug                  = $this->get_option( 'debug' );
 		$this->async                  = $this->get_option( 'async' );
 		$this->boleto_expiration_date = $this->get_option( 'boleto_expiration_date' );
-		$this->cancel                 = $this->get_option( 'cancel' );
 
 		// Active logs.
 		if ( 'yes' === $this->debug ) {
@@ -141,12 +140,6 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 				'custom_attributes'  => array(
 					'required' => 'required',
 				),
-			),
-			'cancel' => array(
-				'title'       => __( 'Cancelar pedido', 'woocommerce-pagarme' ),
-				'type'        => 'checkbox',
-				'description' => sprintf( __( 'Cancelar pedido após prazo de vencimento do boleto.', 'woocommerce-pagarme' ) ),
-				'default'     => 'yes',
 			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
