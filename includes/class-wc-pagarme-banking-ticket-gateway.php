@@ -34,14 +34,14 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Define user set variables.
-		$this->title          = $this->get_option( 'title' );
-		$this->description    = $this->get_option( 'description' );
-		$this->api_key        = $this->get_option( 'api_key' );
-		$this->encryption_key = $this->get_option( 'encryption_key' );
-		$this->debug          = $this->get_option( 'debug' );
-		$this->async          = $this->get_option( 'async' );
-		$this->issue_date     = $this->get_option( 'expiration_date' );
-		$this->cancel         = $this->get_option( 'cancel' );
+		$this->title                  = $this->get_option( 'title' );
+		$this->description            = $this->get_option( 'description' );
+		$this->api_key                = $this->get_option( 'api_key' );
+		$this->encryption_key         = $this->get_option( 'encryption_key' );
+		$this->debug                  = $this->get_option( 'debug' );
+		$this->async                  = $this->get_option( 'async' );
+		$this->boleto_expiration_date = $this->get_option( 'boleto_expiration_date' );
+		$this->cancel                 = $this->get_option( 'cancel' );
 
 		// Active logs.
 		if ( 'yes' === $this->debug ) {
@@ -133,12 +133,12 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 				'type'        => 'title',
 				'description' => '',
 			),
-			'expiration_date' => array(
-				'title'             => __( 'Definir a data de expiração do boleto', 'woocommerce-pagarme' ),
-				'type'              => 'text',
-				'description'       => sprintf( __( 'O número colocado neste campo será somado a data atual, assim seu boleto terá a data de expiração mudada para essa soma', 'woocommerce-pagarme' ) . '</a>' ),
-				'default'           => '0',
-				'custom_attributes' => array(
+			'boleto_expiration_date' => array(
+				'title'              => __( 'Definir a data de expiração do boleto', 'woocommerce-pagarme' ),
+				'type'               => 'text',
+				'description'        => sprintf( __( 'O número colocado neste campo será somado a data atual, assim seu boleto terá a data de expiração mudada para essa soma', 'woocommerce-pagarme' ) . '</a>' ),
+				'default'            => '7',
+				'custom_attributes'  => array(
 					'required' => 'required',
 				),
 			),

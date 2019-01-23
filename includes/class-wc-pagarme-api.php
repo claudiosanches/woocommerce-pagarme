@@ -240,6 +240,10 @@ class WC_Pagarme_API {
 	 * @return array            Transaction data.
 	 */
 	public function generate_transaction_data( $order, $posted ) {
+		// Set expiration date
+		$num_days = (int)$this->gateway->boleto_expiration_date;
+		$expiration_date = $this->set_expiration_date($num_days);
+
 		// Set the request data.
 		$data = array(
 			'api_key'      => $this->gateway->api_key,
@@ -339,8 +343,9 @@ class WC_Pagarme_API {
 				}
 			}
 		} elseif ( 'pagarme-banking-ticket' === $this->gateway->id ) {
-			$data['payment_method'] = 'boleto';
-			$data['async']          = 'yes' === $this->gateway->async;
+			$data['payment_method']         = 'boleto';
+			$data['async']                  = 'yes' === $this->gateway->async;
+			$data['boleto_expiration_date'] = $expiration_date;
 		}
 
 		// Add filter for Third Party plugins.
@@ -610,7 +615,6 @@ class WC_Pagarme_API {
 	 * @param array $data Order data.
 	 */
 	protected function save_order_meta_fields( $id, $data ) {
-
 		// Save transaction data.
 		$payment_data = array_map(
 			'sanitize_text_field',
@@ -863,5 +867,20 @@ class WC_Pagarme_API {
 			default :
 				break;
 		}
+	}
+
+	/**
+	 * Set expiration date based on current date + number of days set
+	 * at the banking ticket settings page
+	 *
+	 * @param int $num_days number of days set at settings page
+	 */
+	public function set_expiration_date($num_days) {
+		$today = new DateTime('NOW');
+		$interval = new DateInterval('P' . $num_days . 'D');
+
+		$expiration_date = $today->add($interval);
+
+		return $expiration_date->format(DateTime::ISO8601);
 	}
 }
