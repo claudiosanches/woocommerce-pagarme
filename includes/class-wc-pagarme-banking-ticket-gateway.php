@@ -141,6 +141,19 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 					'required' => 'required',
 				),
 			),
+			'enable_cancel_order' => array(
+				'title'       => __( 'Habilitar cancelamento de pedido', 'woocommerce-pagarme' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Habilitar cancelamento', 'woocommerce-pagarme' ),
+				'default'     => 'no',
+				'description' => sprintf( __( 'Habilitar cancelamento de pedido com número de dias definido em caso de não pagamento do boleto' , 'woocommerce-pagarme' ) ),
+			),
+			'cancel_order' => array(
+				'title'              => __( 'Definir o número de dias para o cancelamento do pedido', 'woocommerce-pagarme' ),
+				'type'               => 'text',
+				'description'        => sprintf( __( 'Definir o número de dias para o cancelamento do pedido em caso de não pagamento do boleto', 'woocommerce-pagarme' ) ),
+				'default'            => '',
+			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
 				'type'        => 'title',
