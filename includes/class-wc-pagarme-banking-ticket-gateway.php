@@ -41,6 +41,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->debug                  = $this->get_option( 'debug' );
 		$this->async                  = $this->get_option( 'async' );
 		$this->boleto_expiration_date = $this->get_option( 'boleto_expiration_date' );
+		$this->cancel_order           = $this->get_option( 'enable_cancel_order' );
 
 		// Active logs.
 		if ( 'yes' === $this->debug ) {
