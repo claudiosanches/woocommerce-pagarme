@@ -7,7 +7,7 @@ list:
 	@echo "up       | Create and start containers"
 
 up:
-	docker-compose up -d --build --force-recreate
+	docker-compose up -d
 
 wait-for-wordpress:
 	sleep 20
