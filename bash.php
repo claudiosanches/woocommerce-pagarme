@@ -1,6 +1,31 @@
 <?php
 
-$woocommerceOptions = [
+define(
+    'WCP_CREDITCARD_OPTION_NAME',
+    'woocommerce_pagarme-credit-card_settings'
+);
+
+define(
+    'WCP_BOLETO_OPTION_NAME',
+    'woocommerce_pagarme-banking-ticket_settings'
+);
+
+/**
+ * Update Woocommerce Pagar.me Options
+ *
+ * @param string $optionName
+ * @param array $options
+ */
+function setup($optionName, $options) {
+    $command = sprintf(
+        "wp option update %s '%s' --format=json --allow-root",
+        $optionName,
+        json_encode($options)
+    );
+    return shell_exec($command);
+}
+
+$woocommerceCreditCardOptions = [
     'enabled' => 'yes',
     'title' => 'Cartão de crédito',
     'description' => 'Cartão de crédito Pagar.me',
@@ -16,5 +41,16 @@ $woocommerceOptions = [
     'debug' => 'yes'
 ];
 
-$command = 'wp option update woocommerce_pagarme-credit-card_settings \''. json_encode($woocommerceOptions) . '\' --format=json --allow-root';
-echo shell_exec($command);
+$woocommerceBoletoOptions = [
+    'enabled' => 'Boleto bancário',
+    'description' => 'Pagar com boleto bancário',
+    'integration' => '',
+    'api_key' => getenv('API_KEY'),
+    'encryption_key' => getenv('ENCRYPTION_KEY'),
+    'async' => 'no',
+    'testing' => '',
+    'debug' => 'yes'
+];
+
+echo setup(WCP_CREDITCARD_OPTION_NAME, $woocommerceCreditCardOptions);
+echo setup(WCP_BOLETO_OPTION_NAME, $woocommerceBoletoOptions);
