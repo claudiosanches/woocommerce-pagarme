@@ -1,0 +1,22 @@
+version: "2.1"
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    env_file: .env
+    healthcheck:
+      test: "/etc/init.d/mysql status"
+      interval: 1s
+      retries: 120
+
+  wordpress:
+    depends_on:
+      db:
+        condition: service_healthy
+    build: .
+    volumes:
+      - ./:/var/www/html/wp-content/plugins/woocommerce-pagarme
+    ports:
+      - 80:80
+    restart: always
+    env_file: .env
