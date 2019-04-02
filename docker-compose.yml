@@ -20,3 +20,9 @@ services:
       - 80:80
     restart: always
     env_file: .env
+
+  composer:
+    image: composer:1.8.4
+    working_dir: /app
+    volumes:
+      - ./:/app

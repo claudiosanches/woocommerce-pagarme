@@ -43,5 +43,11 @@ wcp-setup:
 
 prepare: up wait-for-wordpress wp-install wp-setup wc-setup wcp-setup
 
+composer-install:
+	docker-compose run composer install
+
+lint: composer-install
+	docker-compose run composer ./bin/lint.sh
+
 down:
 	docker-compose down
