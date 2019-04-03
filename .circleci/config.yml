@@ -27,7 +27,19 @@ jobs:
       - run:
           name: Linting changed PHP files on PR
           command: |
-            make lint
+            make lint-php
+
+  lint-js:
+    machine:
+      enabled: true
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Linting JS files
+          command: |
+            make lint-js
 
 workflows:
   version: 2
@@ -35,5 +47,8 @@ workflows:
     jobs:
       - checkout-code
       - lint-php:
+          requires:
+          - checkout-code
+      - lint-js:
           requires:
           - checkout-code
