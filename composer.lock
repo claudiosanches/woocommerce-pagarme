@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2db819d3dea04283f6b17860ceb43dfb",
+    "content-hash": "497d08dbbf2df8124112d9dcf36d5a60",
     "packages": [
         {
             "name": "composer/installers",
@@ -134,12 +134,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/claudiosanches/wp-git-hooks.git",
-                "reference": "4166723d78aa51d77951e3d4464f61f418c22684"
+                "reference": "53c954c3634b7f6f9a5b4056a9f4575320e37530"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/claudiosanches/wp-git-hooks/zipball/4166723d78aa51d77951e3d4464f61f418c22684",
-                "reference": "4166723d78aa51d77951e3d4464f61f418c22684",
+                "url": "https://api.github.com/repos/claudiosanches/wp-git-hooks/zipball/53c954c3634b7f6f9a5b4056a9f4575320e37530",
+                "reference": "53c954c3634b7f6f9a5b4056a9f4575320e37530",
                 "shasum": ""
             },
             "require": {
@@ -168,7 +168,7 @@
             "keywords": [
                 "wordpress"
             ],
-            "time": "2018-08-01T15:32:04+00:00"
+            "time": "2018-08-01T15:38:07+00:00"
         },
         {
             "name": "dealerdirect/phpcodesniffer-composer-installer",
@@ -240,16 +240,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.3.1",
+            "version": "3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "628a481780561150481a9ec74709092b9759b3ec"
+                "reference": "5b4333b4010625d29580eb4a41f1e53251be6baa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/628a481780561150481a9ec74709092b9759b3ec",
-                "reference": "628a481780561150481a9ec74709092b9759b3ec",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/5b4333b4010625d29580eb4a41f1e53251be6baa",
+                "reference": "5b4333b4010625d29580eb4a41f1e53251be6baa",
                 "shasum": ""
             },
             "require": {
@@ -282,12 +282,12 @@
                 }
             ],
             "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
-            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
             "keywords": [
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-07-26T23:47:18+00:00"
+            "time": "2019-03-19T03:22:27+00:00"
         },
         {
             "name": "wimg/php-compatibility",
@@ -340,6 +340,7 @@
                 "phpcs",
                 "standards"
             ],
+            "abandoned": "phpcompatibility/php-compatibility",
             "time": "2018-07-17T13:42:26+00:00"
         },
         {

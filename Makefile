@@ -43,5 +43,14 @@ wcp-setup:
 
 prepare: up wait-for-wordpress wp-install wp-setup wc-setup wcp-setup
 
+composer-install:
+	docker-compose run composer install
+
+lint-php: composer-install
+	docker-compose run composer ./bin/lint.sh
+
+lint-js:
+	docker-compose run node bash -c 'npm install -g grunt-cli && npm install && grunt jshint'
+
 down:
 	docker-compose down

@@ -16,4 +16,6 @@
 		<exclude name="WordPress.VIP.RestrictedFunctions.error_log" />
 		<exclude name="WordPress.VIP.SuperGlobalInputUsage.AccessDetected" />
 	</rule>
+	<exclude-pattern>vendor</exclude-pattern>
+	<exclude-pattern>assets</exclude-pattern>
 </ruleset>

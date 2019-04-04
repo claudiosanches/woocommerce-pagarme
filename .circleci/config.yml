@@ -1,0 +1,54 @@
+version: 2.1
+
+_run:
+  prepare: &prepare
+    name: "Preparing environment"
+    command: |
+      make prepare
+
+jobs:
+  checkout-code:
+    machine:
+      enabled: true
+    steps:
+      - checkout
+      - persist_to_workspace:
+            root: ~/project
+            paths:
+              - ./
+
+  lint-php:
+    machine:
+      enabled: true
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Linting changed PHP files on PR
+          command: |
+            make lint-php
+
+  lint-js:
+    machine:
+      enabled: true
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Linting JS files
+          command: |
+            make lint-js
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - checkout-code
+      - lint-php:
+          requires:
+          - checkout-code
+      - lint-js:
+          requires:
+          - checkout-code

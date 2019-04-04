@@ -8,7 +8,8 @@
     "composer/installers": "~1.0"
   },
   "require-dev": {
-    "claudiosanches/wp-git-hooks": "*"
+    "claudiosanches/wp-git-hooks": "*",
+    "squizlabs/php_codesniffer": "^3.4"
   },
 	"scripts": {
 		"pre-update-cmd": [
