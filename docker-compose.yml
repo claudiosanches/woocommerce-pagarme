@@ -28,7 +28,7 @@ services:
       - ./:/app
 
   node:
-    image: node:8
+    image: cypress/base:8
     working_dir: /app
     volumes:
       - ./:/app

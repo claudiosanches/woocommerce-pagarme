@@ -41,6 +41,19 @@ jobs:
           command: |
             make lint-js
 
+  test-e2e:
+    machine: 
+      enabled: true
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: *prepare
+      - run:
+          name: Run tests e2e
+          command: |
+            make e2e-cypress
+
 workflows:
   version: 2
   build:
@@ -52,3 +65,7 @@ workflows:
       - lint-js:
           requires:
           - checkout-code
+      - test-e2e:
+          requires:
+          - lint-js
+          - lint-php

@@ -52,5 +52,9 @@ lint-php: composer-install
 lint-js:
 	docker-compose run node bash -c 'npm install -g grunt-cli && npm install && grunt jshint'
 
+test-e2e:
+	docker-compose run node bash -c \
+	'npm install && npx cypress install && npx cypress run'
+
 down:
 	docker-compose down
