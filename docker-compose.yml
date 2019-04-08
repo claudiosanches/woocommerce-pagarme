@@ -32,3 +32,4 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
+      - ./cache:/root/.cache/
