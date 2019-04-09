@@ -34,12 +34,14 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Define user set variables.
-		$this->title          = $this->get_option( 'title' );
-		$this->description    = $this->get_option( 'description' );
-		$this->api_key        = $this->get_option( 'api_key' );
-		$this->encryption_key = $this->get_option( 'encryption_key' );
-		$this->debug          = $this->get_option( 'debug' );
-		$this->async          = $this->get_option( 'async' );
+		$this->title                  = $this->get_option( 'title' );
+		$this->description            = $this->get_option( 'description' );
+		$this->api_key                = $this->get_option( 'api_key' );
+		$this->encryption_key         = $this->get_option( 'encryption_key' );
+		$this->debug                  = $this->get_option( 'debug' );
+		$this->async                  = $this->get_option( 'async' );
+		$this->boleto_expiration_date = $this->get_option( 'boleto_expiration_date' );
+		$this->cancel_order           = $this->get_option( 'enable_cancel_order' );
 
 		// Active logs.
 		if ( 'yes' === $this->debug ) {
@@ -125,6 +127,33 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 				'type'        => 'checkbox',
 				'description' => sprintf( __( 'If enabled the banking ticket url will appear in the order page, if disabled it will appear after the checkout process.', 'woocommerce-pagarme' ) ),
 				'default'     => 'no',
+			),
+			'ticket_configs' => array(
+				'title'       => __( 'Configurações do Boleto', 'woocommerce-pagarme' ),
+				'type'        => 'title',
+				'description' => '',
+			),
+			'boleto_expiration_date' => array(
+				'title'              => __( 'Definir a data de expiração do boleto', 'woocommerce-pagarme' ),
+				'type'               => 'text',
+				'description'        => sprintf( __( 'O número colocado neste campo será somado a data atual, assim seu boleto terá a data de expiração mudada para essa soma', 'woocommerce-pagarme' ) . '</a>' ),
+				'default'            => '7',
+				'custom_attributes'  => array(
+					'required' => 'required',
+				),
+			),
+			'enable_cancel_order' => array(
+				'title'       => __( 'Habilitar cancelamento de pedido', 'woocommerce-pagarme' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Habilitar cancelamento', 'woocommerce-pagarme' ),
+				'default'     => 'no',
+				'description' => sprintf( __( 'Habilitar cancelamento de pedido com número de dias definido em caso de não pagamento do boleto' , 'woocommerce-pagarme' ) ),
+			),
+			'cancel_order' => array(
+				'title'              => __( 'Definir o número de dias para o cancelamento do pedido', 'woocommerce-pagarme' ),
+				'type'               => 'text',
+				'description'        => sprintf( __( 'Definir o número de dias para o cancelamento do pedido em caso de não pagamento do boleto', 'woocommerce-pagarme' ) ),
+				'default'            => '',
 			),
 			'testing' => array(
 				'title'       => __( 'Gateway Testing', 'woocommerce-pagarme' ),
