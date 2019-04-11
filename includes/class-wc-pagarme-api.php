@@ -611,7 +611,7 @@ class WC_Pagarme_API {
 	 */
 	protected function save_order_meta_fields( $id, $data ) {
 
-		// Save transaction data.
+		// Transaction data.
 		$payment_data = array_map(
 			'sanitize_text_field',
 			array(
@@ -623,7 +623,7 @@ class WC_Pagarme_API {
 			)
 		);
 
-		//save meta data
+		// Meta data.
 		$meta_data = array(
 			__( 'Banking Ticket URL', 'woocommerce-pagarme' ) => sanitize_text_field( $data['boleto_url'] ),
 			__( 'Credit Card', 'woocommerce-pagarme' )        => $this->get_card_brand_name( sanitize_text_field( $data['card_brand'] ) ),
@@ -638,18 +638,18 @@ class WC_Pagarme_API {
 		$order = wc_get_order( $id );
 
 		// WooCommerce 3.0 or later.
-		$update_meta_data_exists = method_exists( $order, 'update_meta_data' );
-
-		foreach ( $meta_data as $key => $value ) {
-			if ( $update_meta_data_exists ) {
-				$order->update_meta_data( $key, $value );
-			} else {
+		if ( ! method_exists( $order, 'update_meta_data' ) ) {
+			foreach ( $meta_data as $key => $value ) {
 				update_post_meta( $id, $key, $value );
 			}
+		} else {
+			foreach ( $meta_data as $key => $value ) {
+				$order->update_meta_data( $key, $value );
+			}
+
+			$order->save();
 		}
-
 	}
-
 
 	/**
 	 * Process regular payment.
@@ -699,7 +699,6 @@ class WC_Pagarme_API {
 			$this->save_order_meta_fields( $order_id, $transaction );
 
 			$this->process_order_status( $order, $transaction['status'] );
-
 
 			// Empty the cart.
 			WC()->cart->empty_cart();
