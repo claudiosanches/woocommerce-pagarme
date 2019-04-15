@@ -86,6 +86,12 @@ Cypress.Commands.add('selectCreditCard', () => {
    .click({ force: true })
 })
 
+Cypress.Commands.add('selectBoleto', () => {
+  cy
+   .get('#payment_method_pagarme-banking-ticket')
+   .click({ force: true })
+})
+
 Cypress.Commands.add('fillPagarMeCheckoutCreditCardForm', (installments) => {
   cy.wait(2000)
 
