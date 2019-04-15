@@ -24,10 +24,17 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
+      - restore_cache:
+          keys:
+            - woopagarme-cache-{{ checksum "composer.json" }}
       - run:
           name: Linting changed PHP files on PR
           command: |
             make lint-php
+      - save_cache:
+          key: woopagarme-cache-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
 
   lint-js:
     machine:
@@ -36,10 +43,40 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
+      - restore_cache:
+          keys:
+            - woopagarme-cache-{{ checksum "package.json" }}
       - run:
           name: Linting JS files
           command: |
             make lint-js
+      - save_cache:
+          key: woopagarme-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+            - ./cache
+
+  test-e2e:
+    machine:
+      enabled: true
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - restore_cache:
+          keys:
+            - woopagarme-cache-{{ checksum "package.json" }}
+            - woopagarme-cache-{{ checksum "composer.json" }}
+      - run: *prepare
+      - run:
+          name: Run tests e2e
+          command: |
+            make test-e2e
+      - save_cache:
+          key: woopagarme-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+            - ./cache
 
 workflows:
   version: 2
@@ -52,3 +89,7 @@ workflows:
       - lint-js:
           requires:
           - checkout-code
+      - test-e2e:
+          requires:
+          - lint-js
+          - lint-php

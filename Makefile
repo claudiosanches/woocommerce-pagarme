@@ -13,33 +13,35 @@ wait-for-wordpress:
 	sleep 20
 
 wp-install:
-	docker-compose exec wordpress wp core install --allow-root \
+	docker-compose exec woopagarme wp core install --allow-root \
 	--url=woopagarme \
 	--title=Pagar.me --admin_user=pagarme \
 	--admin_email=pagarme@pagar.me \
 	--admin_password=wordpress \
 	--path=/var/www/html \
-	&& docker-compose exec wordpress wp core update --allow-root
+	&& docker-compose exec woopagarme wp core update --allow-root \
+	&& docker-compose exec woopagarme mkdir /var/www/html/wp-content/uploads/wc-logs \
+	&& docker-compose exec woopagarme chown www-data:www-data -R /var/www/html/wp-content/uploads/wc-logs
 
 wp-setup:
-	docker-compose exec wordpress wp plugin install woocommerce \
+	docker-compose exec woopagarme wp plugin install woocommerce \
 	woocommerce-extra-checkout-fields-for-brazil --activate --allow-root \
-	&& docker-compose exec wordpress wp plugin activate woocommerce-pagarme --allow-root \
-	&& docker-compose exec wordpress wp plugin install wordpress-importer --activate --allow-root \
-	&& docker-compose exec wordpress wp theme install storefront --activate --allow-root \
-	&& docker-compose exec wordpress wp language core install pt_BR --allow-root \
-	&& docker-compose exec wordpress wp site switch-language pt_BR --allow-root \
-	&& docker-compose exec wordpress wp language plugin install --all pt_BR --allow-root \
-	&& docker-compose exec wordpress wp rewrite structure '/%postname%/' --allow-root
+	&& docker-compose exec woopagarme wp plugin activate woocommerce-pagarme --allow-root \
+	&& docker-compose exec woopagarme wp plugin install wordpress-importer --activate --allow-root \
+	&& docker-compose exec woopagarme wp theme install storefront --activate --allow-root \
+	&& docker-compose exec woopagarme wp language core install pt_BR --allow-root \
+	&& docker-compose exec woopagarme wp site switch-language pt_BR --allow-root \
+	&& docker-compose exec woopagarme wp language plugin install --all pt_BR --allow-root \
+	&& docker-compose exec woopagarme wp rewrite structure '/%postname%/' --allow-root
 
 wc-setup:
-	docker-compose exec wordpress wp option update woocommerce_default_country "BR" --allow-root \
-	&& docker-compose exec wordpress wp option update woocommerce_currency "BRL" --allow-root \
-	&& docker-compose exec wordpress wp import wp-content/plugins/woocommerce/sample-data/sample_products.xml --authors=skip --allow-root \
-	&& docker-compose exec wordpress wp wc tool run install_pages --allow-root --user=1
+	docker-compose exec woopagarme wp option update woocommerce_default_country "BR" --allow-root \
+	&& docker-compose exec woopagarme wp option update woocommerce_currency "BRL" --allow-root \
+	&& docker-compose exec woopagarme wp import wp-content/plugins/woocommerce/sample-data/sample_products.xml --authors=skip --allow-root \
+	&& docker-compose exec woopagarme wp wc tool run install_pages --allow-root --user=1
 
 wcp-setup:
-	docker-compose exec wordpress php wp-content/plugins/woocommerce-pagarme/bin/bash.php
+	docker-compose exec woopagarme php wp-content/plugins/woocommerce-pagarme/bin/bash.php
 
 prepare: up wait-for-wordpress wp-install wp-setup wc-setup wcp-setup
 
@@ -51,6 +53,10 @@ lint-php: composer-install
 
 lint-js:
 	docker-compose run node bash -c 'npm install -g grunt-cli && npm install && grunt jshint'
+
+test-e2e:
+	docker-compose run node bash -c \
+	'npm install && npx cypress install && npx cypress run'
 
 down:
 	docker-compose down

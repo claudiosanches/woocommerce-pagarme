@@ -9,7 +9,7 @@ services:
       interval: 1s
       retries: 120
 
-  wordpress:
+  woopagarme:
     depends_on:
       db:
         condition: service_healthy
@@ -28,7 +28,8 @@ services:
       - ./:/app
 
   node:
-    image: node:8
+    image: cypress/base:8
     working_dir: /app
     volumes:
       - ./:/app
+      - ./cache:/root/.cache/

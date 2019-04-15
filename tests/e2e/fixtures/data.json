@@ -1,0 +1,28 @@
+{
+  "card_number": "4111111111111111",
+  "card_cvv": "123",
+  "card_expiration_date": "0922",
+  "card_holder_name": "Morpheus Fishburne",
+  "customer": {
+    "name": "Morpheus",
+    "lastname": "Fishburne",
+    "type": "individual",
+    "email": "mopheus@nabucodonozor.com",
+    "documents": [
+      {
+        "type": "cpf",
+        "number": "30621143049"
+      }
+    ],
+    "phone_numbers": ["+5511999998888", "+5511888889999"]
+  },
+  "address": {
+    "country": "br",
+    "state": "sp",
+    "city": "Cotia",
+    "neighborhood": "Rio Cotia",
+    "street": "Rua Matrix",
+    "street_number": "9999",
+    "zipcode": "06714360"
+  }
+}
