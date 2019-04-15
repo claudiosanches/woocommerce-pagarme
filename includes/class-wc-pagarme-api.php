@@ -661,10 +661,10 @@ class WC_Pagarme_API {
 	public function process_regular_payment( $order_id ) {
 		$order = wc_get_order( $order_id );
 
-		$isUsingPagarmeCheckout = (isset($this->gateway->checkout) && 'yes' === $this->gateway->checkout);
-		$shouldRegisterDeniedTransaction = (isset($this->gateway->register_refused_order) && 'yes' === $this->gateway->register_refused_order);
+		$is_checkout_pagarme    = isset( $this->gateway->checkout ) && 'yes' === $this->gateway->checkout;
+		$register_refused_order = isset( $this->gateway->register_refused_order ) && 'yes' === $this->gateway->register_refused_order;
 
-		if ( $isUsingPagarmeCheckout && !$shouldRegisterDeniedTransaction ) {
+		if ( $is_checkout_pagarme && ! $register_refused_order ) {
 			if ( ! empty( $_POST['pagarme_checkout_token'] ) ) {
 				$token = sanitize_text_field( wp_unslash( $_POST['pagarme_checkout_token'] ) );
 				$data  = $this->generate_checkout_data( $order, $token );

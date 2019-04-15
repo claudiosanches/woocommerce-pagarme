@@ -34,17 +34,17 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Define user set variables.
-		$this->title                = $this->get_option( 'title' );
-		$this->description          = $this->get_option( 'description' );
-		$this->api_key              = $this->get_option( 'api_key' );
-		$this->encryption_key       = $this->get_option( 'encryption_key' );
-		$this->checkout             = $this->get_option( 'checkout' );
+		$this->title                  = $this->get_option( 'title' );
+		$this->description            = $this->get_option( 'description' );
+		$this->api_key                = $this->get_option( 'api_key' );
+		$this->encryption_key         = $this->get_option( 'encryption_key' );
+		$this->checkout               = $this->get_option( 'checkout' );
 		$this->register_refused_order = $this->get_option( 'register_refused_order' );
-		$this->max_installment      = $this->get_option( 'max_installment' );
-		$this->smallest_installment = $this->get_option( 'smallest_installment' );
-		$this->interest_rate        = $this->get_option( 'interest_rate', '0' );
-		$this->free_installments    = $this->get_option( 'free_installments', '1' );
-		$this->debug                = $this->get_option( 'debug' );
+		$this->max_installment        = $this->get_option( 'max_installment' );
+		$this->smallest_installment   = $this->get_option( 'smallest_installment' );
+		$this->interest_rate          = $this->get_option( 'interest_rate', '0' );
+		$this->free_installments      = $this->get_option( 'free_installments', '1' );
+		$this->debug                  = $this->get_option( 'debug' );
 
 		// Active logs.
 		if ( 'yes' === $this->debug ) {
@@ -135,12 +135,12 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 				'description' => __( "When enabled opens a Pagar.me modal window to receive the customer's credit card information.", 'woocommerce-pagarme' ),
 			),
 			'register_refused_order' => array(
-				'title' => __( 'Refused Transactions Order', 'woocommerce-pagarme'),
-				'type' => 'checkbox',
-				'label' => __( 'Create order for refused transactions', 'woocommerce-pagarme'),
-				'default' => 'no',
-				'desc_tip' => true,
-				'description' => __( 'Creates order for refused transactions when Pagar.me Checkout is enabled'),
+				'title'       => __( 'Register Refused Order', 'woocommerce-pagarme' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Register order for refused transactions', 'woocommerce-pagarme' ),
+				'default'     => 'no',
+				'desc_tip'    => true,
+				'description' => __( 'Register order for refused transactions when Pagar.me Checkout is enabled' ),
 			),
 			'installments' => array(
 				'title'       => __( 'Installments', 'woocommerce-pagarme' ),
@@ -242,14 +242,14 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 					'pagarme-checkout',
 					'wcPagarmeParams',
 					array(
-						'encryptionKey'    => $this->encryption_key,
-						'interestRate'     => $this->api->get_interest_rate(),
-						'freeInstallments' => $this->free_installments,
-						'postbackUrl'      => WC()->api_request_url( get_class( $this ) ),
-						'customerFields'   => $customer,
-						'checkoutPayPage'  => ! empty( $customer ),
-						'uiColor'          => apply_filters( 'wc_pagarme_checkout_ui_color', '#1a6ee1' ),
-						'register_refused_order'		 => $this->register_refused_order,
+						'encryptionKey'          => $this->encryption_key,
+						'interestRate'           => $this->api->get_interest_rate(),
+						'freeInstallments'       => $this->free_installments,
+						'postbackUrl'            => WC()->api_request_url( get_class( $this ) ),
+						'customerFields'         => $customer,
+						'checkoutPayPage'        => ! empty( $customer ),
+						'uiColor'                => apply_filters( 'wc_pagarme_checkout_ui_color', '#1a6ee1' ),
+						'register_refused_order' => $this->register_refused_order,
 					)
 				);
 			} else {

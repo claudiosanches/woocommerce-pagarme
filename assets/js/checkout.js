@@ -212,7 +212,7 @@
 				success: function( data ) {
 					formSubmit = true;
 
-					if( wcPagarmeParams.register_refused_order === "no" ) {
+					if ( 'no' === wcPagarmeParams.register_refused_order ) {
 						// Remove any old token input.
 						$( 'input[name=pagarme_checkout_token]', form ).remove();
 
@@ -239,7 +239,7 @@
 				customer = getCustomerFields( form );
 			}
 
-			var shouldCreateToken = wcPagarmeParams.register_refused_order === "yes"? "false" : "true";
+			const shouldCreateToken = 'yes' === wcPagarmeParams.register_refused_order ? 'false' : 'true';
 
 			// Set params.
 			params = $.extend({}, {
