@@ -1,19 +1,11 @@
 context('Boleto', () => {
-  describe('Basic purchase workflow', () => {
+  describe('when create a purchase with boleto as payment method', () => {
     before(() => {
       cy.addToCart()
       cy.goToCheckoutPage()
       cy.fillCheckoutForm()
-    })
-
-    it('Order received', () => {
-      cy
-        .get('#payment_method_pagarme-banking-ticket')
-        .next()
-        .contains('Boleto bancário')
-        .click()
-
-      cy.get('form.woocommerce-checkout').submit()
+      cy.selectBoleto()
+      cy.placeOrder()
     })
 
     it('should be at order received page', () => {

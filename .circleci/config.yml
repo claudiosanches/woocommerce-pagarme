@@ -77,6 +77,8 @@ jobs:
           paths:
             - ./node_modules
             - ./cache
+      - store_artifacts:
+          path: ~/project/tests/e2e/videos/
 
 workflows:
   version: 2

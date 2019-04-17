@@ -1,28 +1,3 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import checkoutData from '../fixtures/data'
 
 Cypress.Commands.add('addToCart', () => {
@@ -52,13 +27,17 @@ Cypress.Commands.add('fillCheckoutForm', () => {
     .type(checkoutData.customer.lastname)
 
   cy.get('#billing_persontype')
-    .select('Pessoa Física', {force: true})
+    .select('Pessoa Física', {
+      force: true
+    })
 
   cy.get('#billing_cpf')
     .type(checkoutData.customer.documents[0].number)
 
   cy.get('#billing_state')
-    .select(checkoutData.address.state.toUpperCase(), {force: true})
+    .select(checkoutData.address.state.toUpperCase(), {
+      force: true
+    })
 
   cy.get('#billing_postcode')
     .type(checkoutData.address.zipcode)
@@ -76,7 +55,9 @@ Cypress.Commands.add('fillCheckoutForm', () => {
     .type(checkoutData.address.city)
 
   cy.get('#billing_country')
-    .select(checkoutData.address.country.toUpperCase(), {force: true})
+    .select(checkoutData.address.country.toUpperCase(), {
+      force: true
+    })
 
   cy.get('#billing_phone')
     .type(checkoutData.customer.phone_numbers[0])
@@ -85,7 +66,81 @@ Cypress.Commands.add('fillCheckoutForm', () => {
     .type(checkoutData.customer.phone_numbers[0])
 
   cy.get('#billing_email')
+    .clear()
     .type(checkoutData.customer.email)
 
   cy.log('Form filled successfully.')
+})
+
+Cypress.Commands.add('pagarmeCheckoutCreditCardForm', (iframeSelector, elSelector) => {
+  return cy
+    .get(`iframe${iframeSelector || ''}`, { timeout: 60000 })
+  .then($iframe => {
+    return cy.wrap($iframe.contents().find('#pagarme-modal-box-step-credit-card-information'))
+  })
+})
+
+Cypress.Commands.add('selectCreditCard', () => {
+  cy
+   .get('#payment_method_pagarme-credit-card')
+   .click({ force: true })
+})
+
+Cypress.Commands.add('selectBoleto', () => {
+  cy
+   .get('#payment_method_pagarme-banking-ticket')
+   .click({ force: true })
+})
+
+Cypress.Commands.add('fillPagarMeCheckoutCreditCardForm', (installments) => {
+  cy.wait(2000)
+
+  cy.pagarmeCheckoutCreditCardForm().as('pagarmeModal')
+
+  cy.get('@pagarmeModal')
+   .find('#pagarme-modal-box-credit-card-number')
+   .type(checkoutData.card_number)
+
+  cy.get('@pagarmeModal')
+    .find('#pagarme-modal-box-credit-card-name')
+    .type(checkoutData.card_holder_name)
+
+  cy.get('@pagarmeModal')
+    .find('#pagarme-modal-box-credit-card-expiration')
+    .type(checkoutData.card_expiration_date)
+
+  cy.get('@pagarmeModal')
+    .find('#pagarme-modal-box-credit-card-cvv')
+    .type(checkoutData.card_cvv)
+
+  cy.get('@pagarmeModal')
+    .find('#pagarme-modal-box-installments')
+    .select(installments.toString(), { force: true })
+
+  cy.get('@pagarmeModal')
+    .find('button.pagarme-modal-box-next-step')
+    .click()
+})
+
+Cypress.Commands.add('placeOrder', () => {
+  cy.get('button[name="woocommerce_checkout_place_order"]')
+    .click()
+})
+
+Cypress.Commands.add('loginAsAdmin', () => {
+  cy.visit('/wp-admin');
+  cy.wait(1000)
+  cy.get('#user_login').type('pagarme');
+  cy.get('#user_pass').type('wordpress');
+  cy.get('#wp-submit').click();
+})
+
+Cypress.Commands.add('enableCheckoutPagarme', () => {
+  cy.visit('/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_pagarme_credit_card_gateway')
+
+  cy.get('#woocommerce_pagarme-credit-card_checkout')
+    .check()
+
+  cy.get('.woocommerce-save-button')
+    .click()
 })

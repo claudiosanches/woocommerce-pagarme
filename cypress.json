@@ -7,5 +7,6 @@
   "supportFile": "./tests/e2e/support/index.js",
   "videosFolder": "./tests/e2e/videos",
   "testFiles": "**/*.spec.js",
-  "baseUrl": "http://woopagarme"
+  "baseUrl": "http://woopagarme",
+  "chromeWebSecurity": false
 }
