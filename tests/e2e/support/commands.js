@@ -139,7 +139,8 @@ Cypress.Commands.add('fillPagarMeCheckoutCreditCardForm', (installments) => {
 })
 
 Cypress.Commands.add('placeOrder', () => {
-  cy.get('button[name="woocommerce_checkout_place_order"]')
+  cy.get('#place_order')
+    .contains('Finalizar compra')
     .click()
 })
 
@@ -159,5 +160,43 @@ Cypress.Commands.add('enableCheckoutPagarme', () => {
     .check()
 
   cy.get('.woocommerce-save-button')
+    .contains('Salvar alterações')
     .click()
+})
+
+Cypress.Commands.add('disableCheckoutPagarme', () => {
+  cy.visit('/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_pagarme_credit_card_gateway')
+
+  cy.get('#woocommerce_pagarme-credit-card_checkout')
+    .uncheck()
+
+  cy.get('.woocommerce-save-button')
+    .contains('Salvar alterações')
+    .click()
+})
+
+Cypress.Commands.add('fillAvoidingException', (element, value) => {
+  cy.on('uncaught:exception', () => {
+      return false
+    })
+    .get(element)
+    .type(value)
+})
+
+Cypress.Commands.add('fillCreditCardForm', () => {
+  cy.log('Filling credit card data...')
+
+  cy.fillAvoidingException(
+    '#pagarme-card-holder-name',
+    checkoutData.card_holder_name
+  )
+
+  cy.get('#pagarme-card-number')
+    .type(checkoutData.card_number)
+
+  cy.get('#pagarme-card-expiry')
+    .type(checkoutData.card_expiration_date)
+
+  cy.get('#pagarme-card-cvc')
+    .type(checkoutData.card_cvv)
 })
