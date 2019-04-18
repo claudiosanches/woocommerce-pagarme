@@ -18,4 +18,8 @@
 	</rule>
 	<exclude-pattern>vendor</exclude-pattern>
 	<exclude-pattern>assets</exclude-pattern>
+
+	<rule ref="WordPress.Security.EscapeOutput">
+		<exclude-pattern>bin/bash.php</exclude-pattern>
+	</rule>
 </ruleset>
