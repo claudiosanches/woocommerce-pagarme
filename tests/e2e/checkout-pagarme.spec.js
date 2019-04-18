@@ -3,7 +3,7 @@ context('Checkout Pagarme', () => {
     before(() => {
       cy.loginAsAdmin()
       cy.enableCheckoutPagarme()
-      cy.addToCart()
+      cy.addProductToCart()
       cy.goToCheckoutPage()
       cy.fillCheckoutForm()
       cy.selectCreditCard()

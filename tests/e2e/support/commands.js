@@ -1,6 +1,6 @@
 import checkoutData from '../fixtures/data'
 
-Cypress.Commands.add('addToCart', () => {
+Cypress.Commands.add('addProductToCart', () => {
   cy.log('Adding product to cart...')
 
   cy.visit('/product/hoodie-with-zipper/')
@@ -21,9 +21,11 @@ Cypress.Commands.add('fillCheckoutForm', () => {
   cy.log('Filling customer data...')
 
   cy.get('#billing_first_name')
+    .clear()
     .type(checkoutData.customer.name)
 
   cy.get('#billing_last_name')
+    .clear()
     .type(checkoutData.customer.lastname)
 
   cy.get('#billing_persontype')
@@ -32,6 +34,7 @@ Cypress.Commands.add('fillCheckoutForm', () => {
     })
 
   cy.get('#billing_cpf')
+    .clear()
     .type(checkoutData.customer.documents[0].number)
 
   cy.get('#billing_state')
@@ -40,18 +43,23 @@ Cypress.Commands.add('fillCheckoutForm', () => {
     })
 
   cy.get('#billing_postcode')
+    .clear()
     .type(checkoutData.address.zipcode)
 
   cy.get('#billing_address_1')
+    .clear()
     .type(checkoutData.address.street)
 
   cy.get('#billing_number')
+    .clear()
     .type(checkoutData.address.street_number)
 
   cy.get('#billing_neighborhood')
+    .clear()
     .type(checkoutData.address.neighborhood)
 
   cy.get('#billing_city')
+    .clear()
     .type(checkoutData.address.city)
 
   cy.get('#billing_country')
@@ -60,10 +68,12 @@ Cypress.Commands.add('fillCheckoutForm', () => {
     })
 
   cy.get('#billing_phone')
+    .clear()
     .type(checkoutData.customer.phone_numbers[0])
 
   cy.get('#billing_cellphone')
-    .type(checkoutData.customer.phone_numbers[0])
+    .clear()
+    .type(checkoutData.customer.phone_numbers[1])
 
   cy.get('#billing_email')
     .clear()
@@ -75,21 +85,27 @@ Cypress.Commands.add('fillCheckoutForm', () => {
 Cypress.Commands.add('pagarmeCheckoutCreditCardForm', (iframeSelector, elSelector) => {
   return cy
     .get(`iframe${iframeSelector || ''}`, { timeout: 60000 })
-  .then($iframe => {
-    return cy.wrap($iframe.contents().find('#pagarme-modal-box-step-credit-card-information'))
-  })
+    .then($iframe => {
+      return cy.wrap($iframe.contents().find('#pagarme-modal-box-step-credit-card-information'))
+    })
 })
 
 Cypress.Commands.add('selectCreditCard', () => {
-  cy
-   .get('#payment_method_pagarme-credit-card')
-   .click({ force: true })
+  cy.log('Select payment method credt card')
+
+  cy.get('#payment_method_pagarme-credit-card')
+    .next()
+    .contains('Cartão de crédito')
+    .click()
 })
 
-Cypress.Commands.add('selectBoleto', () => {
-  cy
-   .get('#payment_method_pagarme-banking-ticket')
-   .click({ force: true })
+Cypress.Commands.add('selectBankingTicket', () => {
+  cy.log('Select payment method banking ticket')
+
+  cy.get('#payment_method_pagarme-banking-ticket')
+    .next()
+    .contains('Boleto bancário')
+    .click()
 })
 
 Cypress.Commands.add('fillPagarMeCheckoutCreditCardForm', (installments) => {
@@ -98,8 +114,8 @@ Cypress.Commands.add('fillPagarMeCheckoutCreditCardForm', (installments) => {
   cy.pagarmeCheckoutCreditCardForm().as('pagarmeModal')
 
   cy.get('@pagarmeModal')
-   .find('#pagarme-modal-box-credit-card-number')
-   .type(checkoutData.card_number)
+    .find('#pagarme-modal-box-credit-card-number')
+    .type(checkoutData.card_number)
 
   cy.get('@pagarmeModal')
     .find('#pagarme-modal-box-credit-card-name')
@@ -128,11 +144,12 @@ Cypress.Commands.add('placeOrder', () => {
 })
 
 Cypress.Commands.add('loginAsAdmin', () => {
-  cy.visit('/wp-admin');
+  cy.visit('/wp-admin')
   cy.wait(1000)
-  cy.get('#user_login').type('pagarme');
-  cy.get('#user_pass').type('wordpress');
-  cy.get('#wp-submit').click();
+
+  cy.get('#user_login').type('pagarme')
+  cy.get('#user_pass').type('wordpress')
+  cy.get('#wp-submit').click()
 })
 
 Cypress.Commands.add('enableCheckoutPagarme', () => {
