@@ -3,7 +3,6 @@
   "version": "2.0.12",
   "title": "WooCommerce Pagar.me",
   "description": "WooCommerce Pagar.me payment gateway",
-  "homepage": "",
   "main": "Gruntfile.js",
   "repository": {
     "type": "git",
