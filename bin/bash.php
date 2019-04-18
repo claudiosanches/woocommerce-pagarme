@@ -59,6 +59,26 @@ if (!$apiKey && !$encryptionKey) {
     $encryptionKey = $companyData->encryption_key->test;
 }
 
+/**
+ * Get customs options
+ *
+ * @param array $arguments Array of arguments passed to script
+ * @param string $name Name argument
+ *
+ * @return array
+ */
+function getCustomOptions($arguments, $name)
+{
+    $options = [];
+    $index = array_search($name, $arguments);
+
+    if ($index !== false && isset($arguments[$index++])) {
+        parse_str($arguments[$index], $options);
+    }
+
+    return $options;
+}
+
 define('PAGARME_API_KEY', $apiKey);
 define('PAGARME_ENCRYPTION_KEY', $encryptionKey);
 
@@ -80,22 +100,32 @@ $baseOptions = [
     'debug' => 'yes'
 ];
 
-$woocommerceCreditCardOptions = array_merge($baseOptions, [
-    'title' => 'Cartão de crédito',
-    'description' => 'Cartão de crédito Pagar.me',
-    'integration' => '',
-    'checkout' => 'no',
-    'max_installment' => '12',
-    'smallest_installment' => '1',
-    'interest_rate' => '5',
-    'free_installments' => '2',
-]);
+$optionsCustoms = getCustomOptions($argv, '--credit');
+$woocommerceCreditCardOptions = array_merge(
+    $baseOptions,
+    [
+        'title' => 'Cartão de crédito',
+        'description' => 'Cartão de crédito Pagar.me',
+        'integration' => '',
+        'checkout' => 'no',
+        'max_installment' => '12',
+        'smallest_installment' => '1',
+        'interest_rate' => '5',
+        'free_installments' => '2',
+    ],
+    $optionsCustoms
+);
 
-$woocommerceBoletoOptions = array_merge($baseOptions, [
-    'title' => 'Boleto bancário',
-    'description' => 'Pagar com boleto bancário',
-    'async' => 'no',
-]);
+$optionsCustoms = getCustomOptions($argv, '--boleto');
+$woocommerceBoletoOptions = array_merge(
+    $baseOptions,
+    [
+        'title' => 'Boleto bancário',
+        'description' => 'Pagar com boleto bancário',
+        'async' => 'no',
+    ],
+    $optionsCustoms
+);
 
 echo setup(WCP_CREDITCARD_OPTION_NAME, $woocommerceCreditCardOptions);
 echo setup(WCP_BOLETO_OPTION_NAME, $woocommerceBoletoOptions);
