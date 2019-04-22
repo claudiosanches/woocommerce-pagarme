@@ -5,24 +5,26 @@
   "type": "wordpress-plugin",
   "license": "GPL-2.0+",
   "require": {
-    "composer/installers": "~1.0"
+    "composer/installers": "~1.0",
+    "ext-json": "*",
+    "ext-curl": "*"
   },
   "require-dev": {
     "claudiosanches/wp-git-hooks": "*",
     "squizlabs/php_codesniffer": "^3.4"
   },
-	"scripts": {
-		"pre-update-cmd": [
-			"ClaudioSanches\\WpGitHooks\\Hooks::preHooks"
-		],
-		"pre-install-cmd": [
-			"ClaudioSanches\\WpGitHooks\\Hooks::preHooks"
-		],
-		"post-install-cmd": [
-			"ClaudioSanches\\WpGitHooks\\Hooks::postHooks"
-		],
-		"post-update-cmd": [
-			"ClaudioSanches\\WpGitHooks\\Hooks::postHooks"
-		]
-	}
+  "scripts": {
+    "pre-update-cmd": [
+      "ClaudioSanches\\WpGitHooks\\Hooks::preHooks"
+    ],
+    "pre-install-cmd": [
+      "ClaudioSanches\\WpGitHooks\\Hooks::preHooks"
+    ],
+    "post-install-cmd": [
+      "ClaudioSanches\\WpGitHooks\\Hooks::postHooks"
+    ],
+    "post-update-cmd": [
+      "ClaudioSanches\\WpGitHooks\\Hooks::postHooks"
+    ]
+  }
 }

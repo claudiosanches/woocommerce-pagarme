@@ -3,14 +3,18 @@ context('Checkout Pagarme', () => {
     before(() => {
       cy.loginAsAdmin()
       cy.enableCheckoutPagarme()
-      cy.addToCart()
+      cy.addProductToCart()
       cy.goToCheckoutPage()
       cy.fillCheckoutForm()
       cy.selectCreditCard()
-      cy.wait(2000)
       cy.placeOrder()
 
       cy.fillPagarMeCheckoutCreditCardForm(1)
+    })
+
+    after(() => {
+      cy.loginAsAdmin()
+      cy.disableCheckoutPagarme()
     })
 
     it('should be at order received page', () => {

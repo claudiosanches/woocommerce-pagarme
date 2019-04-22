@@ -1,10 +1,10 @@
 context('Boleto', () => {
   describe('when create a purchase with boleto as payment method', () => {
     before(() => {
-      cy.addToCart()
+      cy.addProductToCart()
       cy.goToCheckoutPage()
       cy.fillCheckoutForm()
-      cy.selectBoleto()
+      cy.selectBankingTicket()
       cy.placeOrder()
     })
 
@@ -14,8 +14,7 @@ context('Boleto', () => {
     })
 
     it('should countains boleto url', () => {
-      cy
-        .contains('Pagar boleto bancário')
+      cy.contains('Pagar boleto bancário')
         .and('have.attr', 'href', 'https://pagar.me' )
     })
   })
