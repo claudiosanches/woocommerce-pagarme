@@ -1,8 +1,7 @@
 context('Checkout Pagarme', () => {
   describe('when create a purchase with checkout pagar.me as payment method', () => {
     before(() => {
-      cy.loginAsAdmin()
-      cy.enableCheckoutPagarme()
+      cy.configureCreditCard({ checkout: true, register_refused_order: false })
       cy.addProductToCart()
       cy.goToCheckoutPage()
       cy.fillCheckoutForm()
@@ -10,11 +9,6 @@ context('Checkout Pagarme', () => {
       cy.placeOrder()
 
       cy.fillPagarMeCheckoutCreditCardForm(1)
-    })
-
-    after(() => {
-      cy.loginAsAdmin()
-      cy.disableCheckoutPagarme()
     })
 
     it('should be at order received page', () => {
