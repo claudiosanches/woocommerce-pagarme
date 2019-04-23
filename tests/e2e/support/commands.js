@@ -145,30 +145,109 @@ Cypress.Commands.add('placeOrder', () => {
 })
 
 Cypress.Commands.add('loginAsAdmin', () => {
-  cy.visit('/wp-admin')
-  cy.wait(1000)
+  cy.visit('/wp-login.php')
 
-  cy.get('#user_login').type('pagarme')
+  cy.get('#user_login')
+    .clear()
+    .type('pagarme')
   cy.get('#user_pass').type('wordpress')
+
   cy.get('#wp-submit').click()
 })
 
-Cypress.Commands.add('enableCheckoutPagarme', () => {
+/**
+ * @param {Object} options
+ * @param {boolean} options.enabled
+ * @param {string} options.title
+ * @param {string} options.description
+ * @param {string} options.api_key
+ * @param {string} options.encryption_key
+ * @param {boolean} options.checkout
+ * @param {boolean} options.register_refused_order
+ * @param {number} options.max_installments
+ * @param {number} options.min_installments_value
+ * @param {float} options.interest_rate
+ * @param {number} options.free_installments
+ */
+Cypress.Commands.add('configureCreditCard', (options) => {
   cy.visit('/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_pagarme_credit_card_gateway')
+  cy.log('Update settings Pagar.me')
 
-  cy.get('#woocommerce_pagarme-credit-card_checkout')
-    .check()
+  if (!!options.enabled) {
+    cy.get('#woocommerce_pagarme-credit-card_enabled')
+      .check()
+  }
 
-  cy.get('.woocommerce-save-button')
-    .contains('Salvar alterações')
-    .click()
-})
+  if (options.enabled === false) {
+    cy.get('#woocommerce_pagarme-credit-card_enabled')
+      .uncheck()
+  }
 
-Cypress.Commands.add('disableCheckoutPagarme', () => {
-  cy.visit('/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_pagarme_credit_card_gateway')
+  if (!!options.title) {
+    cy.get('#woocommerce_pagarme-credit-card_title')
+      .clear()
+      .type(options.title)
+  }
 
-  cy.get('#woocommerce_pagarme-credit-card_checkout')
-    .uncheck()
+  if (!!options.description) {
+    cy.get('#woocommerce_pagarme-credit-card_description')
+      .clear()
+      .type(options.description)
+  }
+
+  if (!!options.api_key) {
+    cy.get('#woocommerce_pagarme-credit-card_api_key')
+      .clear()
+      .type(options.api_key)
+  }
+
+  if (!!options.encryption_key) {
+    cy.get('#woocommerce_pagarme-credit-card_encryption_key')
+      .clear()
+      .type(options.encryption_key)
+  }
+
+  if (!!options.checkout) {
+    cy.get('#woocommerce_pagarme-credit-card_checkout')
+      .check()
+  }
+
+  if (options.checkout === false) {
+    cy.get('#woocommerce_pagarme-credit-card_checkout')
+      .uncheck()
+  }
+
+  if (!!options.register_refused_order) {
+    cy.get('#woocommerce_pagarme-credit-card_register_refused_order')
+      .check()
+  }
+
+  if (options.register_refused_order === false) {
+    cy.get('#woocommerce_pagarme-credit-card_register_refused_order')
+      .uncheck()
+  }
+
+  if (!!options.max_installments) {
+    cy.get('#woocommerce_pagarme-credit-card_max_installment')
+      .select(number.toString)
+  }
+
+  if (!!options.min_installments_value) {
+    cy.get('#woocommerce_pagarme-credit-card_smallest_installment')
+      .clear()
+      .type(options.min_installments_value.toString())
+  }
+
+  if (!!options.interest_rate) {
+    cy.get('#woocommerce_pagarme-credit-card_interest_rate')
+      .clear()
+      .type(options.interest_rate.toString())
+  }
+
+  if (!!options.free_installments) {
+    cy.get(woocommerce_pagarme-credit-card_free_installments)
+      .select(options.free_installments.toString())
+  }
 
   cy.get('.woocommerce-save-button')
     .contains('Salvar alterações')
