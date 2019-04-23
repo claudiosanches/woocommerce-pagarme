@@ -108,8 +108,9 @@ Cypress.Commands.add('selectBankingTicket', () => {
     .click()
 })
 
-Cypress.Commands.add('fillPagarMeCheckoutCreditCardForm', (installments) => {
+Cypress.Commands.add('fillPagarMeCheckoutCreditCardForm', (cardData) => {
   cy.wait(2000)
+  Object.assign(checkoutData, cardData)
 
   cy.pagarmeCheckoutCreditCardForm().as('pagarmeModal')
 
@@ -131,7 +132,7 @@ Cypress.Commands.add('fillPagarMeCheckoutCreditCardForm', (installments) => {
 
   cy.get('@pagarmeModal')
     .find('#pagarme-modal-box-installments')
-    .select(installments.toString(), { force: true })
+    .select(checkoutData.card_installments.toString(), { force: true })
 
   cy.get('@pagarmeModal')
     .find('button.pagarme-modal-box-next-step')

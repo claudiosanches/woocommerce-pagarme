@@ -3,6 +3,7 @@
   "card_cvv": "123",
   "card_expiration_date": "0922",
   "card_holder_name": "Morpheus Fishburne",
+  "card_installments": 1,
   "customer": {
     "name": "Morpheus",
     "lastname": "Fishburne",
