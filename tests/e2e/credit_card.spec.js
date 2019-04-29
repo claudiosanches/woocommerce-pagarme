@@ -14,7 +14,7 @@ context('Credit card', () => {
     })
 
     it('should be at order received page', () => {
-      cy.url().should('include', '/finalizar-compra/order-received/')
+      cy.url({ timeout: 60000 }).should('include', '/finalizar-compra/order-received/')
       cy.contains('Pedido recebido')
     })
 

@@ -326,6 +326,7 @@ class WC_Pagarme_API {
 			if ( apply_filters( 'wc_pagarme_allow_credit_card_installments_validation', isset( $posted['pagarme_installments'] ), $order ) ) {
 				$_installment = $posted['pagarme_installments'];
 
+				$data['installments'] = $_installment;
 				// Get installments data.
 				$installments = $this->get_installments( $order->get_total() );
 				if ( isset( $installments[ $_installment ] ) ) {
@@ -333,8 +334,7 @@ class WC_Pagarme_API {
 					$smallest_installment = $this->get_smallest_installment();
 
 					if ( $installment['installment'] <= $this->gateway->max_installment && $smallest_installment <= $installment['installment_amount'] ) {
-						$data['installments'] = $installment['installment'];
-						$data['amount']       = $installment['amount'];
+						$data['amount'] = $installment['amount'];
 					}
 				}
 			}
