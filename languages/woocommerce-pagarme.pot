@@ -1,15 +1,15 @@
-# Copyright (C) 2018 Pagar.me, Claudio Sanches
+# Copyright (C) 2019 Pagar.me, Claudio Sanches
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Pagar.me 2.0.12\n"
+"Project-Id-Version: WooCommerce Pagar.me 2.0.13\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/woocommerce-pagarme\n"
-"POT-Creation-Date: 2018-08-01 02:13:36+00:00\n"
+"POT-Creation-Date: 2019-04-29 20:05:38+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
@@ -91,93 +91,93 @@ msgstr ""
 msgid "Discover"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:615
+#: includes/class-wc-pagarme-api.php:628
 msgid "Banking Ticket URL"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:619
-#: includes/class-wc-pagarme-credit-card-gateway.php:96
+#: includes/class-wc-pagarme-api.php:629
+#: includes/class-wc-pagarme-credit-card-gateway.php:97
 msgid "Credit Card"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:622
-#: includes/class-wc-pagarme-credit-card-gateway.php:137
+#: includes/class-wc-pagarme-api.php:630
+#: includes/class-wc-pagarme-credit-card-gateway.php:146
 #: templates/credit-card/payment-form.php:36
 msgid "Installments"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:625
+#: includes/class-wc-pagarme-api.php:631
 msgid "Total paid"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:628
+#: includes/class-wc-pagarme-api.php:632
 msgid "Anti Fraud Score"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:661
+#: includes/class-wc-pagarme-api.php:685
 msgid ""
 "Missing credit card data, please review your data and try again or contact "
 "us for assistance."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:756
+#: includes/class-wc-pagarme-api.php:766
 msgid "Pagar.me Request Failure"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:799
+#: includes/class-wc-pagarme-api.php:809
 msgid "Pagar.me: The transaction was authorized."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:808
+#: includes/class-wc-pagarme-api.php:818
 #. translators: %s transaction details url
 msgid ""
 "Pagar.me: You should manually analyze this transaction to continue payment "
 "flow, access %s to do it!"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:812
+#: includes/class-wc-pagarme-api.php:822
 msgid "Pagar.me: The transaction is being processed."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:817
+#: includes/class-wc-pagarme-api.php:827
 msgid "Pagar.me: Transaction paid."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:825
+#: includes/class-wc-pagarme-api.php:835
 msgid "Pagar.me: The banking ticket was issued but not paid yet."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:829
+#: includes/class-wc-pagarme-api.php:839
 msgid "Pagar.me: The transaction was rejected by the card company or by fraud."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:835
+#: includes/class-wc-pagarme-api.php:845
 msgid "The transaction for order %s was rejected by the card company or by fraud"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:836
+#: includes/class-wc-pagarme-api.php:846
 msgid "Transaction failed"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:837
+#: includes/class-wc-pagarme-api.php:847
 msgid ""
 "Order %1$s has been marked as failed, because the transaction was rejected "
 "by the card company or by fraud, for more details, see %2$s."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:842
+#: includes/class-wc-pagarme-api.php:852
 msgid "Pagar.me: The transaction was refunded/canceled."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:848
+#: includes/class-wc-pagarme-api.php:858
 msgid "The transaction for order %s refunded"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:849
+#: includes/class-wc-pagarme-api.php:859
 msgid "Transaction refunded"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:850
+#: includes/class-wc-pagarme-api.php:860
 msgid ""
 "Order %1$s has been marked as refunded by Pagar.me, for more details, see "
 "%2$s."
@@ -192,7 +192,7 @@ msgid "Accept banking ticket payments using Pagar.me."
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:81
-#: includes/class-wc-pagarme-credit-card-gateway.php:86
+#: includes/class-wc-pagarme-credit-card-gateway.php:87
 msgid "Enable/Disable"
 msgstr ""
 
@@ -201,12 +201,12 @@ msgid "Enable Pagar.me Banking Ticket"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:87
-#: includes/class-wc-pagarme-credit-card-gateway.php:92
+#: includes/class-wc-pagarme-credit-card-gateway.php:93
 msgid "Title"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:89
-#: includes/class-wc-pagarme-credit-card-gateway.php:94
+#: includes/class-wc-pagarme-credit-card-gateway.php:95
 msgid "This controls the title which the user sees during checkout."
 msgstr ""
 
@@ -215,12 +215,12 @@ msgid "Banking Ticket"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:94
-#: includes/class-wc-pagarme-credit-card-gateway.php:99
+#: includes/class-wc-pagarme-credit-card-gateway.php:100
 msgid "Description"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:96
-#: includes/class-wc-pagarme-credit-card-gateway.php:101
+#: includes/class-wc-pagarme-credit-card-gateway.php:102
 msgid "This controls the description which the user sees during checkout."
 msgstr ""
 
@@ -229,17 +229,17 @@ msgid "Pay with Banking Ticket"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:101
-#: includes/class-wc-pagarme-credit-card-gateway.php:106
+#: includes/class-wc-pagarme-credit-card-gateway.php:107
 msgid "Integration Settings"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:106
-#: includes/class-wc-pagarme-credit-card-gateway.php:111
+#: includes/class-wc-pagarme-credit-card-gateway.php:112
 msgid "Pagar.me API Key"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:108
-#: includes/class-wc-pagarme-credit-card-gateway.php:113
+#: includes/class-wc-pagarme-credit-card-gateway.php:114
 msgid ""
 "Please enter your Pagar.me API Key. This is needed to process the payment "
 "and notifications. Is possible get your API Key in %s."
@@ -247,18 +247,18 @@ msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:108
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:117
-#: includes/class-wc-pagarme-credit-card-gateway.php:113
-#: includes/class-wc-pagarme-credit-card-gateway.php:122
+#: includes/class-wc-pagarme-credit-card-gateway.php:114
+#: includes/class-wc-pagarme-credit-card-gateway.php:123
 msgid "Pagar.me Dashboard > My Account page"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:115
-#: includes/class-wc-pagarme-credit-card-gateway.php:120
+#: includes/class-wc-pagarme-credit-card-gateway.php:121
 msgid "Pagar.me Encryption Key"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:117
-#: includes/class-wc-pagarme-credit-card-gateway.php:122
+#: includes/class-wc-pagarme-credit-card-gateway.php:123
 msgid ""
 "Please enter your Pagar.me Encryption key. This is needed to process the "
 "payment. Is possible get your Encryption Key in %s."
@@ -275,27 +275,27 @@ msgid ""
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:130
-#: includes/class-wc-pagarme-credit-card-gateway.php:201
+#: includes/class-wc-pagarme-credit-card-gateway.php:210
 msgid "Gateway Testing"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:135
-#: includes/class-wc-pagarme-credit-card-gateway.php:206
+#: includes/class-wc-pagarme-credit-card-gateway.php:215
 msgid "Debug Log"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:137
-#: includes/class-wc-pagarme-credit-card-gateway.php:208
+#: includes/class-wc-pagarme-credit-card-gateway.php:217
 msgid "Enable logging"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:139
-#: includes/class-wc-pagarme-credit-card-gateway.php:210
+#: includes/class-wc-pagarme-credit-card-gateway.php:219
 msgid "Log Pagar.me events, such as API requests. You can check the log in %s"
 msgstr ""
 
 #: includes/class-wc-pagarme-banking-ticket-gateway.php:139
-#: includes/class-wc-pagarme-credit-card-gateway.php:210
+#: includes/class-wc-pagarme-credit-card-gateway.php:219
 msgid "System Status &gt; Logs"
 msgstr ""
 
@@ -307,61 +307,73 @@ msgstr ""
 msgid "Accept credit card payments using Pagar.me."
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:88
+#: includes/class-wc-pagarme-credit-card-gateway.php:89
 msgid "Enable Pagar.me Credit Card"
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:103
+#: includes/class-wc-pagarme-credit-card-gateway.php:104
 msgid "Pay with Credit Card"
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:129
+#: includes/class-wc-pagarme-credit-card-gateway.php:130
 msgid "Checkout Pagar.me"
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:131
+#: includes/class-wc-pagarme-credit-card-gateway.php:132
 msgid "Enable checkout Pagar.me"
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:134
+#: includes/class-wc-pagarme-credit-card-gateway.php:135
 msgid ""
 "When enabled opens a Pagar.me modal window to receive the customer's credit "
 "card information."
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:142
+#: includes/class-wc-pagarme-credit-card-gateway.php:138
+msgid "Register Refused Order"
+msgstr ""
+
+#: includes/class-wc-pagarme-credit-card-gateway.php:140
+msgid "Register order for refused transactions"
+msgstr ""
+
+#: includes/class-wc-pagarme-credit-card-gateway.php:143
+msgid "Register order for refused transactions when Pagar.me Checkout is enabled"
+msgstr ""
+
+#: includes/class-wc-pagarme-credit-card-gateway.php:151
 msgid "Number of Installment"
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:146
+#: includes/class-wc-pagarme-credit-card-gateway.php:155
 msgid "Maximum number of installments possible with payments by credit card."
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:164
+#: includes/class-wc-pagarme-credit-card-gateway.php:173
 msgid "Smallest Installment"
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:166
+#: includes/class-wc-pagarme-credit-card-gateway.php:175
 msgid ""
 "Please enter with the value of smallest installment, Note: it not can be "
 "less than 5."
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:171
+#: includes/class-wc-pagarme-credit-card-gateway.php:180
 msgid "Interest rate"
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:173
+#: includes/class-wc-pagarme-credit-card-gateway.php:182
 msgid ""
 "Please enter with the interest rate amount. Note: use 0 to not charge "
 "interest."
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:178
+#: includes/class-wc-pagarme-credit-card-gateway.php:187
 msgid "Free Installments"
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:182
+#: includes/class-wc-pagarme-credit-card-gateway.php:191
 msgid "Number of installments with interest free."
 msgstr ""
 
@@ -489,7 +501,7 @@ msgstr ""
 msgid "https://pagar.me/"
 msgstr ""
 
-#: includes/class-wc-pagarme-credit-card-gateway.php:185
+#: includes/class-wc-pagarme-credit-card-gateway.php:194
 msgctxt "no free installments"
 msgid "None"
 msgstr ""
