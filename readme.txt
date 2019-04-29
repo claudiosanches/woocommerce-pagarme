@@ -2,8 +2,8 @@
 Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
-Tested up to: 4.9
-Stable tag: 2.0.12
+Tested up to: 5.1
+Stable tag: 2.0.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,7 +101,7 @@ Não é obrigatório caso você não utilize antifraude, no caso para digital go
 
 = Problemas com a integração? =
 
-Primeiro de tudo ative a opção **Log de depuração** e tente realizar o pagamento novamente.  
+Primeiro de tudo ative a opção **Log de depuração** e tente realizar o pagamento novamente.
 Feito isso copie o conteúdo do log e salve usando o [pastebin.com](http://pastebin.com) ou o [gist.github.com](http://gist.github.com), depois basta abrir um tópico de suporte [aqui](http://wordpress.org/support/plugin/woocommerce-pagarme).
 
 = Mais dúvidas relacionadas ao funcionamento do plugin? =
@@ -117,6 +117,11 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
+= 2.0.13 - 2018/05/29 =
+
+* Permitido resgistro de pedido para transação recusada no checkout Pagar.me.
+* Corrige o timeout na captura no checkout Pagar.me.
+
 = 2.0.12 - 2018/07/31 =
 
 * Adicionado cidade e estado nos dados enviados para o Checkout Pagar.me.
@@ -124,7 +129,7 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 = 2.0.11 - 2017/09/08 =
 
-* Adicionada opção para suportar boletos asíncronos.
+* Adicionada opção para suportar boletos assíncronos.
 
 = 2.0.10 - 2016/09/29 =
 
