@@ -212,11 +212,21 @@
 				success: function( data ) {
 					formSubmit = true;
 
-					// Remove any old token input.
-					$( 'input[name=pagarme_checkout_token]', form ).remove();
+					if ( 'no' === wcPagarmeParams.register_refused_order ) {
+						// Remove any old token input.
+						$( 'input[name=pagarme_checkout_token]', form ).remove();
 
-					// Add the token input.
-					form.append( $( '<input name="pagarme_checkout_token" type="hidden" />' ).val( data.token ) );
+						// Add the token input.
+						form.append( $( '<input name="pagarme_checkout_token" type="hidden" />' ).val( data.token ) );
+					} else {
+						// Remove any old card_hash and installments input.
+						$( 'input[name=pagarme_card_hash]', form ).remove();
+						$( 'input[name=pagarme_installments]', form ).remove();
+
+						// Add the token input.
+						form.append( $( '<input name="pagarme_card_hash" type="hidden" />' ).val( data.card_hash ) );
+						form.append( $( '<input name="pagarme_installments" type="hidden" />' ).val( data.installments ) );
+					}
 
 					// Submit the form.
 					form.submit();
@@ -229,12 +239,14 @@
 				customer = getCustomerFields( form );
 			}
 
+			const shouldCreateToken = 'yes' === wcPagarmeParams.register_refused_order ? 'false' : 'true';
+
 			// Set params.
 			params = $.extend({}, {
 				paymentMethods:   'credit_card',
 				customerData:     false,
 				amount:           inline_data.data( 'total' ),
-				createToken:      true,
+				createToken:      shouldCreateToken,
 				interestRate:     wcPagarmeParams.interestRate,
 				maxInstallments:  inline_data.data( 'max_installment' ),
 				freeInstallments: wcPagarmeParams.freeInstallments,

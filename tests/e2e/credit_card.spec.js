@@ -3,6 +3,8 @@ import checkoutData from './fixtures/data'
 context('Credit card', () => {
   describe('Basic purchase workflow', () => {
     before(() => {
+      cy.configureCreditCard({ checkout: false })
+
       cy.addProductToCart()
       cy.goToCheckoutPage()
       cy.fillCheckoutForm()

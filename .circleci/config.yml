@@ -94,4 +94,3 @@ workflows:
       - test-e2e:
           requires:
           - lint-js
-          - lint-php

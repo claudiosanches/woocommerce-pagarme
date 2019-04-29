@@ -18,3 +18,12 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+before(() => {
+  cy.log('Login admin')
+  cy.loginAsAdmin()
+
+  Cypress.Cookies.defaults({
+    whitelist: /wordpress_.+/
+  })
+})
