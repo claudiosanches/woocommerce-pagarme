@@ -278,5 +278,8 @@ Cypress.Commands.add('fillCreditCardForm', () => {
     .type(checkoutData.card_expiration_date)
 
   cy.get('#pagarme-card-cvc')
-    .type(checkoutData.card_cvv)
+	  .type(checkoutData.card_cvv)
+
+	cy.get('#pagarme-installments')
+	  .select(checkoutData.card_installments.toString())
 })

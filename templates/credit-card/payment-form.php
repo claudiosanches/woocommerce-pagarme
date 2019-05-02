@@ -35,6 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<p class="form-row form-row-wide">
 			<label for="pagarme-card-installments"><?php esc_html_e( 'Installments', 'woocommerce-pagarme' ); ?> <span class="required">*</span></label>
 			<select name="pagarme_installments" id="pagarme-installments" style="font-size: 1.5em; padding: 8px; width: 100%;">
+				<option value="0"><?php printf( esc_html__( 'Please, select the number of installments', 'woocommerce-pagarme' ) ); ?></option>
 				<?php
 				foreach ( $installments as $number => $installment ) :
 					if ( 1 !== $number && $smallest_installment > $installment['installment_amount'] ) {
@@ -43,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 					$interest           = ( ( $cart_total * 100 ) < $installment['amount'] ) ? sprintf( __( '(total of %s)', 'woocommerce-pagarme' ), strip_tags( wc_price( $installment['amount'] / 100 ) ) ) : __( '(interest-free)', 'woocommerce-pagarme' );
 					$installment_amount = strip_tags( wc_price( $installment['installment_amount'] / 100 ) );
-				?>
+					?>
 				<option value="<?php echo absint( $installment['installment'] ); ?>"><?php printf( esc_html__( '%1$dx of %2$s %3$s', 'woocommerce-pagarme' ), absint( $installment['installment'] ), esc_html( $installment_amount ), esc_html( $interest ) ); ?></option>
 				<?php endforeach; ?>
 			</select>
