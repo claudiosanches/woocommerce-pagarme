@@ -3,7 +3,7 @@ Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
 Tested up to: 5.1
-Stable tag: 2.0.13
+Stable tag: 2.0.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 4. Configurações para cartão de crédito.
 
 == Changelog ==
+
+= 2.0.14 - 2018/05/02 =
+
+* Corrigido problema de resetar para 1 parcela ao recarregar o formulário de dados de cartão.
 
 = 2.0.13 - 2018/05/29 =
 
