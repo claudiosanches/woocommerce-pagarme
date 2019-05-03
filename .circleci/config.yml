@@ -12,6 +12,9 @@ jobs:
       enabled: true
     steps:
       - checkout
+      - run:
+          name: Setup company temporary Pagar.me
+          command: make company-setup
       - persist_to_workspace:
             root: ~/project
             paths:

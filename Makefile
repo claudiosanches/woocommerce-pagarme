@@ -6,7 +6,7 @@ list:
 	@echo "prepare  | Setup WordPress, Woocommerce and Woocommerce-Pagar.me"
 	@echo "up       | Create and start containers"
 
-up:
+up: company-setup
 	docker-compose up -d
 
 wait-for-wordpress:
@@ -57,6 +57,10 @@ lint-js:
 test-e2e:
 	docker-compose run node bash -c \
 	'npm install && npx cypress install && npx cypress run'
+
+company-setup:
+	touch .env.local
+	docker-compose run composer php ./bin/setup-company-temporary.php
 
 down:
 	docker-compose down
