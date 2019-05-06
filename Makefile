@@ -20,7 +20,7 @@ wp-install:
 	--admin_password=wordpress \
 	--path=/var/www/html \
 	&& docker-compose exec woopagarme wp core update --allow-root \
-	&& docker-compose exec woopagarme mkdir /var/www/html/wp-content/uploads/wc-logs \
+	&& docker-compose exec woopagarme touch /var/www/html/wp-content/uploads/wc-logs \
 	&& docker-compose exec woopagarme chown www-data:www-data -R /var/www/html/wp-content/uploads/wc-logs
 
 wp-setup:
