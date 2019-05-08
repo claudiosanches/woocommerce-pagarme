@@ -53,10 +53,13 @@ context('Checkout Pagarme', () => {
 
         cy.get('tbody', { timeout: 60000 })
           .contains(`#${orderId}`)
-
-        cy.visit(`http://woopagarme/minha-conta/view-order/${orderId}/`)
-          .contains(`Pedido #${orderId}`)
       })
+    })
+
+    it('should validate the current status of the order', () => {
+      cy.visit(`minha-conta/view-order/${orderId}/`)
+      cy.contains(`Pedido #${orderId}`)
+      cy.contains('atualmente está Aguardando.')
     })
 
     it('should contain at least one postback', () => {
