@@ -79,5 +79,17 @@ context('Checkout Pagarme', () => {
             })
         )
     })
+
+    it('Postback URL should equals test domain', () => {
+      expect(postback).to.have
+        .property('request_url', 'http://woopagarme/wc-api/WC_Pagarme_Credit_Card_Gateway/')
+    })
+
+    it('Postback status should equals refused', () => {
+      cy.getPayloadData(postback.payload)
+        .then((payload) => {
+          expect(payload['current_status']).to.equal('refused')
+        })
+    })
   })
 })
