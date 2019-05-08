@@ -22,8 +22,11 @@ context('Checkout Pagarme', () => {
   })
 
   describe('when make a purchase with refused orders register enabled', () => {
+    let orderId
+    let postback
+
     before(() => {
-      cy.configureCreditCard({ register_refused_order: true })
+      cy.configureCreditCard({ checkout: true, register_refused_order: true })
       cy.addProductToCart()
       cy.goToCheckoutPage()
       cy.fillCheckoutForm()
@@ -34,7 +37,8 @@ context('Checkout Pagarme', () => {
     })
 
     it('should be at order received page', () => {
-      cy.url({ timeout: 60000 }).should('include', '/finalizar-compra/order-received/')
+      cy.url({ timeout: 60000 })
+        .should('include', '/finalizar-compra/order-received/')
       cy.contains('Pedido recebido')
     })
 
@@ -44,16 +48,33 @@ context('Checkout Pagarme', () => {
 
     it('should be registered at "my orders" page', () => {
       cy.get('.woocommerce-order-overview__order strong').then($order => {
-        const orderId = $order.text()
-        cy.visit('/minha-conta/orders/', { timeout: 60000 })
+        orderId = $order.text()
+        cy.visit('/minha-conta/orders/')
 
-        let orderUrl = `http://woopagarme/minha-conta/view-order/${orderId}/`
         cy.get('tbody', { timeout: 60000 })
           .contains(`#${orderId}`)
 
-        cy.visit(orderUrl, { timeout: 60000 })
+        cy.visit(`http://woopagarme/minha-conta/view-order/${orderId}/`)
           .contains(`Pedido #${orderId}`)
       })
+    })
+
+    it('should contain at least one postback', () => {
+      const opts = {
+        metadata: { order_number: orderId }
+      }
+
+      cy.log('Wait process transaction in Pagar.me')
+      cy.wait(5000)
+
+      cy.task('pagarmejs:transaction', opts)
+        .then((transaction) =>
+          cy.task('pagarmejs:postback', transaction.id)
+            .then((postbacks) => {
+              expect(postbacks).to.not.be.empty
+              postback = postbacks[0]
+            })
+        )
     })
   })
 })

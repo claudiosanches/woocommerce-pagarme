@@ -20,7 +20,7 @@ context('Postback last transaction', () => {
     })
 
     it('should contain at least one postback', () => {
-      cy.task('pagarmejs:postback')
+      cy.task('pagarmejs:lastPostback')
         .then(postbacks => {
           expect(postbacks).to.not.be.empty
           postback = postbacks[0]
