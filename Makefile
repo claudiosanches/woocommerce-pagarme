@@ -6,7 +6,7 @@ list:
 	@echo "prepare  | Setup WordPress, Woocommerce and Woocommerce-Pagar.me"
 	@echo "up       | Create and start containers"
 
-up:
+up: company-setup
 	docker-compose up -d
 
 wait-for-wordpress:
@@ -20,7 +20,7 @@ wp-install:
 	--admin_password=wordpress \
 	--path=/var/www/html \
 	&& docker-compose exec woopagarme wp core update --allow-root \
-	&& docker-compose exec woopagarme mkdir /var/www/html/wp-content/uploads/wc-logs \
+	&& docker-compose exec woopagarme touch /var/www/html/wp-content/uploads/wc-logs \
 	&& docker-compose exec woopagarme chown www-data:www-data -R /var/www/html/wp-content/uploads/wc-logs
 
 wp-setup:
@@ -57,6 +57,10 @@ lint-js:
 test-e2e:
 	docker-compose run node bash -c \
 	'npm install && npx cypress install && npx cypress run'
+
+company-setup:
+	touch .env.local
+	docker-compose run composer php ./bin/setup-company-temporary.php
 
 down:
 	docker-compose down

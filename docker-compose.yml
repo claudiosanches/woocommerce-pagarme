@@ -19,7 +19,9 @@ services:
     ports:
       - 80:80
     restart: always
-    env_file: .env
+    env_file:
+      - .env
+      - .env.local
 
   composer:
     image: composer:1.8.4
@@ -33,3 +35,5 @@ services:
     volumes:
       - ./:/app
       - ./cache:/root/.cache/
+    env_file:
+      - .env.local

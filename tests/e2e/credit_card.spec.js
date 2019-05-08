@@ -1,5 +1,3 @@
-import checkoutData from './fixtures/data'
-
 context('Credit card', () => {
   describe('Basic purchase workflow', () => {
     before(() => {
@@ -18,7 +16,7 @@ context('Credit card', () => {
       cy.contains('Pedido recebido')
     })
 
-    it('should countains success message', () => {
+    it('should contains success message', () => {
       cy.contains('Pagamento realizado utilizando cartão de crédito')
     })
   })

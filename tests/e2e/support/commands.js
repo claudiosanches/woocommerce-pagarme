@@ -283,3 +283,13 @@ Cypress.Commands.add('fillCreditCardForm', () => {
 	cy.get('#pagarme-installments')
 	  .select(checkoutData.card_installments.toString())
 })
+
+Cypress.Commands.add('getPayloadData', (payload) => {
+  const items = {}
+  payload.split('&').forEach(element => {
+    const [prop = '', value = ''] = element.split('=')
+    items[decodeURIComponent(prop)] = decodeURIComponent(value)
+  })
+
+  return items
+})

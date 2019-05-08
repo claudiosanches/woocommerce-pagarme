@@ -24,46 +24,6 @@ function setup( $option_name, $options ) {
 }
 
 /**
- * Creates and retrieve data from company temporary route
- *
- * @return stdClass
- * @throws Exception Emits Exception in case of an error in Datetime.
- */
-function get_company_temporary() {
-	$ch = curl_init();
-	curl_setopt(
-		$ch,
-		CURLOPT_URL,
-		'https://api.pagar.me/1/companies/temporary'
-	);
-	$date   = new DateTime( 'now', new DateTimeZone( 'America/New_York' ) );
-	$params = sprintf(
-		'name=acceptance_test_company&email=%s@woocoomercesuite.com&password=password',
-		$date->format( 'YmdHis' )
-	);
-	curl_setopt( $ch, CURLOPT_POST, 1 );
-	curl_setopt(
-		$ch,
-		CURLOPT_POSTFIELDS,
-		$params
-	);
-	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-	$result       = curl_exec( $ch );
-	$company_data = json_decode( $result );
-	curl_close( $ch );
-
-	return $company_data;
-}
-$api_key        = getenv( 'API_KEY' );
-$encryption_key = getenv( 'ENCRYPTION_KEY' );
-
-if ( ! $api_key && ! $encryption_key ) {
-	$company_data   = get_company_temporary();
-	$api_key        = $company_data->api_key->test;
-	$encryption_key = $company_data->encryption_key->test;
-}
-
-/**
  * Get customs options
  *
  * @param array  $arguments Array of arguments passed to script.
@@ -82,8 +42,8 @@ function get_custom_options( $arguments, $name ) {
 	return $options;
 }
 
-define( 'PAGARME_API_KEY', $api_key );
-define( 'PAGARME_ENCRYPTION_KEY', $encryption_key );
+define( 'PAGARME_API_KEY', getenv( 'API_KEY' ) );
+define( 'PAGARME_ENCRYPTION_KEY', getenv( 'ENCRYPTION_KEY' ) );
 
 define(
 	'WCP_CREDITCARD_OPTION_NAME',
