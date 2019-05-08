@@ -38,7 +38,7 @@ context('Postback last transaction', () => {
     })
 
     it('should validate the current status of the order', () => {
-      cy.visit(`http://woopagarme/minha-conta/view-order/${orderId}/`)
+      cy.visit(`minha-conta/view-order/${orderId}/`)
         .contains('atualmente está Aguardando.')
     })
 
@@ -57,7 +57,7 @@ context('Postback last transaction', () => {
 
       cy.getPayloadData(postback.payload)
         .then((payload) => {
-          cy.visit(`http://woopagarme/minha-conta/view-order/${orderId}/`)
+          cy.visit(`minha-conta/view-order/${orderId}/`)
           cy.contains('atualmente está ' + status[payload['current_status']])
         })
     })

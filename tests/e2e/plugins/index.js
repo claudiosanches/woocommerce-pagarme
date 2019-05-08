@@ -33,10 +33,7 @@ const getPostback = (apiKey, transactionId) =>
       client.postbacks.find({ transactionId: transactionId})
     )
 
-const getLastTransaction = (apiKey) =>
-  getClient(apiKey)
-    .then(client => client.transactions.all({ count: 1 }))
-    .then(transactions => transactions[0])
+const getLastTransaction = (apiKey) => getTransaction(apiKey, { count: 1 })
 
 const getLastTransactionPostback = (apiKey) =>
   getLastTransaction(apiKey)

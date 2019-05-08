@@ -12,7 +12,8 @@ context('Checkout Pagarme', () => {
     })
 
     it('should be at order received page', () => {
-      cy.url({ timeout: 60000 }).should('include', '/finalizar-compra/order-received/')
+      cy.url({ timeout: 60000 })
+        .should('include', '/finalizar-compra/order-received/')
       cy.contains('Pedido recebido')
     })
 
@@ -47,13 +48,15 @@ context('Checkout Pagarme', () => {
     })
 
     it('should be registered at "my orders" page', () => {
-      cy.get('.woocommerce-order-overview__order strong').then($order => {
-        orderId = $order.text()
-        cy.visit('/minha-conta/orders/')
+      cy.get('.woocommerce-order-overview__order strong')
+        .then(($order) => $order.text())
+        .then((id) => {
+          orderId = id
+          cy.visit('/minha-conta/orders/')
 
-        cy.get('tbody', { timeout: 60000 })
-          .contains(`#${orderId}`)
-      })
+          cy.get('tbody', { timeout: 60000 })
+            .contains(`#${orderId}`)
+        })
     })
 
     it('should validate the current status of the order', () => {
@@ -67,7 +70,7 @@ context('Checkout Pagarme', () => {
         metadata: { order_number: orderId }
       }
 
-      cy.log('Wait process transaction in Pagar.me')
+      cy.log('Wait process transaction on Pagar.me')
       cy.wait(5000)
 
       cy.task('pagarmejs:transaction', opts)
@@ -97,6 +100,11 @@ context('Checkout Pagarme', () => {
         .then((response) => {
           expect(response.status).to.eq(200)
         })
+    })
+
+    it('should validate the new status of the order', () => {
+      cy.visit(`minha-conta/view-order/${orderId}/`)
+      cy.contains('atualmente está Malsucedido')
     })
   })
 })
