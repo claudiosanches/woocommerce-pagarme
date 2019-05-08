@@ -91,5 +91,12 @@ context('Checkout Pagarme', () => {
           expect(payload['current_status']).to.equal('refused')
         })
     })
+
+    it('should update order transaction via postback', () => {
+      cy.updateOrderViaPostback(postback)
+        .then((response) => {
+          expect(response.status).to.eq(200)
+        })
+    })
   })
 })

@@ -43,12 +43,7 @@ context('Postback last transaction', () => {
     })
 
     it('should update order transaction via postback', () => {
-      cy.request({
-          method: 'POST',
-          url: 'wc-api/WC_Pagarme_Credit_Card_Gateway/',
-          headers: JSON.parse(postback.headers),
-          body: postback.payload
-        })
+      cy.updateOrderViaPostback(postback)
         .then((response) => {
           expect(response.status).to.eq(200)
         })
