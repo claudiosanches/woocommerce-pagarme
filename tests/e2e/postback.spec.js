@@ -20,7 +20,7 @@ context('Postback last transaction', () => {
     })
 
     it('should contain at least one postback', () => {
-      cy.task('pagarmejs:postback')
+      cy.task('pagarmejs:lastPostback')
         .then(postbacks => {
           expect(postbacks).to.not.be.empty
           postback = postbacks[0]
@@ -38,17 +38,12 @@ context('Postback last transaction', () => {
     })
 
     it('should validate the current status of the order', () => {
-      cy.visit(`http://woopagarme/minha-conta/view-order/${orderId}/`)
+      cy.visit(`minha-conta/view-order/${orderId}/`)
         .contains('atualmente está Aguardando.')
     })
 
     it('should update order transaction via postback', () => {
-      cy.request({
-          method: 'POST',
-          url: 'wc-api/WC_Pagarme_Credit_Card_Gateway/',
-          headers: JSON.parse(postback.headers),
-          body: postback.payload
-        })
+      cy.updateOrderViaPostback(postback)
         .then((response) => {
           expect(response.status).to.eq(200)
         })
@@ -62,7 +57,7 @@ context('Postback last transaction', () => {
 
       cy.getPayloadData(postback.payload)
         .then((payload) => {
-          cy.visit(`http://woopagarme/minha-conta/view-order/${orderId}/`)
+          cy.visit(`minha-conta/view-order/${orderId}/`)
           cy.contains('atualmente está ' + status[payload['current_status']])
         })
     })

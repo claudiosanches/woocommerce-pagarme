@@ -293,3 +293,12 @@ Cypress.Commands.add('getPayloadData', (payload) => {
 
   return items
 })
+
+Cypress.Commands.add('updateOrderViaPostback', (postback) =>
+  cy.request({
+    method: 'POST',
+    url: 'wc-api/WC_Pagarme_Credit_Card_Gateway/',
+    headers: JSON.parse(postback.headers),
+    body: postback.payload
+  })
+)

@@ -22,10 +22,18 @@ const getClient = (apiKey) => {
   return client
 }
 
-const getLastTransaction = (apiKey) =>
+const getTransaction = (apiKey, options) =>
   getClient(apiKey)
-    .then(client => client.transactions.all({ count: 1 }))
+    .then(client => client.transactions.find(options))
     .then(transactions => transactions[0])
+
+const getPostback = (apiKey, transactionId) =>
+  getClient(apiKey)
+    .then((client) =>
+      client.postbacks.find({ transactionId: transactionId})
+    )
+
+const getLastTransaction = (apiKey) => getTransaction(apiKey, { count: 1 })
 
 const getLastTransactionPostback = (apiKey) =>
   getLastTransaction(apiKey)
@@ -40,7 +48,9 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
 
   on('task', {
-    'pagarmejs:transaction': () => getLastTransaction(config.env.API_KEY),
-    'pagarmejs:postback': () => getLastTransactionPostback(config.env.API_KEY)
+    'pagarmejs:transaction': (options) => getTransaction(config.env.API_KEY, options),
+    'pagarmejs:postback': (transactionId) => getPostback(config.env.API_KEY, transactionId),
+    'pagarmejs:lastTransaction': () => getLastTransaction(config.env.API_KEY),
+    'pagarmejs:lastPostback': () => getLastTransactionPostback(config.env.API_KEY)
   })
 }
