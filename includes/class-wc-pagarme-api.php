@@ -861,6 +861,10 @@ class WC_Pagarme_API {
 				);
 
 				break;
+			case 'analyzing' :
+				$order->update_status( 'on-hold', __( 'Pagar.me: Transaction is waiting for antifraud analysis.', 'woocommerce-pagarme' ) );
+
+				break;
 
 			default :
 				break;
