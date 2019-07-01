@@ -3,7 +3,7 @@
 **Tags:** woocommerce, pagarme, payment
 **Requires at least:** 4.0
 **Tested up to:** 5.1
-**Stable tag:** 2.0.14
+**Stable tag:** 2.0.15
 **License:** GPLv2 or later
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 
 ## Changelog ##
+
+### 2.0.15 - 2019-07-01 ###
+
+* Adicionado o novo status `analyzing` do Pagar.me
 
 ### 2.0.14 - 2018/05/02 ###
 
