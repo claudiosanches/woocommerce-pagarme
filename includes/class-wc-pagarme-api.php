@@ -322,20 +322,23 @@ class WC_Pagarme_API {
 				$data['card_hash']      = $posted['pagarme_card_hash'];
 			}
 
+			$is_checkout_pagarme = isset( $this->gateway->checkout ) && 'yes' === $this->gateway->checkout;
+			$has_installment_data = ! empty( $posted['pagarme_installments'] ) && isset( $posted['pagarme_installments'] );
+
+			$should_set_default_installment = $is_checkout_pagarme && ! $has_installment_data;
+
+			$_installment = $should_set_default_installment ? 1 : $posted['pagarme_installments'];
+
 			// Validate the installments.
-			if ( apply_filters( 'wc_pagarme_allow_credit_card_installments_validation', isset( $posted['pagarme_installments'] ), $order ) ) {
-				$_installment = $posted['pagarme_installments'];
+			$data['installments'] = $_installment;
+			// Get installments data.
+			$installments = $this->get_installments( $order->get_total() );
+			if ( isset( $installments[ $_installment ] ) ) {
+				$installment          = $installments[ $_installment ];
+				$smallest_installment = $this->get_smallest_installment();
 
-				$data['installments'] = $_installment;
-				// Get installments data.
-				$installments = $this->get_installments( $order->get_total() );
-				if ( isset( $installments[ $_installment ] ) ) {
-					$installment          = $installments[ $_installment ];
-					$smallest_installment = $this->get_smallest_installment();
-
-					if ( $installment['installment'] <= $this->gateway->max_installment && $smallest_installment <= $installment['installment_amount'] ) {
-						$data['amount'] = $installment['amount'];
-					}
+				if ( $installment['installment'] <= $this->gateway->max_installment && $smallest_installment <= $installment['installment_amount'] ) {
+					$data['amount'] = $installment['amount'];
 				}
 			}
 		} elseif ( 'pagarme-banking-ticket' === $this->gateway->id ) {
