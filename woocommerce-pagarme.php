@@ -29,7 +29,7 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		 *
 		 * @var string
 		 */
-		const VERSION = '2.0.14';
+		const VERSION = '2.0.16';
 
 		/**
 		 * Instance of this class.

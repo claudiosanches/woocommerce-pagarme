@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: WooCommerce Pagar.me 2.0.15\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/woocommerce-pagarme\n"
-"POT-Creation-Date: 2019-07-01 19:15:18+00:00\n"
+"POT-Creation-Date: 2019-09-23 19:39:22+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -39,151 +39,151 @@ msgstr ""
 msgid "Install WooCommerce"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:449
+#: includes/class-wc-pagarme-api.php:452
 msgid "Invalid transaction data."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:458
+#: includes/class-wc-pagarme-api.php:461
 msgid "Payment made with more installments than allowed."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:469
+#: includes/class-wc-pagarme-api.php:472
 msgid "Payment divided into a lower amount than permitted."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:478
+#: includes/class-wc-pagarme-api.php:481
 msgid "Wrong payment amount total."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:591
+#: includes/class-wc-pagarme-api.php:594
 msgid "Visa"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:592
+#: includes/class-wc-pagarme-api.php:595
 msgid "MasterCard"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:593
+#: includes/class-wc-pagarme-api.php:596
 msgid "American Express"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:594
+#: includes/class-wc-pagarme-api.php:597
 msgid "Aura"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:595
+#: includes/class-wc-pagarme-api.php:598
 msgid "JCB"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:596
+#: includes/class-wc-pagarme-api.php:599
 msgid "Diners"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:597
+#: includes/class-wc-pagarme-api.php:600
 msgid "Elo"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:598
+#: includes/class-wc-pagarme-api.php:601
 msgid "Hipercard"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:599
+#: includes/class-wc-pagarme-api.php:602
 msgid "Discover"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:628
+#: includes/class-wc-pagarme-api.php:631
 msgid "Banking Ticket URL"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:629
+#: includes/class-wc-pagarme-api.php:632
 #: includes/class-wc-pagarme-credit-card-gateway.php:97
 msgid "Credit Card"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:630
+#: includes/class-wc-pagarme-api.php:633
 #: includes/class-wc-pagarme-credit-card-gateway.php:146
 #: templates/credit-card/payment-form.php:36
 msgid "Installments"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:631
+#: includes/class-wc-pagarme-api.php:634
 msgid "Total paid"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:632
+#: includes/class-wc-pagarme-api.php:635
 msgid "Anti Fraud Score"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:685
+#: includes/class-wc-pagarme-api.php:688
 msgid ""
 "Missing credit card data, please review your data and try again or contact "
 "us for assistance."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:766
+#: includes/class-wc-pagarme-api.php:769
 msgid "Pagar.me Request Failure"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:809
+#: includes/class-wc-pagarme-api.php:812
 msgid "Pagar.me: The transaction was authorized."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:818
+#: includes/class-wc-pagarme-api.php:821
 #. translators: %s transaction details url
 msgid ""
 "Pagar.me: You should manually analyze this transaction to continue payment "
 "flow, access %s to do it!"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:822
+#: includes/class-wc-pagarme-api.php:825
 msgid "Pagar.me: The transaction is being processed."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:827
+#: includes/class-wc-pagarme-api.php:830
 msgid "Pagar.me: Transaction paid."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:835
+#: includes/class-wc-pagarme-api.php:838
 msgid "Pagar.me: The banking ticket was issued but not paid yet."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:839
+#: includes/class-wc-pagarme-api.php:842
 msgid "Pagar.me: The transaction was rejected by the card company or by fraud."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:845
+#: includes/class-wc-pagarme-api.php:848
 msgid "The transaction for order %s was rejected by the card company or by fraud"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:846
+#: includes/class-wc-pagarme-api.php:849
 msgid "Transaction failed"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:847
+#: includes/class-wc-pagarme-api.php:850
 msgid ""
 "Order %1$s has been marked as failed, because the transaction was rejected "
 "by the card company or by fraud, for more details, see %2$s."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:852
+#: includes/class-wc-pagarme-api.php:855
 msgid "Pagar.me: The transaction was refunded/canceled."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:858
+#: includes/class-wc-pagarme-api.php:861
 msgid "The transaction for order %s refunded"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:859
+#: includes/class-wc-pagarme-api.php:862
 msgid "Transaction refunded"
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:860
+#: includes/class-wc-pagarme-api.php:863
 msgid ""
 "Order %1$s has been marked as refunded by Pagar.me, for more details, see "
 "%2$s."
 msgstr ""
 
-#: includes/class-wc-pagarme-api.php:865
+#: includes/class-wc-pagarme-api.php:868
 msgid "Pagar.me: Transaction is waiting for antifraud analysis."
 msgstr ""
 
