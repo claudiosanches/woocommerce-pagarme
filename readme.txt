@@ -3,7 +3,7 @@ Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
 Tested up to: 5.1
-Stable tag: 2.0.15
+Stable tag: 2.0.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 4. Configurações para cartão de crédito.
 
 == Changelog ==
+
+= 2.0.16 - 2019-09-23 =
+
+* Corrigido erro "número de parcelas inválido" para compras utlizando o checkout pagar.me, onde o valor da compra era inferior ao valor da menor parcela.
 
 = 2.0.15 - 2019-07-01 =
 

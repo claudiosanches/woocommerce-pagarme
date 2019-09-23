@@ -140,7 +140,7 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 				'label'       => __( 'Register order for refused transactions', 'woocommerce-pagarme' ),
 				'default'     => 'no',
 				'desc_tip'    => true,
-				'description' => __( 'Register order for refused transactions when Pagar.me Checkout is enabled' ),
+				'description' => __( 'Register order for refused transactions when Pagar.me Checkout is enabled', 'woocommerce-pagarme' ),
 			),
 			'installments' => array(
 				'title'       => __( 'Installments', 'woocommerce-pagarme' ),
