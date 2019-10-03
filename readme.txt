@@ -1,9 +1,9 @@
-=== WooCommerce Pagar.me ===
+=== Pagar.me for WooCommerce ===
 Contributors: pagarme, claudiosanches
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
-Tested up to: 5.1
-Stable tag: 2.0.16
+Tested up to: 5.2
+Stable tag: 2.0.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 4. Configurações para cartão de crédito.
 
 == Changelog ==
+
+= 2.0.17 - 2019-10-07 =
+
+* Alterado nome do plugin de "Woocommerce Pagar.me" para "Pagar.me for Woocommerce"
 
 = 2.0.16 - 2019-09-23 =
 
