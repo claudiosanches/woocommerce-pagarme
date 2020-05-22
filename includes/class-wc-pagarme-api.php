@@ -285,6 +285,9 @@ class WC_Pagarme_API {
 		if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
 			$wcbcf_settings = get_option( 'wcbcf_settings' );
 			if ( '0' !== $wcbcf_settings['person_type'] ) {
+				// Avoid error if person type is set as an integer
+				settype($wcbcf_settings['person_type'], 'string');
+				
 				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->billing_persontype ) || '2' === $wcbcf_settings['person_type'] ) {
 					$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
 				}
