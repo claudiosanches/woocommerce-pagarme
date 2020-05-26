@@ -284,12 +284,13 @@ class WC_Pagarme_API {
 		// Set the document number.
 		if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
 			$wcbcf_settings = get_option( 'wcbcf_settings' );
-			if ( '0' !== $wcbcf_settings['person_type'] ) {
-				if ( ( '1' === $wcbcf_settings['person_type'] && '1' === $order->billing_persontype ) || '2' === $wcbcf_settings['person_type'] ) {
+			$person_type    = (string) $wcbcf_settings['person_type'];
+			if ( '0' !== $person_type ) {
+				if ( ( '1' === $person_type && '1' === $order->billing_persontype ) || '2' === $person_type ) {
 					$data['customer']['document_number'] = $this->only_numbers( $order->billing_cpf );
 				}
 
-				if ( ( '1' === $wcbcf_settings['person_type'] && '2' === $order->billing_persontype ) || '3' === $wcbcf_settings['person_type'] ) {
+				if ( ( '1' === $person_type && '2' === $order->billing_persontype ) || '3' === $person_type ) {
 					$data['customer']['name']            = $order->billing_company;
 					$data['customer']['document_number'] = $this->only_numbers( $order->billing_cnpj );
 				}
