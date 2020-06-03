@@ -26,6 +26,9 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		$this->method_title         = __( 'Pagar.me - Credit Card', 'woocommerce-pagarme' );
 		$this->method_description   = __( 'Accept credit card payments using Pagar.me.', 'woocommerce-pagarme' );
 		$this->view_transaction_url = 'https://dashboard.pagar.me/#/transactions/%s';
+		$this->supports           	= array(
+			'refunds'
+		);
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -309,6 +312,20 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 	 */
 	public function process_payment( $order_id ) {
 		return $this->api->process_regular_payment( $order_id );
+	}
+
+	/**
+	 * Refund the payment.
+	 *
+	 * @param int $order_id Order ID.
+	 * @param float $amount Amount to refund.
+	 * @param string $reason Reason to refund.
+	 *
+	 * @return bool Successfully refunded.
+	 */
+
+	public function process_refund( $order_id, $amount = null, $reason = '' ) {
+		return $this->api->do_refund( $order_id , $amount );
 	}
 
 	/**
