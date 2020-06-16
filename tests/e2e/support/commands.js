@@ -302,3 +302,28 @@ Cypress.Commands.add('updateOrderViaPostback', (postback) =>
     body: postback.payload
   })
 )
+
+Cypress.Commands.add('refundOrder', (id, amount = 0) => {
+  cy.log('Refunding order')
+  cy.visit(`/wp-admin/post.php?post=${id}&action=edit`)
+
+  cy.log('Do refund')
+  cy.log('Select refund option')
+  cy.get('.refund-items')
+    .contains('Reembolso')
+    .click()
+
+  cy.log('Type refund amount')
+  cy.get('#refund_amount')
+    .clear()
+    .type(amount)
+
+
+  cy.on('window:confirm', () => true)
+
+  cy.get('.do-api-refund')
+    .contains('Pagar.me - Cartão de crédito')
+    .click()
+
+  cy.wait(7000)
+})
