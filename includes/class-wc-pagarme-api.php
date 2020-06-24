@@ -540,6 +540,84 @@ class WC_Pagarme_API {
 	}
 
 	/**
+	 * Refund the order.
+	 *
+	 * @param  WC_Order $order Order data.
+	 * @param  float    $amount Amount to refund.
+	 *
+	 * @return bool     Successfully refunded.
+	 */
+	public function do_refund( $order_id, $amount ) {
+		$order    = wc_get_order( $order_id );
+		$transaction_id  = get_post_meta( $order_id, '_wc_pagarme_transaction_id', true );
+		$endpoint = 'transactions/' . $transaction_id . '/refund';
+		$data = array (
+			'api_key' => $this->gateway->api_key,
+		);
+
+		if ( 'yes' === $this->gateway->debug ) {
+			$this->gateway->log->add( $this->gateway->id, 'Starting refunding for order. ID: ' . $order->get_order_number() . '...' );
+		}
+
+		if ( ! in_array( $order->get_status(), array( 'processing', 'completed' ), true ) ) {
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'Can\'t refund unpaid order. ID: ' . $order->get_order_number() );
+			}
+
+			return false;
+		}
+
+		if ( $order->get_total() < $amount ) {
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'Can\'t refund more than the paid amount. ID: ' . $order->get_order_number() );
+			}
+
+			return false;
+		}
+
+		if ( $amount <= 0 ) {
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'Can\'t refund when amount is zero or negative. ID: ' . $order->get_order_number() );
+			}
+
+			return false;
+		}
+
+		$is_partially_refund = $amount < $order->get_total();
+
+		if ( $is_partially_refund ){
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'Refunding order partially. ID: ' . $order->get_order_number() . '...' );
+				$this->gateway->log->add( $this->gateway->id, 'Order total: ' . $order->get_total() . ', Refund total: ' . $amount );
+			}
+
+			$data['amount'] = $amount * 100;
+		}
+
+		$response = $this->do_request( $endpoint, 'POST', $data );
+
+		if ( is_wp_error( $response ) ) {
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'Error doing refund: ' . $response->get_error_message() );
+			}
+
+			return false;
+		}
+
+		$response_data = json_decode( $response['body'], true );
+
+		if ( isset( $response_data['errors'] ) ) {
+			if ( 'yes' === $this->gateway->debug ) {
+				$this->gateway->log->add( $this->gateway->id, 'Failed to make the refund: ' . print_r( $response, true ) );
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Do the transaction.
 	 *
 	 * @param  WC_Order $order Order data.
