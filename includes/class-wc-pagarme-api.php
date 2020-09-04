@@ -141,8 +141,24 @@ class WC_Pagarme_API {
 			$params['body'] = $data;
 		}
 
+		// Pagar.me user-agent and api version.
+		$x_pagarme_useragent = 'pagarme-woocommerce/' . WC_Pagarme::VERSION;
+
+		if ( defined( 'WC_VERSION' ) ) {
+			$x_pagarme_useragent .= ' woocommerce/' . WC_VERSION;
+		}
+
+		$x_pagarme_useragent .= ' wordpress/' . get_bloginfo( 'version' );
+		$x_pagarme_useragent .= ' php/' . phpversion();
+
+		$params['headers'] = [
+			'User-Agent' => $x_pagarme_useragent,
+			'X-PagarMe-User-Agent' => $x_pagarme_useragent,
+			'X-PagarMe-Version' => '2017-07-17',
+		];
+
 		if ( ! empty( $headers ) ) {
-			$params['headers'] = $headers;
+			$params['headers'] = array_merge( $params['headers'], $headers );
 		}
 
 		return wp_safe_remote_post( $this->get_api_url() . $endpoint, $params );
