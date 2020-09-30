@@ -17,7 +17,8 @@ context('Boleto', () => {
 
     it('should countains boleto url', () => {
       cy.contains('Pagar boleto bancário')
-        .and('have.attr', 'href', 'https://pagar.me' )
+		.and('have.attr', 'href' )
+		.should('match', new RegExp(/https:\/\/api.pagar.me\/1\/boletos\/test_/g))
     })
   })
 })
