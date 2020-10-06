@@ -24,7 +24,7 @@ wp-install:
 	&& docker-compose exec woopagarme chown www-data:www-data -R /var/www/html/wp-content/uploads/wc-logs
 
 wp-setup:
-	docker-compose exec woopagarme wp plugin install woocommerce \
+	docker-compose exec woopagarme wp plugin install woocommerce --version=3.7.0 \
 	woocommerce-extra-checkout-fields-for-brazil --activate --allow-root \
 	&& docker-compose exec woopagarme wp plugin activate woocommerce-pagarme --allow-root \
 	&& docker-compose exec woopagarme wp plugin install wordpress-importer --activate --allow-root \
