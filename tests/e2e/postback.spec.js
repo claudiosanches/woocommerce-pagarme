@@ -20,6 +20,9 @@ context('Postback last transaction', () => {
     })
 
     it('should contain at least one postback', () => {
+      cy.log('Wait process transaction on Pagar.me')
+      cy.wait(5000)
+      
       cy.task('pagarmejs:lastPostback')
         .then(postbacks => {
           expect(postbacks).to.not.be.empty
