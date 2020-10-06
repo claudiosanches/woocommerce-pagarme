@@ -95,6 +95,9 @@ context('Credit card', () => {
                 metadata: { order_number: orderId }
               }
 
+              cy.log('Wait process transaction on Pagar.me')
+              cy.wait(5000)
+
               return cy.task('pagarmejs:transaction', opts)
                 .then(transaction => cy.task('pagarmejs:postback', transaction.id))
                 .then(postbacks => cy.updateOrderViaPostback(postbacks[0]))
@@ -109,7 +112,7 @@ context('Credit card', () => {
           cy.contains('Reembolso #')
           cy.contains('por pagarme')
 
-          cy.contains('-R$45.00')
+          cy.contains('-R$1.00')
         })
       })
     })
@@ -143,6 +146,9 @@ context('Credit card', () => {
               const opts = {
                 metadata: { order_number: orderId }
               }
+
+              cy.log('Wait process transaction on Pagar.me')
+              cy.wait(5000)
 
               return cy.task('pagarmejs:transaction', opts)
                 .then(transaction => cy.task('pagarmejs:postback', transaction.id))
