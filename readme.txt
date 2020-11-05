@@ -1,9 +1,9 @@
 === Pagar.me for WooCommerce ===
-Contributors: pagarme, claudiosanches
+Contributors: pagarme, claudiosanches, murilohns
 Tags: woocommerce, pagarme, payment
 Requires at least: 4.0
-Tested up to: 5.2
-Stable tag: 2.2.0
+Tested up to: 5.5
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,9 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 == Changelog ==
 
+= 2.3.0 - 2020-11-05 =
+
+* Torna o campo bairro obrigatório
 
 = 2.2.0 - 2020-09-10 =
 

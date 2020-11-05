@@ -5,7 +5,7 @@
  * Description: Gateway de pagamento Pagar.me para WooCommerce.
  * Author: Pagar.me, Claudio Sanches
  * Author URI: https://pagar.me/
- * Version: 2.1.0
+ * Version: 2.3.0
  * License: GPLv2 or later
  * Text Domain: woocommerce-pagarme
  * Domain Path: /languages/
@@ -29,7 +29,7 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		 *
 		 * @var string
 		 */
-		const VERSION = '2.2.0';
+		const VERSION = '2.3.0';
 
 		/**
 		 * Instance of this class.
@@ -45,7 +45,7 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 			// Load plugin text domain.
 			add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
-			// Checks with WooCommerce is installed.
+			// Checks if WooCommerce is installed.
 			if ( class_exists( 'WC_Payment_Gateway' ) ) {
 				$this->upgrade();
 				$this->includes();
@@ -54,6 +54,11 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 				add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
 			} else {
 				add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
+			}
+
+			// Custom settings for the "Brazilian Market on WooCommerce" plugin billing fields.
+			if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
+				add_action( 'wcbcf_billing_fields', array( $this, 'wcbcf_billing_fields_custom_settings' ) );
 			}
 		}
 
@@ -177,6 +182,19 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 					delete_option( 'woocommerce_pagarme_settings' );
 				}
 			}
+		}
+
+		/**
+		 * Custom settings for the "Brazilian Market on WooCommerce" plugin billing fields.
+		 *
+		 * @param  array $wcbcf_billing_fields "Brazilian Market on WooCommerce" plugin billing fields.
+		 *
+		 * @return array
+		 */
+		public function wcbcf_billing_fields_custom_settings( $wcbcf_billing_fields ) {
+			$wcbcf_billing_fields['billing_neighborhood']['required'] = true;
+
+			return $wcbcf_billing_fields;
 		}
 	}
 
