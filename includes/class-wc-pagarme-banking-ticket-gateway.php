@@ -175,7 +175,7 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 	 */
 	public function thankyou_page( $order_id ) {
 		$order = wc_get_order( $order_id );
-		$data  = get_post_meta( $order_id, '_wc_pagarme_transaction_data', true );
+		$data  = $order->get_meta( '_wc_pagarme_transaction_data' );
 
 		if ( isset( $data['boleto_url'] ) && in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) ) {
 			$template = 'no' === $this->async ? 'payment' : 'async';
@@ -201,11 +201,11 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 	 * @return string                Payment instructions.
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if ( $sent_to_admin || ! in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) || $this->id !== $order->payment_method ) {
+		if ( $sent_to_admin || ! in_array( $order->get_status(), array( 'processing', 'on-hold' ), true ) || $this->id !== $order->get_payment_method() ) {
 			return;
 		}
 
-		$data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+		$data = $order->get_meta( '_wc_pagarme_transaction_data' );
 
 		if ( isset( $data['boleto_url'] ) ) {
 			$email_type = $plain_text ? 'plain' : 'html';

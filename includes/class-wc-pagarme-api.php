@@ -262,8 +262,8 @@ class WC_Pagarme_API {
 			'amount'       => $order->get_total() * 100,
 			'postback_url' => WC()->api_request_url( get_class( $this->gateway ) ),
 			'customer'     => array(
-				'name'  => trim( $order->billing_first_name . ' ' . $order->billing_last_name ),
-				'email' => $order->billing_email,
+				'name'  => trim( $order->get_formatted_billing_full_name() ),
+				'email' => $order->get_billing_email(),
 			),
 			'metadata'     => array(
 				'order_number' => $order->get_order_number(),
@@ -271,8 +271,8 @@ class WC_Pagarme_API {
 		);
 
 		// Phone.
-		if ( ! empty( $order->billing_phone ) ) {
-			$phone = $this->only_numbers( $order->billing_phone );
+		if ( $order->get_billing_phone() ) {
+			$phone = $this->only_numbers( $order->get_billing_phone() );
 
 			$data['customer']['phone'] = array(
 				'ddd'    => substr( $phone, 0, 2 ),
@@ -281,11 +281,11 @@ class WC_Pagarme_API {
 		}
 
 		// Address.
-		if ( ! empty( $order->billing_address_1 ) ) {
+		if ( $order->get_billing_address_1() ) {
 			$data['customer']['address'] = array(
-				'street'        => $order->billing_address_1,
-				'complementary' => $order->billing_address_2,
-				'zipcode'       => $this->only_numbers( $order->billing_postcode ),
+				'street'        => $order->get_billing_address_1(),
+				'complementary' => $order->get_billing_address_2(),
+				'zipcode'       => $this->only_numbers( $order->get_billing_postcode() ),
 			);
 
 			// Non-WooCommerce default address fields.
@@ -565,7 +565,7 @@ class WC_Pagarme_API {
 	 */
 	public function do_refund( $order_id, $amount ) {
 		$order    = wc_get_order( $order_id );
-		$transaction_id  = get_post_meta( $order_id, '_wc_pagarme_transaction_id', true );
+		$transaction_id  = $order->get_meta( '_wc_pagarme_transaction_id' );
 		$endpoint = 'transactions/' . $transaction_id . '/refund';
 		$data = array (
 			'api_key' => $this->gateway->api_key,
@@ -878,15 +878,16 @@ class WC_Pagarme_API {
 		$order    = wc_get_order( $order_id );
 		$status   = sanitize_text_field( $posted['current_status'] );
 
-		if ( $order && $order->id === $order_id ) {
+		if ( $order && $order->get_id() === $order_id ) {
 			$this->process_order_status( $order, $status );
 		}
 
 		// Async transactions will only send the boleto_url on IPN.
-		if ( ! empty( $posted['transaction']['boleto_url'] ) && 'pagarme-banking-ticket' === $order->payment_method ) {
-			$post_data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+		if ( ! empty( $posted['transaction']['boleto_url'] ) && 'pagarme-banking-ticket' === $order->get_payment_method() ) {
+			$post_data = $order->get_meta( '_wc_pagarme_transaction_data' );
 			$post_data['boleto_url'] = sanitize_text_field( $posted['transaction']['boleto_url'] );
-			update_post_meta( $order->id, '_wc_pagarme_transaction_data', $post_data );
+			$order->update_meta_data( '_wc_pagarme_transaction_data', $post_data );
+			$order->save();
 		}
 	}
 
@@ -909,7 +910,7 @@ class WC_Pagarme_API {
 
 				break;
 			case 'pending_review':
-				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_id  = $order->get_meta( '_wc_pagarme_transaction_id' );
 				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
 
 				/* translators: %s transaction details url */
@@ -936,7 +937,7 @@ class WC_Pagarme_API {
 			case 'refused' :
 				$order->update_status( 'failed', __( 'Pagar.me: The transaction was rejected by the card company or by fraud.', 'woocommerce-pagarme' ) );
 
-				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_id  = $order->get_meta( '_wc_pagarme_transaction_id' );
 				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
 
 				$this->send_email(
@@ -949,7 +950,7 @@ class WC_Pagarme_API {
 			case 'refunded' :
 				$order->update_status( 'refunded', __( 'Pagar.me: The transaction was refunded/canceled.', 'woocommerce-pagarme' ) );
 
-				$transaction_id  = get_post_meta( $order->id, '_wc_pagarme_transaction_id', true );
+				$transaction_id  = $order->get_meta( '_wc_pagarme_transaction_id' );
 				$transaction_url = '<a href="https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '">https://dashboard.pagar.me/#/transactions/' . intval( $transaction_id ) . '</a>';
 
 				$this->send_email(

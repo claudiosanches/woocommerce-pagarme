@@ -30,7 +30,7 @@ class WC_Pagarme_My_Account {
 	 * @return array
 	 */
 	public function my_orders_banking_ticket_link( $actions, $order ) {
-		if ( 'pagarme-banking-ticket' !== $order->payment_method ) {
+		if ( 'pagarme-banking-ticket' !== $order->get_payment_method() ) {
 			return $actions;
 		}
 
@@ -38,7 +38,7 @@ class WC_Pagarme_My_Account {
 			return $actions;
 		}
 
-		$data = get_post_meta( $order->id, '_wc_pagarme_transaction_data', true );
+		$data = $order->get_meta( '_wc_pagarme_transaction_data' );
 		if ( ! empty( $data['boleto_url'] ) ) {
 			$actions[] = array(
 				'url'  => $data['boleto_url'],

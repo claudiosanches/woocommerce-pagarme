@@ -44,15 +44,28 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		private function __construct() {
 			// Load plugin text domain.
 			add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+			$is_installed = false;
+			$has_required_version = false;
 
 			// Checks if WooCommerce is installed.
 			if ( class_exists( 'WC_Payment_Gateway' ) ) {
-				$this->upgrade();
-				$this->includes();
+				$is_installed = true;
 
-				add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
-				add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
-			} else {
+				// Checks if minimum Woocommerce version is installed.
+				if ( defined( 'WC_VERSION' ) ) {
+					$has_required_version = version_compare( WC_VERSION, '3.0', '>=' );
+				}
+
+				if ( $has_required_version ) {
+					$this->upgrade();
+					$this->includes();
+
+					add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
+					add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
+				}
+			}
+
+			if ( ! $is_installed || ! $has_required_version ) {
 				add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
 			}
 
