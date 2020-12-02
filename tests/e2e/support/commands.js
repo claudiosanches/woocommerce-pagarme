@@ -327,3 +327,39 @@ Cypress.Commands.add('refundOrder', (id, amount = 0) => {
 
   cy.wait(7000)
 })
+
+Cypress.Commands.add('goToPluginsPage', () => {
+  cy.log('Going to plugins page...')
+
+  cy.visit('/wp-admin/plugins.php')
+
+  cy.log('In plugins page.')
+})
+
+Cypress.Commands.add('deactivateBrazilianMarketPlugin', () => {
+  cy.log('Deactivating the Brazilian Market plugin...')
+
+  cy.get('#deactivate-woocommerce-extra-checkout-fields-for-brazil')
+  .click()
+})
+
+Cypress.Commands.add('activateBrazilianMarketPlugin', () => {
+  cy.log('Activating the Brazilian Market plugin...')
+
+  cy.get('#activate-woocommerce-extra-checkout-fields-for-brazil')
+  .click()
+})
+
+Cypress.Commands.add('deactivateWoocommercePlugin', () => {
+  cy.log('Deactivating the WooCommerce plugin...')
+
+  cy.get('#deactivate-woocommerce')
+  .click()
+})
+
+Cypress.Commands.add('activateWoocommercePlugin', () => {
+  cy.log('Activating the WooCommerce plugin...')
+
+  cy.get('#activate-woocommerce')
+  .click()
+})
