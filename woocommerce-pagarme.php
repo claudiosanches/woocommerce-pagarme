@@ -5,7 +5,7 @@
  * Description: Gateway de pagamento Pagar.me para WooCommerce.
  * Author: Pagar.me, Claudio Sanches
  * Author URI: https://pagar.me/
- * Version: 2.4.0
+ * Version: 2.4.1
  * License: GPLv2 or later
  * Text Domain: woocommerce-pagarme
  * Domain Path: /languages/
@@ -29,7 +29,7 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		 *
 		 * @var string
 		 */
-		const VERSION = '2.4.0';
+		const VERSION = '2.4.1';
 
 		/**
 		 * Instance of this class.
@@ -45,27 +45,20 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 			// Load plugin text domain.
 			add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
-			// Checks if WooCommerce and Brazilian Market plugins are installed.
-			$woocommerce_is_installed = class_exists( 'WC_Payment_Gateway' );
-			$brazilian_market_is_installed = class_exists( 'Extra_Checkout_Fields_For_Brazil' );
-
-			if ( $woocommerce_is_installed && $brazilian_market_is_installed ) {
+			// Checks if WooCommerce is installed.
+			if ( class_exists( 'WC_Payment_Gateway' ) ) {
 				$this->upgrade();
 				$this->includes();
 
 				add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
 				add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
-
-				// Custom settings for Brazilian Market plugin billing fields.
-				add_action( 'wcbcf_billing_fields', array( $this, 'wcbcf_billing_fields_custom_settings' ) );
 			} else {
-				if ( ! $woocommerce_is_installed ) {
-					add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
-				}
+				add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
+			}
 
-				if ( ! $brazilian_market_is_installed ) {
-					add_action( 'admin_notices', array( $this, 'brazilian_market_missing_notice' ) );
-				}
+			// Custom settings for the "Brazilian Market on WooCommerce" plugin billing fields.
+			if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
+				add_action( 'wcbcf_billing_fields', array( $this, 'wcbcf_billing_fields_custom_settings' ) );
 			}
 		}
 
@@ -148,13 +141,6 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		 */
 		public function woocommerce_missing_notice() {
 			include dirname( __FILE__ ) . '/includes/admin/views/html-notice-missing-woocommerce.php';
-		}
-
-		/**
-		 * Brazilian Market fallback notice.
-		 */
-		public function brazilian_market_missing_notice() {
-			include dirname( __FILE__ ) . '/includes/admin/views/html-notice-missing-brazilian-market.php';
 		}
 
 		/**
