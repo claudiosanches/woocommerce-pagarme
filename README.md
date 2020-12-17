@@ -3,7 +3,7 @@
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
 **Tested up to:** 5.6  
-**Stable tag:** 2.4.0  
+**Stable tag:** 2.4.1  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -124,6 +124,10 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 
 ## Changelog ##
+
+### 2.4.1 - 2020-12-17 ###
+
+* Fix: Reverte a alteração que tornava o plugin Brazilian Market on WooCommerce obrigatório
 
 ### 2.4.0 - 2020-12-16 ###
 
