@@ -132,7 +132,7 @@ class WC_Pagarme_API {
 	 * @return array            Request response.
 	 */
 	protected function do_request( $endpoint, $method = 'POST', $data = array(), $headers = array() ) {
-		$params = array(
+		$params = array( 
 			'method'  => $method,
 			'timeout' => 60,
 		);
