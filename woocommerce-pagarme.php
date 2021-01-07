@@ -60,6 +60,14 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 			if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
 				add_action( 'wcbcf_billing_fields', array( $this, 'wcbcf_billing_fields_custom_settings' ) );
 			}
+
+			// Runs a specific method right after the plugin activation.
+			add_action( 'admin_init', array( $this, 'after_activation' ) );
+
+			// Dismissible notices.
+			add_action( 'wp_loaded', array( $this, 'hide_notices' ) );
+			add_action( 'admin_notices', array( $this, 'brazilian_market_missing_notice' ) );
+			add_action( 'admin_notices', array( $this, 'pagarme_documentation_link_notice' ) );
 		}
 
 		/**
@@ -144,6 +152,30 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 		}
 
 		/**
+		 * Brazilian Market plugin missing notice.
+		 */
+		public function brazilian_market_missing_notice() {
+			if ( ( is_admin() && get_option( 'woocommerce_pagarme_admin_notice_missing_brazilian_market' ) === 'yes' ) ) {
+				// Do not show the notice if the Brazilian Market plugin is installed.
+				if ( class_exists( 'Extra_Checkout_Fields_For_Brazil' ) ) {
+					delete_option( 'woocommerce_pagarme_admin_notice_missing_brazilian_market' );
+					return;
+				}
+
+				include dirname( __FILE__ ) . '/includes/admin/views/html-notice-missing-brazilian-market.php';
+			}
+		}
+
+		/**
+		 * Pagar.me documentation notice.
+		 */
+		public function pagarme_documentation_link_notice() {
+			if ( is_admin() && get_option( 'woocommerce_pagarme_admin_notice_documentation_link' ) === 'yes' ) {
+				include dirname( __FILE__ ) . '/includes/admin/views/html-notice-pagarme-documentation-link.php';
+			}
+		}
+
+		/**
 		 * Upgrade.
 		 *
 		 * @since 2.0.0
@@ -196,8 +228,44 @@ if ( ! class_exists( 'WC_Pagarme' ) ) :
 
 			return $wcbcf_billing_fields;
 		}
+
+		/**
+		 * Hide a notice if the GET variable is set.
+		 */
+		public static function hide_notices() {
+			if ( isset( $_GET['woocommerce-pagarme-hide-notice'] ) ) {
+				$notice_to_hide = sanitize_text_field( wp_unslash( $_GET['woocommerce-pagarme-hide-notice'] ) );
+				delete_option( 'woocommerce_pagarme_admin_notice_' . $notice_to_hide );
+			}
+		}
+
+		/**
+		 * Activate.
+		 *
+		 * Fired by `register_activation_hook` when the plugin is activated.
+		 */
+		public static function activation() {
+			if ( is_multisite() ) {
+				return;
+			}
+
+			add_option( 'woocommerce_pagarme_activated', 'yes' );
+		}
+
+		/**
+		 * After activation.
+		 */
+		public function after_activation() {
+			if ( is_admin() && get_option( 'woocommerce_pagarme_activated' ) === 'yes' ) {
+				delete_option( 'woocommerce_pagarme_activated' );
+
+				add_option( 'woocommerce_pagarme_admin_notice_documentation_link', 'yes' );
+				add_option( 'woocommerce_pagarme_admin_notice_missing_brazilian_market', 'yes' );
+			}
+		}
 	}
 
 	add_action( 'plugins_loaded', array( 'WC_Pagarme', 'get_instance' ) );
+	register_activation_hook( plugin_basename( __FILE__ ), array( 'WC_Pagarme', 'activation' ) );
 
 endif;

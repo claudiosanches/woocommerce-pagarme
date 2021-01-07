@@ -60,6 +60,8 @@ Também será necessário utilizar o plugin [WooCommerce Extra Checkout Fields f
 
 Pronto, sua loja já pode receber pagamentos pelo Pagar.me.
 
+Mais informações sobre as configurações do plugin em: [https://docs.pagar.me/v2/docs/configurando-o-plugin-pagarme-woocommerce](https://docs.pagar.me/v2/docs/configurando-o-plugin-pagarme-woocommerce).
+
 ## Frequently Asked Questions ##
 
 ### Qual é a licença do plugin? ###
