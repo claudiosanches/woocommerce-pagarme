@@ -3,7 +3,7 @@
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
 **Tested up to:** 5.6  
-**Stable tag:** 2.4.1  
+**Stable tag:** 2.5.0  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -126,6 +126,11 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 
 ## Changelog ##
+
+### 2.5.0 - 2020-01-07 ###
+
+* Exibe mensagem após instalação/ativação do plugin, recomendando a instalação do plugin Brazilian Market on WooCommerce
+* Exibe mensagem após instalação/ativação do plugin, com um link para a documentação da Pagar.me
 
 ### 2.4.1 - 2020-12-17 ###
 
