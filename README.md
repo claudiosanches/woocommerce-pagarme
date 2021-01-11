@@ -3,7 +3,7 @@
 **Tags:** woocommerce, pagarme, payment  
 **Requires at least:** 4.0  
 **Tested up to:** 5.6  
-**Stable tag:** 2.4.1  
+**Stable tag:** 2.5.0  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -59,6 +59,8 @@ Habilite a opção que você deseja, preencha as opções de **Chave de API** e 
 Também será necessário utilizar o plugin [WooCommerce Extra Checkout Fields for Brazil](http://wordpress.org/plugins/woocommerce-extra-checkout-fields-for-brazil/) para poder enviar campos de CPF e CNPJ.
 
 Pronto, sua loja já pode receber pagamentos pelo Pagar.me.
+
+Mais informações sobre as configurações do plugin em: [https://docs.pagar.me/v2/docs/configurando-o-plugin-pagarme-woocommerce](https://docs.pagar.me/v2/docs/configurando-o-plugin-pagarme-woocommerce).
 
 ## Frequently Asked Questions ##
 
@@ -124,6 +126,11 @@ Entre em contato [clicando aqui](http://wordpress.org/support/plugin/woocommerce
 
 
 ## Changelog ##
+
+### 2.5.0 - 2020-01-07 ###
+
+* Exibe mensagem após instalação/ativação do plugin, recomendando a instalação do plugin Brazilian Market on WooCommerce
+* Exibe mensagem após instalação/ativação do plugin, com um link para a documentação da Pagar.me
 
 ### 2.4.1 - 2020-12-17 ###
 

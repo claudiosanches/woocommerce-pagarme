@@ -1,15 +1,15 @@
-# Copyright (C) 2020 Pagar.me, Claudio Sanches
+# Copyright (C) 2021 Pagar.me, Claudio Sanches
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Pagar.me for WooCommerce 2.4.1\n"
+"Project-Id-Version: Pagar.me for WooCommerce 2.5.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/woocommerce-pagarme\n"
-"POT-Creation-Date: 2020-12-17 15:09:52+00:00\n"
+"POT-Creation-Date: 2021-01-07 16:54:56+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2020-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2021-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
@@ -24,11 +24,12 @@ msgstr ""
 
 #: includes/admin/views/html-notice-missing-brazilian-market.php:22
 #: includes/admin/views/html-notice-missing-woocommerce.php:22
+#: includes/admin/views/html-notice-pagarme-documentation-link.php:11
 msgid "WooCommerce Pagar.me"
 msgstr ""
 
 #: includes/admin/views/html-notice-missing-brazilian-market.php:22
-msgid "depends on the last version of Brazilian Market to work!"
+msgid "recommends using the last version of Brazilian Market plugin to work!"
 msgstr ""
 
 #: includes/admin/views/html-notice-missing-brazilian-market.php:25
@@ -51,6 +52,14 @@ msgstr ""
 #: includes/admin/views/html-notice-missing-woocommerce.php:28
 #: includes/admin/views/html-notice-missing-woocommerce.php:30
 msgid "Install WooCommerce"
+msgstr ""
+
+#: includes/admin/views/html-notice-pagarme-documentation-link.php:11
+msgid "We recommend checking out our documentation before starting using"
+msgstr ""
+
+#: includes/admin/views/html-notice-pagarme-documentation-link.php:13
+msgid "Pagar.me documentation"
 msgstr ""
 
 #: includes/class-wc-pagarme-api.php:469
@@ -499,11 +508,11 @@ msgstr ""
 msgid "%1$dx of %2$s %3$s"
 msgstr ""
 
-#: woocommerce-pagarme.php:132
+#: woocommerce-pagarme.php:140
 msgid "Bank Slip Settings"
 msgstr ""
 
-#: woocommerce-pagarme.php:134
+#: woocommerce-pagarme.php:142
 msgid "Credit Card Settings"
 msgstr ""
 

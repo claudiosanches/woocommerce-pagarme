@@ -340,26 +340,40 @@ Cypress.Commands.add('deactivateBrazilianMarketPlugin', () => {
   cy.log('Deactivating the Brazilian Market plugin...')
 
   cy.get('#deactivate-woocommerce-extra-checkout-fields-for-brazil')
-  .click()
+    .click()
 })
 
 Cypress.Commands.add('activateBrazilianMarketPlugin', () => {
   cy.log('Activating the Brazilian Market plugin...')
 
   cy.get('#activate-woocommerce-extra-checkout-fields-for-brazil')
-  .click()
+    .click()
 })
 
 Cypress.Commands.add('deactivateWoocommercePlugin', () => {
   cy.log('Deactivating the WooCommerce plugin...')
 
   cy.get('#deactivate-woocommerce')
-  .click()
+    .click()
 })
 
 Cypress.Commands.add('activateWoocommercePlugin', () => {
   cy.log('Activating the WooCommerce plugin...')
 
   cy.get('#activate-woocommerce')
-  .click()
+    .click()
+})
+
+Cypress.Commands.add('deactivateWoocommercePagarmePlugin', () => {
+  cy.log('Deactivating the WooCommerce Pagarme plugin...')
+
+  cy.get('#deactivate-woocommerce-pagarme')
+    .click()
+})
+
+Cypress.Commands.add('activateWoocommercePagarmePlugin', () => {
+  cy.log('Activating the WooCommerce Pagarme plugin...')
+
+  cy.get('#activate-woocommerce-pagarme')
+    .click()
 })
