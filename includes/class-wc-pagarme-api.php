@@ -361,6 +361,32 @@ class WC_Pagarme_API {
 		} elseif ( 'pagarme-banking-ticket' === $this->gateway->id ) {
 			$data['payment_method'] = 'boleto';
 			$data['async']          = 'yes' === $this->gateway->async;
+////////////////////////////////////            CALCULAR DATA VENCIMENTO DO BOLETO         //////////////////////////
+        $dias_vencimeto = (int)$this->gateway->dias_vencimento_boleto;
+		$feriados = (array)$this->gateway->feriados;
+			
+        date_default_timezone_set('America/Sao_Paulo');
+        $data_vencimento = date( 'd/m/Y', time() + ( $dias_vencimento * 86400 ) );
+        $datetime = DateTime::createFromFormat('d/m/Y', $data_vencimento);
+
+		while(in_array($datetime->format('d/m'), $feriados)){
+			$datetime->modify('+1 day');
+		}
+			
+        $dia_semana = $datetime->format("l");
+
+        if($dia_semana == 'Saturday' ){
+            $datetime->modify('+2 days');
+        }else{
+            if($dia_semana == 'Sunday'){
+                $datetime->modify('+1 day');
+            }
+        }
+		$data['boleto_expiration_date'] = $datetime->format('Y-m-d');
+        update_post_meta( $order->id, 'data_vencimento_boleto', $datetime->format('Y-m-d') );
+////////////////////////////////////////            CALCULAR DATA VENCIMENTO DO BOLETO         //////////////////////////
+			
+		$data['boleto_instructions'] = 'APÓS PAGAR O BOLETO, CASO DESEJE, INFORME O PAGAMENTO ATRAVÉS DO WHATSAPP (22) 9 8144-2477';
 		}
 
 		// Add filter for Third Party plugins.
@@ -724,6 +750,8 @@ class WC_Pagarme_API {
 		// Meta data.
 		$meta_data = array(
 			__( 'Banking Ticket URL', 'woocommerce-pagarme' ) => sanitize_text_field( $data['boleto_url'] ),
+			__( 'linha_digitavel', 'woocommerce-pagarme' ) => sanitize_text_field( $data['boleto_barcode'] ),
+            __( 'link_boleto', 'woocommerce-pagarme' ) => sanitize_text_field( $data['boleto_url'] ),
 			__( 'Credit Card', 'woocommerce-pagarme' )        => $this->get_card_brand_name( sanitize_text_field( $data['card_brand'] ) ),
 			__( 'Installments', 'woocommerce-pagarme' )       => sanitize_text_field( $data['installments'] ),
 			__( 'Total paid', 'woocommerce-pagarme' )         => number_format( intval( $data['amount'] ) / 100, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() ),
