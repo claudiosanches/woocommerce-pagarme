@@ -132,7 +132,7 @@ class WC_Pagarme_API {
 	 * @return array            Request response.
 	 */
 	protected function do_request( $endpoint, $method = 'POST', $data = array(), $headers = array() ) {
-		$params = array(
+		$params = array( 
 			'method'  => $method,
 			'timeout' => 60,
 		);
@@ -709,6 +709,9 @@ class WC_Pagarme_API {
 	 */
 	protected function save_order_meta_fields( $id, $data ) {
 
+		
+		do_action('wc_pagarme_before_save_order_meta_fields', $id, $data);
+
 		// Transaction data.
 		$payment_data = array_map(
 			'sanitize_text_field',
@@ -735,6 +738,9 @@ class WC_Pagarme_API {
 
 		$order = wc_get_order( $id );
 
+		//Filtro para poder adcionar mais informações no pedido.
+		$meta_data = apply_filters( 'example_filter', $meta_data, $order, $data );
+
 		// WooCommerce 3.0 or later.
 		if ( ! method_exists( $order, 'update_meta_data' ) ) {
 			foreach ( $meta_data as $key => $value ) {
@@ -747,6 +753,8 @@ class WC_Pagarme_API {
 
 			$order->save();
 		}
+
+		do_action('wc_pagarme_after_save_order_meta_fields', $id, $data);
 	}
 
 	/**
