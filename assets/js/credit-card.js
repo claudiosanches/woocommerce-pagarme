@@ -30,8 +30,14 @@
 			creditCard.cardNumber          = $( '#pagarme-card-number', form ).val().replace( /[^\d]/g, '' );
 			creditCard.cardCVV             = $( '#pagarme-card-cvc', form ).val();
 
-			// Get the errors.
-			errors = creditCard.fieldErrors();
+		    creditCard.parcels = $("#pagarme-installments", form).val();
+
+		    // Get the errors.
+		    errors = creditCard.fieldErrors();
+
+		    if (creditCard.parcels === "0") {
+			  errors.card_parcel = "Parcela Inválida";
+		    }
 
 			// Display the errors in credit card form.
 			if ( ! $.isEmptyObject( errors ) ) {
