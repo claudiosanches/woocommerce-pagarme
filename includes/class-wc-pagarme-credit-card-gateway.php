@@ -75,8 +75,6 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 					$this->encryption_key = $currentCompany['encryption_key_pagarme'];
 				}
 			}
-		} else {
-			exit('Erro no plugin woocommerce-pagarme-studio');
 		}
 
 
