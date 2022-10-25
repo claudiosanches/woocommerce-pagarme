@@ -19,14 +19,15 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Constructor for the gateway.
 	 */
-	public function __construct() {
-		$this->id                   = 'pagarme-credit-card';
-		$this->icon                 = apply_filters( 'wc_pagarme_credit_card_icon', false );
-		$this->has_fields           = true;
-		$this->method_title         = __( 'Pagar.me - Credit Card', 'woocommerce-pagarme' );
-		$this->method_description   = __( 'Accept credit card payments using Pagar.me.', 'woocommerce-pagarme' );
+	public function __construct()
+	{
+		$this->id = 'pagarme-credit-card';
+		$this->icon = apply_filters('wc_pagarme_credit_card_icon', false);
+		$this->has_fields = true;
+		$this->method_title = __('Pagar.me - Credit Card', 'woocommerce-pagarme');
+		$this->method_description = __('Accept credit card payments using Pagar.me.', 'woocommerce-pagarme');
 		$this->view_transaction_url = 'https://dashboard.pagar.me/#/transactions/%s';
-		$this->supports           	= array(
+		$this->supports = array(
 			'refunds'
 		);
 
@@ -37,32 +38,62 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Define user set variables.
-		$this->title                  = $this->get_option( 'title' );
-		$this->description            = $this->get_option( 'description' );
-		$this->api_key                = $this->get_option( 'api_key' );
-		$this->encryption_key         = $this->get_option( 'encryption_key' );
-		$this->checkout               = $this->get_option( 'checkout' );
-		$this->register_refused_order = $this->get_option( 'register_refused_order' );
-		$this->max_installment        = $this->get_option( 'max_installment' );
-		$this->smallest_installment   = $this->get_option( 'smallest_installment' );
-		$this->interest_rate          = $this->get_option( 'interest_rate', '0' );
-		$this->free_installments      = $this->get_option( 'free_installments', '1' );
-		$this->debug                  = $this->get_option( 'debug' );
+		$this->title = $this->get_option('title');
+		$this->description = $this->get_option('description');
+		$this->api_key = $this->get_option('api_key');
+		$this->encryption_key = $this->get_option('encryption_key');
+		$this->checkout = $this->get_option('checkout');
+		$this->register_refused_order = $this->get_option('register_refused_order');
+		$this->max_installment = $this->get_option('max_installment');
+		$this->smallest_installment = $this->get_option('smallest_installment');
+		$this->interest_rate = $this->get_option('interest_rate', '0');
+		$this->free_installments = $this->get_option('free_installments', '1');
+		$this->debug = $this->get_option('debug');
+
+
+		/**
+		 * Adiciona funcionalidades multi-contas Pagar.me
+		 * Este trecho trata de aplicar as regras de negócio com base nas companies
+		 *
+		 *
+		 * @return void
+		 */
+		if (!is_admin() && function_exists('get_field')) {
+
+			if (WC()->session->__isset('_company_cnpj')) {
+				$currentCnpj = WC()->session->get('_company_cnpj');
+				$companies = get_field('companies', 'option');
+
+				foreach ($companies as $key => $company) {
+					if ($company['cnpj'] == $currentCnpj) {
+						$currentCompany = $companies[$key];
+					}
+				}
+
+				if ($currentCompany != null) {
+					$this->api_key = $currentCompany['api_key_pagarme'];
+					$this->encryption_key = $currentCompany['encryption_key_pagarme'];
+				}
+			}
+		} else {
+			exit('Erro no plugin woocommerce-pagarme-studio');
+		}
+
 
 		// Active logs.
-		if ( 'yes' === $this->debug ) {
+		if ('yes' === $this->debug) {
 			$this->log = new WC_Logger();
 		}
 
 		// Set the API.
-		$this->api = new WC_Pagarme_API( $this );
+		$this->api = new WC_Pagarme_API($this);
 
 		// Actions.
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'checkout_scripts' ) );
-		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
-		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_instructions' ), 10, 3 );
-		add_action( 'woocommerce_api_wc_pagarme_credit_card_gateway', array( $this, 'ipn_handler' ) );
+		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
+		add_action('wp_enqueue_scripts', array($this, 'checkout_scripts'));
+		add_action('woocommerce_thankyou_' . $this->id, array($this, 'thankyou_page'));
+		add_action('woocommerce_email_after_order_table', array($this, 'email_instructions'), 10, 3);
+		add_action('woocommerce_api_wc_pagarme_credit_card_gateway', array($this, 'ipn_handler'));
 	}
 
 	/**
