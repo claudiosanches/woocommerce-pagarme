@@ -41,6 +41,36 @@ class WC_Pagarme_Banking_Ticket_Gateway extends WC_Payment_Gateway {
 		$this->debug          = $this->get_option( 'debug' );
 		$this->async          = $this->get_option( 'async' );
 
+		/**
+		 * Adiciona funcionalidades multi-contas Pagar.me
+		 * Este trecho trata de aplicar as regras de negócio com base nas companies
+		 *
+		 *
+		 * @return void
+		 */
+		if (!is_null(WC()->session) && function_exists('get_field')) {
+
+			if (WC()->session->__isset('_company_cnpj')) {
+				$currentCnpj = WC()->session->get('_company_cnpj');
+
+				//necessita do plugin ACF ativado
+				$companies = get_field('companies', 'option');
+
+				if (!is_null($companies)) {
+					foreach ($companies as $key => $company) {
+						if ($company['cnpj'] == $currentCnpj) {
+							$currentCompany = $companies[$key];
+						}
+					}
+				}
+
+				if (isset($currentCompany) && $currentCompany != null) {
+					$this->api_key = $currentCompany['api_key_pagarme'];
+					$this->encryption_key = $currentCompany['encryption_key_pagarme'];
+				}
+			}
+		}
+
 		// Active logs.
 		if ( 'yes' === $this->debug ) {
 			$this->log = new WC_Logger();

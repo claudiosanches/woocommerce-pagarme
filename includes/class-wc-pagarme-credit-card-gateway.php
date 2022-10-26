@@ -58,19 +58,23 @@ class WC_Pagarme_Credit_Card_Gateway extends WC_Payment_Gateway {
 		 *
 		 * @return void
 		 */
-		if (!is_admin() && function_exists('get_field')) {
+		if (!is_null(WC()->session) && function_exists('get_field')) {
 
 			if (WC()->session->__isset('_company_cnpj')) {
 				$currentCnpj = WC()->session->get('_company_cnpj');
+
+				//necessita do plugin ACF ativado
 				$companies = get_field('companies', 'option');
 
-				foreach ($companies as $key => $company) {
-					if ($company['cnpj'] == $currentCnpj) {
-						$currentCompany = $companies[$key];
+				if (!is_null($companies)) {
+					foreach ($companies as $key => $company) {
+						if ($company['cnpj'] == $currentCnpj) {
+							$currentCompany = $companies[$key];
+						}
 					}
 				}
 
-				if ($currentCompany != null) {
+				if (isset($currentCompany) && $currentCompany != null) {
 					$this->api_key = $currentCompany['api_key_pagarme'];
 					$this->encryption_key = $currentCompany['encryption_key_pagarme'];
 				}
